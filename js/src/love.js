@@ -1,101 +1,134 @@
-//鼠标点击出现爱心特效
-(function(window,document) {
-    var hearts = [];
+function clickEffect() {
+  let balls = [];
+  let longPressed = false;
+  let longPress;
+  let multiplier = 0;
+  let width, height;
+  let origin;
+  let normal;
+  let ctx;
+  const colours = ["#F73859", "#14FFEC", "#00E0FF", "#FF99FE", "#FAF15D"];
+  const canvas = document.createElement("canvas");
+  document.body.appendChild(canvas);
+  canvas.setAttribute("style", "width: 100%; height: 100%; top: 0; left: 0; z-index: 99999; position: fixed; pointer-events: none;");
+  const pointer = document.createElement("span");
+  pointer.classList.add("pointer");
+  document.body.appendChild(pointer);
  
-    /**
-     * 初始化动画循环事件
-     */
-    window.requestAnimationFrame = (function () {
-        return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-                setTimeout(callback, 1000 / 60);
-            }
-    })();
+  if (canvas.getContext && window.addEventListener) {
+    ctx = canvas.getContext("2d");
+    updateSize();
+    window.addEventListener('resize', updateSize, false);
+    loop();
+    window.addEventListener("mousedown", function(e) {
+      pushBalls(randBetween(10, 20), e.clientX, e.clientY);
+      document.body.classList.add("is-pressed");
+      longPress = setTimeout(function(){
+        document.body.classList.add("is-longpress");
+        longPressed = true;
+      }, 500);
+    }, false);
+    window.addEventListener("mouseup", function(e) {
+      clearInterval(longPress);
+      if (longPressed == true) {
+        document.body.classList.remove("is-longpress");
+        pushBalls(randBetween(50 + Math.ceil(multiplier), 100 + Math.ceil(multiplier)), e.clientX, e.clientY);
+        longPressed = false;
+      }
+      document.body.classList.remove("is-pressed");
+    }, false);
+    window.addEventListener("mousemove", function(e) {
+      let x = e.clientX;
+      let y = e.clientY;
+      pointer.style.top = y + "px";
+      pointer.style.left = x + "px";
+    }, false);
+  } else {
+    console.log("canvas or addEventListener is unsupported!");
+  }
  
-    /**
-     * 添加桃心样式
-     */
-    function addHeartCss() {
-        var cssStr = ".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}";
-        createCss(cssStr);
+ 
+  function updateSize() {
+    canvas.width = window.innerWidth * 2;
+    canvas.height = window.innerHeight * 2;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(2, 2);
+    width = (canvas.width = window.innerWidth);
+    height = (canvas.height = window.innerHeight);
+    origin = {
+      x: width / 2,
+      y: height / 2
+    };
+    normal = {
+      x: width / 2,
+      y: height / 2
+    };
+  }
+  class Ball {
+    constructor(x = origin.x, y = origin.y) {
+      this.x = x;
+      this.y = y;
+      this.angle = Math.PI * 2 * Math.random();
+      if (longPressed == true) {
+        this.multiplier = randBetween(14 + multiplier, 15 + multiplier);
+      } else {
+        this.multiplier = randBetween(6, 12);
+      }
+      this.vx = (this.multiplier + Math.random() * 0.5) * Math.cos(this.angle);
+      this.vy = (this.multiplier + Math.random() * 0.5) * Math.sin(this.angle);
+      this.r = randBetween(8, 12) + 3 * Math.random();
+      this.color = colours[Math.floor(Math.random() * colours.length)];
     }
-    
-    /**
-     * 绘制桃心
-     */
-    function drawHeart() {
-        var i = 0;
-        for (i; i < hearts.length; i++) {
-            if (hearts[i].alpha <= 0) {
-                document.body.removeChild(hearts[i].el);
-                hearts.splice(i, 1);
-                continue;
-            }
-            hearts[i].y--;
-            hearts[i].scale += 0.005;
-            hearts[i].alpha -= 0.01;
-            hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
-        }
-        requestAnimationFrame(drawHeart);
+    update() {
+      this.x += this.vx - normal.x;
+      this.y += this.vy - normal.y;
+      normal.x = -2 / window.innerWidth * Math.sin(this.angle);
+      normal.y = -2 / window.innerHeight * Math.cos(this.angle);
+      this.r -= 0.3;
+      this.vx *= 0.9;
+      this.vy *= 0.9;
     }
+  }
  
-    /**
-     * 注册点击事件
-     */
-    function attachEvent() {
-        var oldOnClick = typeof window.οnclick === "function" && window.onclick;
-        window.onclick = function (event) {
-            oldOnClick && oldOnClick();
-            createHeart(event);
-        }
+  function pushBalls(count = 1, x = origin.x, y = origin.y) {
+    for (let i = 0; i < count; i++) {
+      balls.push(new Ball(x, y));
     }
+  }
  
-    /**
-     * 创建桃心
-     * @param event
-     */
-    function createHeart(event) {
-        var d = document.createElement("div");
-        d.className = "heart";
-        hearts.push({
-            el: d,
-            x: event.clientX - 5,
-            y: event.clientY - 5,
-            scale: 1,
-            alpha: 1,
-            color: randomColor()
-        });
-        document.body.appendChild(d);
+  function randBetween(min, max) {
+    return Math.floor(Math.random() * max) + min;
+  }
+ 
+  function loop() {
+    ctx.fillStyle = "rgba(255, 255, 255, 0)";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < balls.length; i++) {
+      let b = balls[i];
+      if (b.r < 0) continue;
+      ctx.fillStyle = b.color;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2, false);
+      ctx.fill();
+      b.update();
     }
- 
-    /**
-     * 添加CSS样式到DOM中
-     * @param cssStr
-     */
-    function createCss(cssStr) {
-        var style = document.createElement("style");
-        style.innerHTML = cssStr;
-        document.getElementsByTagName('head')[0].appendChild(style);
+    if (longPressed == true) {
+      multiplier += 0.2;
+    } else if (!longPressed && multiplier >= 0) {
+      multiplier -= 0.4;
     }
+    removeBall();
+    requestAnimationFrame(loop);
+  }
  
-    /**
-     * 获取随机颜色
-     * @returns {string}
-     */
-    function randomColor() {
-        return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+  function removeBall() {
+    for (let i = 0; i < balls.length; i++) {
+      let b = balls[i];
+      if (b.x + b.r < 0 || b.x - b.r > width || b.y + b.r < 0 || b.y - b.r > height || b.r < 0) {
+        balls.splice(i, 1);
+      }
     }
- 
-    /**
-     * 开始监听
-     */
-    (function () {
-        addHeartCss();
-        attachEvent();
-        drawHeart();
-    })();
-})(window,document);
+  }
+}
+clickEffect();//调用特效函数
