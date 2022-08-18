@@ -3,13 +3,14 @@
 <head>
   <!-- 爆炸效果 -->
 <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
-<script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+
 <script type="text/javascript" src="/js/cursor/fireworks.js"></script>
 
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/icons8-github-gradient-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/icons8-github-gradient-16.png">
 
@@ -420,7 +421,7 @@
     <span class="post-meta-divider">|</span>
 <!-- 不蒜子计数初始值纠正 -->
 <script>
-$(document).ready(function() {
+(document).ready(function() {
 
     var int = setInterval(fixCount, 50);  // 50ms周期检测函数
     var countOffset = 0;  // 初始化首次数据
