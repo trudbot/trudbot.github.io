@@ -21,7 +21,7 @@
 .ripple {
   position: absolute;
 /* background-color: pink; */
-  background: linear-gradient(to left, #23fcfc, #ce72f8);
+  background: linear-gradient(to left, #fff886, #f072b6);
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -1251,7 +1251,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #032863;
+  background: #9a5228;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
