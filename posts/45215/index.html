@@ -27,7 +27,7 @@
 <meta property="og:description" content="前言c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。 本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。 自定义排序的三种比较器形式比较函数STL中的sort函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素a和b， 谁">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-23T14:05:14.000Z">
-<meta property="article:modified_time" content="2022-08-23T15:54:08.555Z">
+<meta property="article:modified_time" content="2022-08-24T02:35:07.859Z">
 <meta property="article:author" content="trudbot">
 <meta property="article:tag" content="博客">
 <meta name="twitter:card" content="summary">
@@ -214,10 +214,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-08-23 22:05:14 / 修改时间：23:54:08" itemprop="dateCreated datePublished" datetime="2022-08-23T22:05:14+08:00">2022-08-23</time>
+              <time title="创建时间：2022-08-23 22:05:14" itemprop="dateCreated datePublished" datetime="2022-08-23T22:05:14+08:00">2022-08-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 10:35:07" itemprop="dateModified" datetime="2022-08-24T10:35:07+08:00">2022-08-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -260,9 +266,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
 <p>本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。</p>
-<h2 id="自定义排序的三种比较器形式"><a href="#自定义排序的三种比较器形式" class="headerlink" title="自定义排序的三种比较器形式"></a>自定义排序的三种比较器形式</h2><h3 id="比较函数"><a href="#比较函数" class="headerlink" title="比较函数"></a>比较函数</h3><p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
+<h1 id="自定义排序的三种比较器形式"><a href="#自定义排序的三种比较器形式" class="headerlink" title="自定义排序的三种比较器形式"></a>自定义排序的三种比较器形式</h1><h2 id="比较函数"><a href="#比较函数" class="headerlink" title="比较函数"></a>比较函数</h2><p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
+<span id="more"></span>
+
 <blockquote>
 <p>sort函数的一个原型</p>
 </blockquote>
@@ -273,7 +281,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bool comp(const type&amp; a, const type&amp; b);</span><br></pre></td></tr></table></figure>
 
 <p>一般而言形参的形式为<code>const</code>、引用类型（当然不写也可以， 只是这样更安全、效率更高）。</p>
-<p>而返回值于a、b的前后关系是**<code>返回true时， a在前面; 返回false时, b在前面.</code>**&#96;</p>
+<p>而返回值于a、b的前后关系是<strong>返回true时， a在前面; 返回false时, b在前面.</strong></p>
 <p>如</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp</span><span class="params">(<span class="type">const</span> <span class="type">int</span> &amp;a, <span class="type">const</span> <span class="type">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -294,18 +302,18 @@
 <p>如</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sort</span>(data.<span class="built_in">begin</span>(), data.<span class="built_in">end</span>(), [](<span class="type">const</span> type&amp; a, <span class="type">const</span> type&amp; b) -&gt; <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="comment">//judge something</span></span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
 
-<h3 id="重载-lt-运算符"><a href="#重载-lt-运算符" class="headerlink" title="重载&lt;运算符"></a>重载&lt;运算符</h3><p>有时候我们会用结构体或类来定义较为复杂的数据结构， 要对它进行自定义排序除了使用比较函数外， 还可以用重载运算符的方式。</p>
+
+
+<h2 id="重载-lt-运算符"><a href="#重载-lt-运算符" class="headerlink" title="重载&lt;运算符"></a>重载&lt;运算符</h2><p>有时候我们会用结构体或类来定义较为复杂的数据结构， 要对它进行自定义排序除了使用比较函数外， 还可以用重载运算符的方式。</p>
 <p>以上面的学生例子举例</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span> &#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> score;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> stu&amp; b) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(score != b.score) &#123;</span><br><span class="line">            <span class="keyword">return</span> score &gt; b.score;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> name &lt; b.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>上述代码重载了stu类的<code>&lt;</code>运算符，和比较函数不同的时只有一个参数， 但其实只不过是a参数变成了当前的结构体 。</p>
 <p>由于<code>sort</code>函数默认为升序, 会把用<code>&lt;</code>比较的两个函数中小的放前面， 所以函数体编写思想和比较函数完全一致：写入要把a放到前面满足的条件。</p>
-<h3 id="函数对象比较器——重载"><a href="#函数对象比较器——重载" class="headerlink" title="函数对象比较器——重载()"></a>函数对象比较器——重载()</h3><p>其实就是定义一个结构体或类作为比较器， 重载<code>()</code>, 这样类名+<code>()</code>就成为了比较函数。</p>
+<h2 id="函数对象比较器——重载"><a href="#函数对象比较器——重载" class="headerlink" title="函数对象比较器——重载()"></a>函数对象比较器——重载()</h2><p>其实就是定义一个结构体或类作为比较器， 重载<code>()</code>, 这样类名+<code>()</code>就成为了比较函数。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span> &#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> score;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp</span> &#123;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(<span class="type">const</span> stu&amp; a, <span class="type">const</span> stu&amp; b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(a.score != b.score) &#123;</span><br><span class="line">            <span class="keyword">return</span> a.score &gt; b.score;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> a.name &lt; b.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    vector&lt;stu&gt; a&#123;&#123;<span class="string">&quot;abc&quot;</span>, <span class="number">100</span>&#125;, &#123;<span class="string">&quot;acb&quot;</span>, <span class="number">100</span>&#125;&#125;;</span><br><span class="line">    <span class="built_in">sort</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), <span class="built_in">cmp</span>());</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">const</span> <span class="keyword">auto</span>&amp; i : a) &#123;</span><br><span class="line">        cout &lt;&lt; i.name &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; i.score &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<h2 id="容器应用"><a href="#容器应用" class="headerlink" title="容器应用"></a>容器应用</h2><p>STL用两种比较对象来指代排序的两种方向， 分别是<code>less</code>和<code>greater</code>分别使用<code>&lt;</code>和<code>&gt;</code>， 对应升序和降序。在众容器中都默认使用less， 所以结构体要使用默认排序需要重载小于运算符。</p>
+<h1 id="容器应用"><a href="#容器应用" class="headerlink" title="容器应用"></a>容器应用</h1><p>STL用两种比较对象来指代排序的两种方向， 分别是<code>less</code>和<code>greater</code>分别使用<code>&lt;</code>和<code>&gt;</code>， 对应升序和降序。在众容器中都默认使用less， 所以结构体要使用默认排序需要重载小于运算符。</p>
 <p>也可以显示指出方向， 如以下代码对数组进行了降序排序。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; a&#123;<span class="number">3</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">4</span>&#125;;</span><br><span class="line">    <span class="built_in">sort</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), greater&lt;&gt;());<span class="comment">//重载了&lt; / &gt;运算符， 即可使用less&lt;&gt; / greater&lt;&gt;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -404,7 +412,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F%E7%9A%84%E4%B8%89%E7%A7%8D%E6%AF%94%E8%BE%83%E5%99%A8%E5%BD%A2%E5%BC%8F"><span class="nav-number"></span> <span class="nav-text">自定义排序的三种比较器形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">比较函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD-lt-%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">2.</span> <span class="nav-text">重载&lt;运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E6%AF%94%E8%BE%83%E5%99%A8%E2%80%94%E2%80%94%E9%87%8D%E8%BD%BD"><span class="nav-number">3.</span> <span class="nav-text">函数对象比较器——重载()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8"><span class="nav-number"></span> <span class="nav-text">容器应用</span></a></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F%E7%9A%84%E4%B8%89%E7%A7%8D%E6%AF%94%E8%BE%83%E5%99%A8%E5%BD%A2%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">自定义排序的三种比较器形式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">比较函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD-lt-%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">2.2.</span> <span class="nav-text">重载&lt;运算符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E6%AF%94%E8%BE%83%E5%99%A8%E2%80%94%E2%80%94%E9%87%8D%E8%BD%BD"><span class="nav-number">2.3.</span> <span class="nav-text">函数对象比较器——重载()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">容器应用</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

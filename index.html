@@ -211,10 +211,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-08-23 22:05:14 / 修改时间：23:54:08" itemprop="dateCreated datePublished" datetime="2022-08-23T22:05:14+08:00">2022-08-23</time>
+              <time title="创建时间：2022-08-23 22:05:14" itemprop="dateCreated datePublished" datetime="2022-08-23T22:05:14+08:00">2022-08-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 10:35:07" itemprop="dateModified" datetime="2022-08-24T10:35:07+08:00">2022-08-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -250,60 +256,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
 <p>本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。</p>
-<h2 id="自定义排序的三种比较器形式"><a href="#自定义排序的三种比较器形式" class="headerlink" title="自定义排序的三种比较器形式"></a>自定义排序的三种比较器形式</h2><h3 id="比较函数"><a href="#比较函数" class="headerlink" title="比较函数"></a>比较函数</h3><p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
-<blockquote>
-<p>sort函数的一个原型</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">sort</span><span class="params">(_RandomAccessIterator __first, _RandomAccessIterator __last)</span></span>;<span class="comment">//无比较器， 升序排序， 会调用&lt;进行元素比较, 小的会放前面</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">sort</span><span class="params">(_RandomAccessIterator __first, _RandomAccessIterator __last, _Compare __comp)</span></span>;<span class="comment">//传入比较器， 前后顺序由比较强返回值决定</span></span><br></pre></td></tr></table></figure>
-
-<p>在<code>sort</code>函数中这即为第三个参数：比较器</p>
-<p><strong>比较函数的基本形式</strong>:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bool comp(const type&amp; a, const type&amp; b);</span><br></pre></td></tr></table></figure>
-
-<p>一般而言形参的形式为<code>const</code>、引用类型（当然不写也可以， 只是这样更安全、效率更高）。</p>
-<p>而返回值于a、b的前后关系是**<code>返回true时， a在前面; 返回false时, b在前面.</code>**&#96;</p>
-<p>如</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp</span><span class="params">(<span class="type">const</span> <span class="type">int</span> &amp;a, <span class="type">const</span> <span class="type">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>返回值为<code>true</code>时， a在前面， 且<code>a&lt;b</code>， 所以会是升序排序。</p>
-<p>所以更透彻的讲， 比较函数的内容其实是<strong>a要想排在b前面所要满足的条件</strong></p>
-<p><strong>简单小例子</strong></p>
-<p>若用pair&lt;string, int&gt; 存储着若干个学生的<code>name</code>和<code>score</code>信息， 要对这些学生进行排序， </p>
-<p>要求：</p>
-<ul>
-<li>按分数从高到低</li>
-<li>分数相等时按名字字典序排列</li>
-</ul>
-<p>很容易的可以得到比较函数为</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(<span class="type">const</span> pair&lt;string, <span class="type">int</span>&gt; &amp;a, <span class="type">const</span> pair&lt;string, <span class="type">int</span>&gt; &amp;b)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(a.second != b.second) &#123;</span><br><span class="line">		<span class="keyword">return</span> a.second &gt; b.second;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> a.first &lt; b.first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>lambda表达式</strong></p>
-<p>比较函数在大多场景下可能仅需使用一次， 因此我们可以用lambda表示式来简写</p>
-<p>如</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sort</span>(data.<span class="built_in">begin</span>(), data.<span class="built_in">end</span>(), [](<span class="type">const</span> type&amp; a, <span class="type">const</span> type&amp; b) -&gt; <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="comment">//judge something</span></span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
-
-<h3 id="重载-lt-运算符"><a href="#重载-lt-运算符" class="headerlink" title="重载&lt;运算符"></a>重载&lt;运算符</h3><p>有时候我们会用结构体或类来定义较为复杂的数据结构， 要对它进行自定义排序除了使用比较函数外， 还可以用重载运算符的方式。</p>
-<p>以上面的学生例子举例</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span> &#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> score;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> stu&amp; b) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(score != b.score) &#123;</span><br><span class="line">            <span class="keyword">return</span> score &gt; b.score;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> name &lt; b.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>上述代码重载了stu类的<code>&lt;</code>运算符，和比较函数不同的时只有一个参数， 但其实只不过是a参数变成了当前的结构体 。</p>
-<p>由于<code>sort</code>函数默认为升序, 会把用<code>&lt;</code>比较的两个函数中小的放前面， 所以函数体编写思想和比较函数完全一致：写入要把a放到前面满足的条件。</p>
-<h3 id="函数对象比较器——重载"><a href="#函数对象比较器——重载" class="headerlink" title="函数对象比较器——重载()"></a>函数对象比较器——重载()</h3><p>其实就是定义一个结构体或类作为比较器， 重载<code>()</code>, 这样类名+<code>()</code>就成为了比较函数。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span> &#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> score;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">cmp</span> &#123;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(<span class="type">const</span> stu&amp; a, <span class="type">const</span> stu&amp; b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(a.score != b.score) &#123;</span><br><span class="line">            <span class="keyword">return</span> a.score &gt; b.score;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> a.name &lt; b.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    vector&lt;stu&gt; a&#123;&#123;<span class="string">&quot;abc&quot;</span>, <span class="number">100</span>&#125;, &#123;<span class="string">&quot;acb&quot;</span>, <span class="number">100</span>&#125;&#125;;</span><br><span class="line">    <span class="built_in">sort</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), <span class="built_in">cmp</span>());</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">const</span> <span class="keyword">auto</span>&amp; i : a) &#123;</span><br><span class="line">        cout &lt;&lt; i.name &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; i.score &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="容器应用"><a href="#容器应用" class="headerlink" title="容器应用"></a>容器应用</h2><p>STL用两种比较对象来指代排序的两种方向， 分别是<code>less</code>和<code>greater</code>分别使用<code>&lt;</code>和<code>&gt;</code>， 对应升序和降序。在众容器中都默认使用less， 所以结构体要使用默认排序需要重载小于运算符。</p>
-<p>也可以显示指出方向， 如以下代码对数组进行了降序排序。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; a&#123;<span class="number">3</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">4</span>&#125;;</span><br><span class="line">    <span class="built_in">sort</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), greater&lt;&gt;());<span class="comment">//重载了&lt; / &gt;运算符， 即可使用less&lt;&gt; / greater&lt;&gt;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>要注意的是在set， priority_queue这样的容器不能用比较函数的方式， 只能够使用重载的方式实现。</p>
-<hr>
-<p>以及比较反人类的是当<code>priority_queue</code>使用<code>less</code>时其实是大根堆， 使用<code>greater&lt;&gt;</code>才是小根堆。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">stu</span> &#123;</span><br><span class="line">    string name;</span><br><span class="line">    <span class="type">int</span> score;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> stu &amp; b) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(score != b.score) &#123;</span><br><span class="line">            <span class="keyword">return</span> score &gt; b.score;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> name &lt; b.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    priority_queue&lt;stu, vector&lt;stu&gt;&gt; heap;</span><br><span class="line">    heap.<span class="built_in">push</span>(&#123;<span class="string">&quot;a&quot;</span>, <span class="number">100</span>&#125;);</span><br><span class="line">    heap.<span class="built_in">push</span>(&#123;<span class="string">&quot;b&quot;</span>, <span class="number">100</span>&#125;);</span><br><span class="line">    heap.<span class="built_in">push</span>(&#123;<span class="string">&quot;c&quot;</span>, <span class="number">110</span>&#125;);</span><br><span class="line">    <span class="keyword">while</span>(!heap.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">        cout &lt;&lt; heap.<span class="built_in">top</span>().name &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; heap.<span class="built_in">top</span>().score &lt;&lt; endl;</span><br><span class="line">        heap.<span class="built_in">pop</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出结果</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">b 100</span></span><br><span class="line"><span class="comment">a 100</span></span><br><span class="line"><span class="comment">c 110</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
+<h1 id="自定义排序的三种比较器形式"><a href="#自定义排序的三种比较器形式" class="headerlink" title="自定义排序的三种比较器形式"></a>自定义排序的三种比较器形式</h1><h2 id="比较函数"><a href="#比较函数" class="headerlink" title="比较函数"></a>比较函数</h2><p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/45215/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -349,10 +312,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-08-19 09:20:29 / 修改时间：11:24:27" itemprop="dateCreated datePublished" datetime="2022-08-19T09:20:29+08:00">2022-08-19</time>
+              <time title="创建时间：2022-08-19 09:20:29" itemprop="dateCreated datePublished" datetime="2022-08-19T09:20:29+08:00">2022-08-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-23 23:56:02" itemprop="dateModified" datetime="2022-08-23T23:56:02+08:00">2022-08-23</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -395,10 +364,6 @@
 <p>1983年在PASCAL代码上进行的一项实验发现，缩进大小显着影响了可理解性。2 到 4 个字符之间的缩进大小被证明是最佳的。</p>
 </blockquote>
 <p>在大部分的程序语言中， 默认使用四个空格或一个tab键（制表符可以与空格互相转换， 一个’\t’等于4个空格）</p>
-<p>在部分的脚本语言或HTML中， 可能会使用2个空格， 以避免过长的缩进。</p>
-<p>下文中介绍的风格默认使用4字符缩进。</p>
-<h3 id="大括号位置"><a href="#大括号位置" class="headerlink" title="大括号位置"></a>大括号位置</h3><p>大括号用于声明程序的控制语句的作用域， 跟在<code>(····)</code>后面。</p>
-<p>下面将介绍几种主流的大括号风格。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/57442/#more" rel="contents">
