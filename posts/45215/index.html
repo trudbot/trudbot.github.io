@@ -18,13 +18,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"trudbot.cns","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="前言c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。 本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。 自定义排序的三种比较器形式比较函数STL中的sort函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素a和b， 谁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一文搞定c++自定义排序">
-<meta property="og:url" content="http://example.com/posts/45215/index.html">
+<meta property="og:url" content="http://trudbot.cns/posts/45215/index.html">
 <meta property="og:site_name" content="trudbot的空中小岛">
 <meta property="og:description" content="前言c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。 本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。 自定义排序的三种比较器形式比较函数STL中的sort函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素a和b， 谁">
 <meta property="og:locale" content="zh_CN">
@@ -34,7 +34,7 @@
 <meta property="article:tag" content="博客">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/posts/45215/">
+<link rel="canonical" href="http://trudbot.cns/posts/45215/">
 
 
 <script id="page-configurations">
@@ -194,7 +194,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/45215/">
+    <link itemprop="mainEntityOfPage" href="http://trudbot.cns/posts/45215/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
