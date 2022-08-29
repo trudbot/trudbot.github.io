@@ -1306,7 +1306,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #90589d;
+  background: #9a0bd4;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2834,8 +2834,8 @@ p code {
   border: 1px solid #d6d6d6;
 }
 * {
-  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/ai87f-8jyxv-001.ico"), auto !important;
+  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/icons8-滚筒刷-64.ico"), auto !important;
 }
 :active {
-  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/ai87f-8jyxv-001.ico"), auto !important;
+  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/icons8-滚筒刷-64.ico"), auto !important;
 }
