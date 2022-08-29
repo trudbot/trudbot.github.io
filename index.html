@@ -18,7 +18,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="做生命的极客">
@@ -255,8 +255,10 @@
 
       
           <p><strong>Hi, 你好,  欢迎来到trudbot的私人网站。这里暂时内容很少， 但它会慢慢丰富</strong></p>
-<h3 id="这是什么网站？"><a href="#这是什么网站？" class="headerlink" title="这是什么网站？"></a>这是什么网站？</h3><p>这是我的个人博客网站， 使用开源框架<code>Hexo</code>， 托管于<code>github</code>上;  推荐桌面浏览器打开。</p>
-<h3 id="这里会有什么内容？"><a href="#这里会有什么内容？" class="headerlink" title="这里会有什么内容？"></a>这里会有什么内容？</h3><ul>
+<h3 id="这是什么网站"><a class="markdownIt-Anchor" href="#这是什么网站"></a> 这是什么网站？</h3>
+<p>这是我的个人博客网站， 使用开源框架<code>Hexo</code>， 托管于<code>github</code>上;  推荐桌面浏览器打开。</p>
+<h3 id="这里会有什么内容"><a class="markdownIt-Anchor" href="#这里会有什么内容"></a> 这里会有什么内容？</h3>
+<ul>
 <li>技术学习之路中记录笔记或经验分享</li>
 <li>有意思的算法题题目及题解分享</li>
 </ul>
@@ -352,9 +354,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
+          <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>c++拥有强大的STL， 在对复杂的数据结构排序时只需要自定义去比较函数， 然后放到容器内调用api即可。</p>
 <p>本该是很简单的东西， 但我之前一直无法记住升序以及降序两种方向该分别怎么写，总是会搞混，  每次都得现场Google。终于下定决心要在今天把它彻底搞定。</p>
-<h1 id="自定义排序的三种比较器形式"><a href="#自定义排序的三种比较器形式" class="headerlink" title="自定义排序的三种比较器形式"></a>自定义排序的三种比较器形式</h1><h2 id="比较函数"><a href="#比较函数" class="headerlink" title="比较函数"></a>比较函数</h2><p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
+<h1 id="自定义排序的三种比较器形式"><a class="markdownIt-Anchor" href="#自定义排序的三种比较器形式"></a> 自定义排序的三种比较器形式</h1>
+<h2 id="比较函数"><a class="markdownIt-Anchor" href="#比较函数"></a> 比较函数</h2>
+<p>STL中的<code>sort</code>函数已经为我们提供了排序算法的框架，我们唯一要做的决定就是对于两个元素<code>a</code>和<code>b</code>， 谁在前、谁在后？</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/45215/#more" rel="contents">
@@ -454,9 +459,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="什么是缩进风格"><a href="#什么是缩进风格" class="headerlink" title="什么是缩进风格"></a>什么是缩进风格</h3><p>缩进风格是代码风格的一部分， 是自发形成的一种约定， 用控制代码块缩进的方式传达程序的结构。</p>
+          <h3 id="什么是缩进风格"><a class="markdownIt-Anchor" href="#什么是缩进风格"></a> 什么是缩进风格</h3>
+<p>缩进风格是代码风格的一部分， 是自发形成的一种约定， 用控制代码块缩进的方式传达程序的结构。</p>
 <p>缩进风格可以分为两个方面：<code>缩进大小</code>和<code>大括号位置</code>。</p>
-<h3 id="缩进大小"><a href="#缩进大小" class="headerlink" title="缩进大小"></a>缩进大小</h3><p>缩进在大部分语言中并不是强制要求， 但合理的缩进有利于人类理解程序的结构， 即提高了代码的清晰性。</p>
+<h3 id="缩进大小"><a class="markdownIt-Anchor" href="#缩进大小"></a> 缩进大小</h3>
+<p>缩进在大部分语言中并不是强制要求， 但合理的缩进有利于人类理解程序的结构， 即提高了代码的清晰性。</p>
 <blockquote>
 <p>1983年在PASCAL代码上进行的一项实验发现，缩进大小显着影响了可理解性。2 到 4 个字符之间的缩进大小被证明是最佳的。</p>
 </blockquote>
