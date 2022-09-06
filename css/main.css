@@ -1284,7 +1284,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #05ffff;
+  background: #74c7ed;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2812,15 +2812,8 @@ p code {
   border: 1px solid #d6d6d6;
 }
 * {
-  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/brush.ico"), auto !important;
+  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/a4b07-j6o60-001.ico"), auto !important;
 }
 :active {
-  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/brush.ico"), auto !important;
-}
-.post {
-  margin-top: 60px;
-  margin-bottom: 60px;
-  padding: 25px;
-  -webkit-box-shadow: 0 0 5px rgba(202,203,203,0.5);
-  -moz-box-shadow: 0 0 5px rgba(202,203,204,0.5);
+  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/a4b07-j6o60-001.ico"), auto !important;
 }
