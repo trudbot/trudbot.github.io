@@ -1284,7 +1284,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #7d42bd;
+  background: #ffdf6b;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1434,7 +1434,7 @@ pre .javascript .function {
   white-space: nowrap;
 }
 .post-toc .nav .nav-child {
-  display: none;
+  display: block;
 }
 .post-toc .nav .active > .nav-child {
   display: block;
@@ -2812,8 +2812,15 @@ p code {
   border: 1px solid #d6d6d6;
 }
 * {
-  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/brush.ico"), auto !important;
+  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/brush.ico"), auto !important;
 }
 :active {
-  cursor: url("https://gitee.com/kk_best/trudbot_images/raw/master/md_images/brush.ico"), auto !important;
+  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/brush.ico"), auto !important;
+}
+.post {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  padding: 25px;
+  -webkit-box-shadow: 0 0 5px rgba(202,203,203,0.5);
+  -moz-box-shadow: 0 0 5px rgba(202,203,204,0.5);
 }
