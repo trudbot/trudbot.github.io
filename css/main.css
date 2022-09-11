@@ -1284,7 +1284,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #74c7ed;
+  background: #855263;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2452,12 +2452,7 @@ ul.breadcrumb li + li:last-child {
   }
 }
 .site-brand-container {
-  background: #222;
-}
-@media (max-width: 991px) {
-  .site-brand-container {
-    box-shadow: 0 0 16px rgba(0,0,0,0.5);
-  }
+  background: #87daff;
 }
 .site-meta {
   padding: 20px 0;
@@ -2816,4 +2811,83 @@ p code {
 }
 :active {
   cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/a4b07-j6o60-001.ico"), auto !important;
+}
+.fa {
+  font-size: 14px;
+}
+.fa-home {
+  color: #e74c3c;
+  font-size: 15px;
+}
+.fa-archive {
+  color: #1abc9c;
+}
+.fa-tags {
+  color: #ffa500;
+}
+.fa-chalkboard {
+  color: #3498db;
+}
+.fa-link {
+  color: #fc427b;
+}
+.fa-user {
+  color: #9b59b6;
+}
+.fa-camera {
+  color: #1abc9c;
+}
+.fa-envelope {
+  color: #fc427b;
+}
+.fa-zhihu {
+  color: #00f;
+}
+.fa-calendar-check {
+  color: #f00;
+}
+.fa-eye {
+  color: #70a1ff;
+}
+.fa-comment {
+  color: #2ed573;
+}
+.fa-comments {
+  color: #2ed573;
+}
+.fa-file-word {
+  color: #273c75;
+}
+.fa-clock {
+  color: #ff5252;
+}
+.fa-image {
+  color: #fc427b;
+}
+.fa-sun {
+  color: #ffa500;
+}
+.fa-bookmark {
+  color: #0ff;
+}
+.fa-book {
+  color: #1abc9c;
+}
+.fa-images {
+  color: #f0f;
+}
+.fa-windows {
+  color: #e74c3c;
+}
+.fa-chrome {
+  color: #ffa500;
+}
+.fa-desktop {
+  color: #3498db;
+}
+.fa-tools {
+  color: #0ff;
+}
+.fa-python {
+  color: #3498db;
 }
