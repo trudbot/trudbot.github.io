@@ -326,12 +326,6 @@
         <a href="mailto:SYP2185759039@163.com" title="E-Mail → mailto:SYP2185759039@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://blog.csdn.net/qq_60775983?spm=1000.2115.3001.5343" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_60775983?spm&#x3D;1000.2115.3001.5343" rel="noopener" target="_blank"><i class="c fa-fw"></i>CSDN</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;qu-ge-sha-ming-hao-ni-30" rel="noopener" target="_blank"><i class="zhihu fa-fw"></i>知乎</a>
-      </span>
-      <span class="links-of-author-item">
         <a href="https://leetcode.cn/u/trudbot/" title="leetcode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;trudbot&#x2F;" rel="noopener" target="_blank"><i class="display-code fa-fw"></i>leetcode</a>
       </span>
       <span class="links-of-author-item">
@@ -637,13 +631,13 @@ if(canvas.getContext){
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">10k</span>
+    <span title="站点总字数">11k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17 分钟</span>
+    <span title="站点阅读时长">18 分钟</span>
 </div>
         
 <div class="busuanzi-count">
@@ -719,6 +713,35 @@ if(canvas.getContext){
   
 
   
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'nTrLxEcCoLYWGkoIKEgTCY8q-MdYXbMMI',
+      appKey     : 'mWAunFpmANwYYraf3JoBJE1n',
+      placeholder: "Just go go",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : 'https://ntrlxecc.api.lncldglobal.com'
+    });
+  }, window.Valine);
+});
+</script>
 
 
   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
