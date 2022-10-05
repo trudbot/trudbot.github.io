@@ -13,12 +13,13 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="最短路径问题是图论研究中的一个经典算法问题，旨在寻找图（由结点和路径组成的）中两结点之间的最短路径。   单源最短路即对确定的源点（起点）， 求它到其它所有可达的点的最短路径。对于单源最短路算法， 又可以分为处理正权边图和带负权边图的两种。">
@@ -32,7 +33,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png">
 <meta property="article:published_time" content="2022-10-04T02:15:09.000Z">
-<meta property="article:modified_time" content="2022-10-05T06:43:50.997Z">
+<meta property="article:modified_time" content="2022-10-05T06:53:44.236Z">
 <meta property="article:author" content="trudbot">
 <meta property="article:tag" content="博客">
 <meta name="twitter:card" content="summary">
@@ -346,7 +347,7 @@ mjx-container[display="true"] + br {
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-05 14:43:50" itemprop="dateModified" datetime="2022-10-05T14:43:50+08:00">2022-10-05</time>
+                <time title="修改时间：2022-10-05 14:53:44" itemprop="dateModified" datetime="2022-10-05T14:53:44+08:00">2022-10-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -393,13 +394,13 @@ mjx-container[display="true"] + br {
         <blockquote>
 <p>最短路径问题是图论研究中的一个经典算法问题，旨在寻找图（由结点和路径组成的）中两结点之间的最短路径。</p>
 </blockquote>
-<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%80%E7%9F%AD%E8%B7%AF.png" alt="最短路"></p>
+<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%80%E7%9F%AD%E8%B7%AF.png" alt="最短路算法概览"></p>
 <h1 id="单源最短路"><a href="#单源最短路" class="headerlink" title="单源最短路"></a>单源最短路</h1><p>即对确定的源点（起点）， 求它到其它所有可达的点的最短路径。<br>对于单源最短路算法， 又可以分为处理正权边图和带负权边图的两种。</p>
 <span id="more"></span>
 
 <h2 id="正权图——Dijkstra算法"><a href="#正权图——Dijkstra算法" class="headerlink" title="正权图——Dijkstra算法"></a>正权图——Dijkstra算法</h2><p>个人认为对Dijkstra算法的一个很形象的描述是： 将边看作一条条水渠， 边的权为水渠的长度(m)。在源点处倒入水， 假设水的速度恒定为1m/s， 那么<strong>当水首次流到顶点X时， 所经过的时间就是源点到X的最短路径长度。</strong></p>
 <p>以下图举例：</p>
-<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png" alt="未命名文件"></p>
+<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png" alt="例图"></p>
 <p>假设从A倒入水， 水四散向每个可能的方向流出。那么水流首先会到达B顶点， 这也是水流第一次经过B顶点， 所以A-B的最短路径长度即为1。 类似的， 我们可以得出水流依次经过的顶点顺序为<code>A -&gt; B -&gt; C -&gt; D -&gt; D</code>， 其中D取第一次经过时的时间， 也就是9。</p>
 <p>Dijkstra算法的思想基本如此， 但抽象为计算机语言却有些不同， 接下来讲讲Dijkstra算法的实现过程。</p>
 <ul>
@@ -409,7 +410,7 @@ mjx-container[display="true"] + br {
 <p>整个Dijkstra算法就是基于bfs以及贪心对dist数组更新的一个过程。</p>
 <p>在算法中重复执行此过程： 取出目前未遍历过且dist最小的一个顶点， 更新其所有指向的顶点的dist</p>
 <p>例如以此图举例</p>
-<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png" alt="未命名文件"></p>
+<p><img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png" alt="例图"></p>
 <p>第一次： dist[A] = 0， 其它都为正无穷， 因此遍历A结点， 并更新A指向的所有结点的dist</p>
 <p>更新完毕后dist[B] = 1, dist[C] = 5, dist[D] = 10.</p>
 <p>第二次： 取出B顶点遍历， dist[D] = min (dist[D], dist[B] + weight(B -&gt; D)) （这一步也叫做松弛操作)， 所以dist[D]被更新为9</p>
@@ -950,6 +951,8 @@ if(canvas.getContext){
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

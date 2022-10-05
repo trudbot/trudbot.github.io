@@ -11,6 +11,15 @@
   </url>
   
   <url>
+    <loc>http://trudbot.cn/categories/index.html</loc>
+    
+    <lastmod>2022-10-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://trudbot.cn/posts/61237/</loc>
     
     <lastmod>2022-10-03</lastmod>
@@ -93,15 +102,6 @@
   
   <url>
     <loc>http://trudbot.cn/about/index.html</loc>
-    
-    <lastmod>2022-08-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://trudbot.cn/categories/index.html</loc>
     
     <lastmod>2022-08-17</lastmod>
     
