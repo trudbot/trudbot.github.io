@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="最近发现了一个很有意思的网站：codewars， 上面有很多有趣的’kata’， 通过kata可以提升你的段位。 codewars上的题目和传统的竞赛题目的风格不太一样， 而且用户是可以创建kata的， 这一点我觉得很有意思。 在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)， 每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来， 供未来copy。">
+  <meta name="description" content="最近发现了一个很有意思的网站：codewars， 上面有很多有趣的&#39;kata&#39;， 通过kata可以提升你的段位。 codewars上的题目和传统的竞赛题目的风格不太一样， 而且用户是可以创建kata的， 这一点我觉得很有意思。 在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)， 每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来， 供未来c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高精度模板">
 <meta property="og:url" content="http://trudbot.cn/posts/61750/index.html">
 <meta property="og:site_name" content="trudbot的空中小岛">
-<meta property="og:description" content="最近发现了一个很有意思的网站：codewars， 上面有很多有趣的’kata’， 通过kata可以提升你的段位。 codewars上的题目和传统的竞赛题目的风格不太一样， 而且用户是可以创建kata的， 这一点我觉得很有意思。 在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)， 每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来， 供未来copy。">
+<meta property="og:description" content="最近发现了一个很有意思的网站：codewars， 上面有很多有趣的&#39;kata&#39;， 通过kata可以提升你的段位。 codewars上的题目和传统的竞赛题目的风格不太一样， 而且用户是可以创建kata的， 这一点我觉得很有意思。 在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)， 每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来， 供未来c">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-10-18T11:15:01.000Z">
 <meta property="article:modified_time" content="2022-10-23T08:07:03.593Z">
@@ -79,7 +79,11 @@
   </style>
 </noscript>
 
-<style>mjx-container[jax="SVG"] {
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
 
@@ -359,7 +363,7 @@ mjx-container[display="true"] + br {
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.1k</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -378,12 +382,16 @@ mjx-container[display="true"] + br {
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>最近发现了一个很有意思的网站：codewars， 上面有很多有趣的’kata’， 通过kata可以提升你的段位。</p>
-<p>codewars上的题目和传统的竞赛题目的风格不太一样， 而且用户是可以创建kata的， 这一点我觉得很有意思。</p>
-<p>在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)， 每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来， 供未来copy。</p>
+        <p>最近发现了一个很有意思的网站：codewars， 上面有很多有趣的'kata'，
+通过kata可以提升你的段位。</p>
+<p>codewars上的题目和传统的竞赛题目的风格不太一样，
+而且用户是可以创建kata的， 这一点我觉得很有意思。</p>
+<p>在codewars中老是遇到高精度的题目(高精度在普通OJ中基本只有模板题)，
+每次都要手写及处理细节十分的腻，于是决定把高精度好好的写一遍记录下来，
+供未来copy。</p>
 <span id="more"></span>
-
-<h2 id="高模板模板类"><a href="#高模板模板类" class="headerlink" title="高模板模板类"></a>高模板模板类</h2><p>包含：</p>
+<h2 id="高模板模板类">高模板模板类</h2>
+<p>包含：</p>
 <ul>
 <li>高精度加高精度</li>
 <li>高精度减高精度</li>
@@ -393,21 +401,33 @@ mjx-container[display="true"] + br {
 <li>高精度除以高精度</li>
 </ul>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> BigNumber {</span><br><span class="line">    <span class="function"><span class="type">static</span> string <span class="title">reversed</span><span class="params">(string &amp;s)</span> </span>{<span class="comment">//反转字符串并返回</span></span><br><span class="line">        <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="type">bool</span> <span class="title">comp</span><span class="params">(string a, string b)</span> </span>{<span class="comment">//判断a大于等于b</span></span><br><span class="line">        <span class="keyword">if</span> (a.<span class="built_in">size</span>() != b.<span class="built_in">size</span>()) <span class="keyword">return</span> a.<span class="built_in">size</span>() &gt; b.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">return</span> a &gt; b || a == b;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">static</span> string <span class="title">add</span><span class="params">(string a, string b)</span> </span>{<span class="comment">//高精度加高精度</span></span><br><span class="line">        string ans;</span><br><span class="line">        <span class="type">int</span> i = a.<span class="built_in">size</span>() - <span class="number">1</span>, j = b.<span class="built_in">size</span>() - <span class="number">1</span>, carry = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &gt;= <span class="number">0</span> || j &gt;= <span class="number">0</span> || carry) {</span><br><span class="line">            <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) carry += a[i--] - <span class="string">'0'</span>;</span><br><span class="line">            <span class="keyword">if</span> (j &gt;= <span class="number">0</span>) carry += b[j--] - <span class="string">'0'</span>;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(carry % <span class="number">10</span> + <span class="string">'0'</span>);</span><br><span class="line">            carry /= <span class="number">10</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reversed</span>(ans);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">static</span> string <span class="title">subtract</span><span class="params">(string a, string b)</span> </span>{<span class="comment">//高精度减高精度</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">comp</span>(a, b)) <span class="keyword">return</span> <span class="string">"-"</span> + <span class="built_in">subtract</span>(b, a);</span><br><span class="line">        string ans;</span><br><span class="line">        <span class="type">int</span> n = a.<span class="built_in">size</span>(), m = b.<span class="built_in">size</span>(), carry = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = n - <span class="number">1</span>, j = m - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--, j--) {</span><br><span class="line">            carry += a[i] - <span class="string">'0'</span>;</span><br><span class="line">            <span class="keyword">if</span> (j &gt;= <span class="number">0</span>) carry -= b[j] - <span class="string">'0'</span>;</span><br><span class="line">            <span class="keyword">if</span> (carry &lt; <span class="number">0</span>) ans.<span class="built_in">push_back</span>(carry + <span class="number">10</span> + <span class="string">'0'</span>), carry = <span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">else</span> ans.<span class="built_in">push_back</span>(carry + <span class="string">'0'</span>), carry = <span class="number">0</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">while</span> (ans.<span class="built_in">size</span>() &gt; <span class="number">1</span> &amp;&amp; ans.<span class="built_in">back</span>() == <span class="string">'0'</span>) ans.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reversed</span>(ans); </span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function">    <span class="type">static</span> string <span class="title">multiply</span><span class="params">(string s, T b)</span> </span>{<span class="comment">//高精度乘以低精度</span></span><br><span class="line">        <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">return</span> <span class="string">"0"</span>;</span><br><span class="line">        <span class="built_in">reversed</span>(s);</span><br><span class="line">        string ans;</span><br><span class="line">        <span class="keyword">for</span> (T i = <span class="number">0</span>, carry = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>() || carry; i++) {</span><br><span class="line">            <span class="keyword">if</span> (i &lt; s.<span class="built_in">size</span>()) carry += (s[i] - <span class="string">'0'</span>) * b;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(carry % <span class="number">10</span> + <span class="string">'0'</span>);</span><br><span class="line">            carry /= <span class="number">10</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reversed</span>(ans);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">static</span> string <span class="title">multiply</span><span class="params">(string a, string b)</span> </span>{<span class="comment">//高精度乘以高精度</span></span><br><span class="line">        <span class="built_in">reversed</span>(a), <span class="built_in">reversed</span>(b);</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">ans</span><span class="params">(a.size() + b.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; a.<span class="built_in">size</span>(); i ++) </span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; b.<span class="built_in">size</span>(); j ++)</span><br><span class="line">                ans[i + j] += (a[i] - <span class="string">'0'</span>)  *(b[j] - <span class="string">'0'</span>);</span><br><span class="line">        <span class="type">int</span> carry = <span class="number">0</span>; string res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ans.<span class="built_in">size</span>(); i ++) {</span><br><span class="line">            ans[i] += carry, carry = ans[i] / <span class="number">10</span>, ans[i] %= <span class="number">10</span>;</span><br><span class="line">            res.<span class="built_in">push_back</span>(ans[i] + <span class="string">'0'</span>);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">while</span>(res.<span class="built_in">back</span>() == <span class="string">'0'</span> &amp;&amp; res.<span class="built_in">size</span>() &gt; <span class="number">1</span>) res.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">reversed</span>(res);</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function">    <span class="type">static</span> pair&lt;string, T&gt; <span class="title">divide</span><span class="params">(string a, T b)</span> </span>{<span class="comment">//高精度除以低精度</span></span><br><span class="line">        <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">return</span> {<span class="string">"ERROR"</span>, <span class="number">0</span>};</span><br><span class="line">        T r = <span class="number">0</span>;</span><br><span class="line">        string ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; a.<span class="built_in">size</span>(); i ++) {</span><br><span class="line">            r = r * <span class="number">10</span> + a[i] - <span class="string">'0'</span>;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(r / b + <span class="string">'0'</span>), r %= b;</span><br><span class="line">        }</span><br><span class="line">        <span class="built_in">reversed</span>(ans);</span><br><span class="line">        <span class="keyword">while</span>(ans.<span class="built_in">size</span>() &gt; <span class="number">1</span> &amp;&amp; ans.<span class="built_in">back</span>() == <span class="string">'0'</span>) ans.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="keyword">return</span> {<span class="built_in">reversed</span>(ans), r};</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">static</span> pair&lt;string, string&gt; <span class="title">divide</span><span class="params">(string a, string b)</span> </span>{<span class="comment">//高精度除以高精度， 复杂度较高</span></span><br><span class="line">        <span class="keyword">if</span> (b == <span class="string">"0"</span>) <span class="keyword">return</span> {<span class="string">"ERROR"</span>, <span class="string">"ERROR"</span>};</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">comp</span>(a, b)) <span class="keyword">return</span> {<span class="string">"0"</span>, a};</span><br><span class="line">        <span class="type">int</span> t = a.<span class="built_in">size</span>() - b.<span class="built_in">size</span>();</span><br><span class="line">        string ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; t; i ++) b.<span class="built_in">push_back</span>(<span class="string">'0'</span>);</span><br><span class="line">        <span class="keyword">while</span> (t &gt;= <span class="number">0</span>) {</span><br><span class="line">            <span class="type">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(<span class="built_in">comp</span>(a, b)) a = <span class="built_in">subtract</span>(a, b), cnt++;</span><br><span class="line">            ans.<span class="built_in">push_back</span>(cnt + <span class="string">'0'</span>);</span><br><span class="line">            b.<span class="built_in">pop_back</span>();</span><br><span class="line">            t--;</span><br><span class="line">        }</span><br><span class="line">        <span class="built_in">reversed</span>(ans);</span><br><span class="line">        <span class="keyword">if</span> (ans.<span class="built_in">back</span>() == <span class="string">'0'</span>) ans.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="keyword">return</span> {<span class="built_in">reversed</span>(ans), a};</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-
-<h2 id="实例-codewars-2kyu–Challenge-Fun-10-Integer-Square-Root"><a href="#实例-codewars-2kyu–Challenge-Fun-10-Integer-Square-Root" class="headerlink" title="实例 codewars 2kyu–Challenge Fun #10: Integer Square Root"></a>实例 <a target="_blank" rel="noopener" href="https://www.codewars.com/kata/58a3fa665973c2a6e80000c4/">codewars</a> 2kyu–Challenge Fun #10: Integer Square Root</h2><blockquote>
-<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><p>For each given a number N, the integer S is called <code>integer square root</code> of N if <code>S x S &lt;= N</code> and <code>(S+1) x (S+1) &gt; N</code>.</p>
+<h2 id="实例-codewars-2kyu--challenge-fun-10-integer-square-root">实例
+<a target="_blank" rel="noopener" href="https://www.codewars.com/kata/58a3fa665973c2a6e80000c4/">codewars</a>
+2kyu--Challenge Fun #10: Integer Square Root</h2>
+<blockquote>
+<h3 id="task">Task</h3>
+<p>For each given a number N, the integer S is called
+<code>integer square root</code> of N if <code>S x S &lt;= N</code> and
+<code>(S+1) x (S+1) &gt; N</code>.</p>
 <p>In other words, <code>S = Math.floor(Math.sqrt(N))</code></p>
-<p>Your task is to calculate the <code>integer square root</code> of a given <code>Number</code>.</p>
-<p>Note: Input is given in string format. That is, the <code>Number</code> may be very very large ;-)</p>
-<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><p>For: <code>Number = "4"</code>, result = <code>"2"</code>.</p>
+<p>Your task is to calculate the <code>integer square root</code> of a
+given <code>Number</code>.</p>
+<p>Note: Input is given in string format. That is, the
+<code>Number</code> may be very very large ;-)</p>
+<h3 id="example">Example</h3>
+<p>For: <code>Number = "4"</code>, result = <code>"2"</code>.</p>
 <p>For: <code>Number = "17"</code>, result = <code>"4"</code>.</p>
 <p>For: <code>Number = "101"</code>, result = <code>"10"</code>.</p>
-<p>For: <code>Number = "23232328323215435345345345343458098856756556809400840980980980980809092343243243243243098799634"</code>, result = <code>"152421548093487868711992623730429930751178496967"</code>.</p>
-<h3 id="Input-x2F-Output"><a href="#Input-x2F-Output" class="headerlink" title="Input/Output"></a>Input/Output</h3><ul>
+<p>For:
+<code>Number = "23232328323215435345345345343458098856756556809400840980980980980809092343243243243243098799634"</code>,
+result =
+<code>"152421548093487868711992623730429930751178496967"</code>.</p>
+<h3 id="inputoutput">Input/Output</h3>
+<ul>
 <li><code>[input]</code> string <code>Number</code></li>
 </ul>
-<p>number in decimal form. </p>
-<p>0 &lt; Number &lt; 10^100^</p>
+<p>number in decimal form.</p>
+<p>0 &lt; Number &lt; 10<sup>100</sup></p>
 <ul>
 <li><code>[output]</code> a string</li>
 </ul>
@@ -415,9 +435,6 @@ mjx-container[display="true"] + br {
 </blockquote>
 <p>显然是一道高精度二分， 调用模板完成即可。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> BigNumber;</span><br><span class="line"><span class="function">string <span class="title">integer_square_root</span><span class="params">(string n)</span> </span>{</span><br><span class="line">  string l = <span class="string">"0"</span>, r = n;</span><br><span class="line">  <span class="keyword">while</span> (!<span class="built_in">comp</span>(l, r)) {</span><br><span class="line">    <span class="keyword">auto</span> [mid, rem] = <span class="built_in">divide</span>(<span class="built_in">add</span>(<span class="built_in">add</span>(l, r), <span class="string">"1"</span>), <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">comp</span>(n, <span class="built_in">multiply</span>(mid, mid))) l = mid;</span><br><span class="line">    <span class="keyword">else</span> r = <span class="built_in">subtract</span>(mid, <span class="string">"1"</span>);</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> l;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-
-
-
 
     </div>
 
@@ -513,7 +530,9 @@ mjx-container[display="true"] + br {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%A8%A1%E6%9D%BF%E6%A8%A1%E6%9D%BF%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">高模板模板类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B-codewars-2kyu%E2%80%93Challenge-Fun-10-Integer-Square-Root"><span class="nav-number">2.</span> <span class="nav-text">实例 codewars 2kyu–Challenge Fun #10: Integer Square Root</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Task"><span class="nav-number">2.1.</span> <span class="nav-text">Task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Example"><span class="nav-number">2.2.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Input-x2F-Output"><span class="nav-number">2.3.</span> <span class="nav-text">Input&#x2F;Output</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%A8%A1%E6%9D%BF%E6%A8%A1%E6%9D%BF%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">高模板模板类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B-codewars-2kyu--challenge-fun-10-integer-square-root"><span class="nav-number">2.</span> <span class="nav-text">实例
+codewars
+2kyu--Challenge Fun #10: Integer Square Root</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#task"><span class="nav-number">2.1.</span> <span class="nav-text">Task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#example"><span class="nav-number">2.2.</span> <span class="nav-text">Example</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inputoutput"><span class="nav-number">2.3.</span> <span class="nav-text">Input&#x2F;Output</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -955,6 +974,61 @@ if (document.querySelectorAll('pre.mermaid').length) {
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+&lt;!DOCTYPE html&gt;
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+Document
+</title>
+<style>
         body {
   background: #000;
   color: #aaa;
@@ -37,7 +39,7 @@ p {
 label {
   font-size: 12px;
   font-weight: bold;
-}	
+}   
 button {
   display: block; 
   margin: 10px 0 5px;
@@ -51,15 +53,15 @@ a {
     </style>
 </head>
 <body>
-    <div id="control-panel">
-        <p>404 error!</p>
-        <p>点击并拖拽试试吧</p>
-        <label>Trails: </label>
-        <input type="checkbox" id="trail" name="trail" checked />
-        <button id="clear">Clear</button>
-        <a href="http://trudbot.cn/">回到首页</a>
-        </div>
-        <canvas id="c"></canvas>
+<div id="control-panel">
+<pre><code>    &lt;p&gt;404 error!&lt;/p&gt;
+    &lt;p&gt;点击并拖拽试试吧&lt;/p&gt;
+    &lt;label&gt;Trails: &lt;/label&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;trail&quot; name=&quot;trail&quot; checked /&gt;
+    &lt;button id=&quot;clear&quot;&gt;Clear&lt;/button&gt;
+    &lt;a href=&quot;http://trudbot.cn/&quot;&gt;回到首页&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;canvas id=&quot;c&quot;&gt;&lt;/canvas&gt;</code></pre>
 </body>
 </html>
 <script>
@@ -99,37 +101,37 @@ function createOrb(mx,my){
         //size: .5+dist/250,
         size: rand(1,3)/2,
         centerX: cw/2,
-        centerY: ch/2,		
+        centerY: ch/2,      
         radius: dist,
         speed: (rand(5,10)/1000)*(dist/750)+.015,
         alpha: 1 - Math.abs(dist)/cw,
-        draw: function() {			
-            ctx.strokeStyle = 'hsla('+this.colorAngle+',100%,50%,1)';	
-            ctx.lineWidth = this.size;			
+        draw: function() {          
+            ctx.strokeStyle = 'hsla('+this.colorAngle+',100%,50%,1)';   
+            ctx.lineWidth = this.size;          
             ctx.beginPath();
             ctx.moveTo(this.lastX, this.lastY);
             ctx.lineTo(this.x, this.y);
             ctx.stroke();
-        },	
+        },  
         update: function(){
             var mx = this.x;
-            var my = this.y;	
+            var my = this.y;    
             this.lastX = this.x;
             this.lastY = this.y;
             var x1 = cw/2;
             var y1 = ch/2;
             var x2 = mx;
-            var y2 = my;		
+            var y2 = my;        
             var rise = y1-y2;
             var run = x1-x2;
             var slope = -(rise/run);
             var radian = Math.atan(slope);
-            var angleH = Math.floor(radian*(180/Math.PI));		
-            if(x2 < x1 && y2 < y1){angleH += 180;}		
-            if(x2 < x1 && y2 > y1){angleH += 180;}		
-            if(x2 > x1 && y2 > y1){angleH += 360;}		
-            if(y2 < y1 && slope =='-Infinity'){angleH = 90;}		
-            if(y2 > y1 && slope =='Infinity'){angleH = 270;}		
+            var angleH = Math.floor(radian*(180/Math.PI));      
+            if(x2 < x1 && y2 < y1){angleH += 180;}      
+            if(x2 < x1 && y2 > y1){angleH += 180;}      
+            if(x2 > x1 && y2 > y1){angleH += 360;}      
+            if(y2 < y1 && slope =='-Infinity'){angleH = 90;}        
+            if(y2 > y1 && slope =='Infinity'){angleH = 270;}        
             if(x2 < x1 && slope =='0'){angleH = 180;}
             if(isNaN(angleH)){angleH = 0;}
             this.colorAngle = angleH;
@@ -141,14 +143,14 @@ function createOrb(mx,my){
 }
 function orbGo(e){
     var mx = e.pageX - c.offsetLeft;
-    var my = e.pageY - c.offsetTop;		
+    var my = e.pageY - c.offsetTop;     
     createOrb(mx,my);
 }
 function turnOnMove(){
-    c.addEventListener('mousemove', orbGo, false);	
+    c.addEventListener('mousemove', orbGo, false);  
 }
 function turnOffMove(){
-    c.removeEventListener('mousemove', orbGo, false);	
+    c.removeEventListener('mousemove', orbGo, false);   
 }
 function toggleTrails(){
     trail = trailCB.checked;
@@ -174,11 +176,11 @@ var loop = function(){
         ctx.clearRect(0,0,cw,ch);
     }
     var i = orbs.length;
-    while(i--){	
-        var orb = orbs[i];	
+    while(i--){ 
+        var orb = orbs[i];  
         var updateCount = 3;
         while(updateCount--){
-        orb.update();		
+        orb.update();       
         orb.draw(ctx);
         }
     }
