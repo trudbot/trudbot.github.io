@@ -435,7 +435,7 @@ mjx-container[display="true"] + br {
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-01-10 19:38:34 / 修改时间：22:13:32" itemprop="dateCreated datePublished" datetime="2023-01-10T19:38:34+08:00">2023-01-10</time>
+              <time title="创建时间：2023-01-10 19:38:34 / 修改时间：22:30:11" itemprop="dateCreated datePublished" datetime="2023-01-10T19:38:34+08:00">2023-01-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -481,68 +481,17 @@ mjx-container[display="true"] + br {
 是因为欧拉解决了与此紧密相关的<strong>一笔画问题</strong>，
 即在不重复、折返的情况下遍历一张无向图。</p>
 <figure>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blender3D_HouseOfStNiclas.gif/83px-Blender3D_HouseOfStNiclas.gif" alt="图五（图四的动态版）">
-<figcaption aria-hidden="true">图五（图四的动态版）</figcaption>
+<img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/Euler-3.jpg" alt="欧拉图示例">
+<figcaption aria-hidden="true">欧拉图示例</figcaption>
 </figure>
-<h3 id="判别欧拉图">判别欧拉图</h3>
-<p>欧拉图的判断可以使用欧拉提出的“一笔画定理”。</p>
-<blockquote>
-<p>连通的无向图有欧拉路径的充要条件是：<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f5f3c8921a3b352de45446a6789b104458c9f90b" alt="G">中奇顶点（连接的边数量为奇数的顶点）的数目等于0或者2。</p>
-<p>连通的无向图是欧拉图（存在欧拉回路）的充要条件是：中每个顶点的度都是偶数。</p>
-</blockquote>
-<p>证明可见:<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/一笔画问题">一笔画问题 -
-维基百科</a></p>
-<h4 id="例题欧拉路径">例题——欧拉路径</h4>
-<blockquote>
-<p>判断一无向图是欧拉图、半欧拉图还是非欧拉图
-<strong>输入格式</strong></p>
-<p>第一行包含两个整数 N 和 M，表示无向图的点和边的数量。</p>
-<p>接下来 M 行，每行包含两个整数 a,b，表示点 a 和 b 之间存在一条边。</p>
-<p>所有点的编号从 <strong>1∼N</strong>。</p>
-<p><strong>输出格式</strong>
-输出对该图的判断，<code>Eulerian</code>（欧拉图），<code>Semi-Eulerian</code>（半欧拉图），<code>Non-Eulerian</code>（非欧拉图）。</p>
-<p>行尾不得有多余空格。</p>
-</blockquote>
-<p><strong>代码实现</strong></p>
-<ul>
-<li>使用并查集判断图是否连通</li>
-<li>构造顶点的度数组， 用于判断欧拉图</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">510</span>;</span><br><span class="line"><span class="type">int</span> p[N], d[N];</span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">find</span><span class="params">(<span class="type">int</span> x)</span> </span>{</span><br><span class="line">    <span class="keyword">if</span> (x == p[x]) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">return</span> p[x] = <span class="built_in">find</span>(p[x]);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用并查集判断图是否连通</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isConnected</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>; i &lt;= n; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">find</span>(i) != <span class="built_in">find</span>(<span class="number">1</span>)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断图中是否有欧拉路径</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">hasEulerianPath</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="type">int</span> odd = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n &amp;&amp; odd &lt;= <span class="number">2</span>; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (d[i] &amp; <span class="number">1</span>) odd ++;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> odd == <span class="number">0</span> || odd == <span class="number">2</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断图中是否有欧拉回路</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">hasEulerianCircuit</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (d[i] &amp; <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span> <span class="params">()</span> </span>{</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) p[i] = i;</span><br><span class="line">    <span class="keyword">while</span> (m --) {</span><br><span class="line">        <span class="type">int</span> a, b; cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">        d[a] ++, d[b] ++;</span><br><span class="line">        p[<span class="built_in">find</span>(a)] = <span class="built_in">find</span>(b);</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">isConnected</span>()) cout &lt;&lt; <span class="string">"Non-Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">hasEulerianCircuit</span>()) cout &lt;&lt; <span class="string">"Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">hasEulerianPath</span>()) cout &lt;&lt; <span class="string">"Semi-Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; <span class="string">"Non-Eulerian"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="求欧拉回路">求欧拉回路</h3>
-<p>求欧拉回路一般使用<strong>Hierholzer</strong>算法。</p>
-<p><em>Hierholzer算法</em>的基本流程如下：</p>
-<ul>
-<li>从任一点开始对图进行dfs遍历</li>
-<li>遍历过程中经过的边直接删除</li>
-<li>当一个顶点的出度减为0时， 加入栈中</li>
-<li>dfs结束后， 将栈中元素出栈， 即为一条欧拉回路</li>
-</ul>
-<p>伪代码即为：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dfs</span>(node u) {</span><br><span class="line">    <span class="keyword">while</span> (!u.edges.<span class="built_in">empty</span>()) {</span><br><span class="line">        node next = u.edges.<span class="built_in">back</span>();</span><br><span class="line">        u.edges.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="built_in">dfs</span>(next);</span><br><span class="line">    }</span><br><span class="line">    stk.<span class="built_in">push</span>(u);</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>性质一： dfs的起点就是得到的欧拉回路的起点</p>
-<p>性质二： 若要求从某起点出发、字典序最小的欧拉回路，
-只需要在遍历边时贪心的选择顶点编号最小的边即可，
-可以使用排序或优先队列。</p>
-<h4 id="例题重新安排行程">例题——重新安排行程</h4>
-<blockquote>
-<p>给你一份航线列表 tickets ，其中 tickets[i] = [fromi, toi]
-表示飞机出发和降落的机场地点。请你对该行程进行重新规划排序。</p>
-<p>所有这些机票都属于一个从
-JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK
-开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。</p>
-<p>例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前。
-假定所有机票至少存在一种合理的行程。且所有的机票 必须都用一次 且
-只能用一次。</p>
-<p>来源：力扣（LeetCode）
-链接：https://leetcode.cn/problems/reconstruct-itinerary
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
-</blockquote>
-<p><strong>Solution</strong> 显然这题是有向边求字典序最小的的欧拉回路。
-由于顶点是用字符串代表， 所以用哈希表记录每个顶点的出边集。
-预先对出边集排序， 在遍历时看最小的出边。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    map&lt;string, vector&lt;string&gt;&gt; e;</span><br><span class="line">    vector&lt;string&gt; stk;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(string u)</span> </span>{</span><br><span class="line">        <span class="keyword">while</span> (e[u].<span class="built_in">size</span>()) {</span><br><span class="line">            string ne = e[u].<span class="built_in">back</span>(); e[u].<span class="built_in">pop_back</span>();</span><br><span class="line">            <span class="built_in">dfs</span>(ne);</span><br><span class="line">        }</span><br><span class="line">        stk.<span class="built_in">push_back</span>(u);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">findItinerary</span><span class="params">(vector&lt;vector&lt;string&gt;&gt;&amp; tickets)</span> </span>{</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;v : tickets) {</span><br><span class="line">            e[v[<span class="number">0</span>]].<span class="built_in">push_back</span>(v[<span class="number">1</span>]);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;[s, v] : e) {</span><br><span class="line">            <span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), greater&lt;&gt;());</span><br><span class="line">        }</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="string">"JFK"</span>);</span><br><span class="line">        <span class="built_in">reverse</span>(stk.<span class="built_in">begin</span>(), stk.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> stk;</span><br><span class="line">    }</span><br><span class="line">};</span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/29020/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
