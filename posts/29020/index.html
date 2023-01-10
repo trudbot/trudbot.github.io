@@ -22,20 +22,23 @@
     var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="什么是缩进风格 缩进风格是代码风格的一部分， 是自发形成的一种约定， 用控制代码块缩进的方式传达程序的结构。 缩进风格可以分为两个方面：缩进大小和大括号位置。 缩进大小 缩进在大部分语言中并不是强制要求， 但合理的缩进有利于人类理解程序的结构， 即提高了代码的清晰性。  1983年在PASCAL代码上进行的一项实验发现，缩进大小显着影响了可理解性。2 到 4 个字符之间的缩进大小">
+  <meta name="description" content="欧拉通路(路径): 一条经过了图中所有边的路径， 且每条边仅经过一次。 欧拉回路: 起点和终点相同的欧拉通路。 欧拉图: 存在欧拉回路的图 半欧拉图: 不存在欧拉回路， 但存在欧拉通路的图  之所以以欧拉的名字命名， 是因为欧拉解决了与此紧密相关的一笔画问题， 即在不重复、折返的情况下遍历一张无向图。   图五（图四的动态版）  判别欧拉图 欧拉图的判断可以使用欧拉提出">
 <meta property="og:type" content="article">
-<meta property="og:title" content="有点学问在的缩进风格">
-<meta property="og:url" content="http://trudbot.cn/posts/57442/index.html">
+<meta property="og:title" content="欧拉图">
+<meta property="og:url" content="http://trudbot.cn/posts/29020/index.html">
 <meta property="og:site_name" content="trudbot的空中小岛">
-<meta property="og:description" content="什么是缩进风格 缩进风格是代码风格的一部分， 是自发形成的一种约定， 用控制代码块缩进的方式传达程序的结构。 缩进风格可以分为两个方面：缩进大小和大括号位置。 缩进大小 缩进在大部分语言中并不是强制要求， 但合理的缩进有利于人类理解程序的结构， 即提高了代码的清晰性。  1983年在PASCAL代码上进行的一项实验发现，缩进大小显着影响了可理解性。2 到 4 个字符之间的缩进大小">
+<meta property="og:description" content="欧拉通路(路径): 一条经过了图中所有边的路径， 且每条边仅经过一次。 欧拉回路: 起点和终点相同的欧拉通路。 欧拉图: 存在欧拉回路的图 半欧拉图: 不存在欧拉回路， 但存在欧拉通路的图  之所以以欧拉的名字命名， 是因为欧拉解决了与此紧密相关的一笔画问题， 即在不重复、折返的情况下遍历一张无向图。   图五（图四的动态版）  判别欧拉图 欧拉图的判断可以使用欧拉提出">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-08-19T01:20:29.000Z">
-<meta property="article:modified_time" content="2022-08-23T15:56:02.023Z">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blender3D_HouseOfStNiclas.gif/83px-Blender3D_HouseOfStNiclas.gif">
+<meta property="og:image" content="https://wikimedia.org/api/rest_v1/media/math/render/svg/f5f3c8921a3b352de45446a6789b104458c9f90b">
+<meta property="article:published_time" content="2023-01-10T11:38:34.000Z">
+<meta property="article:modified_time" content="2023-01-10T14:13:32.894Z">
 <meta property="article:author" content="trudbot">
 <meta property="article:tag" content="博客">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blender3D_HouseOfStNiclas.gif/83px-Blender3D_HouseOfStNiclas.gif">
 
-<link rel="canonical" href="http://trudbot.cn/posts/57442/">
+<link rel="canonical" href="http://trudbot.cn/posts/29020/">
 
 
 <script id="page-configurations">
@@ -48,7 +51,7 @@
   };
 </script>
 
-  <title>有点学问在的缩进风格 | trudbot的空中小岛</title>
+  <title>欧拉图 | trudbot的空中小岛</title>
   
 
 
@@ -83,7 +86,119 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --></head>
+<!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
@@ -204,7 +319,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://trudbot.cn/posts/57442/">
+    <link itemprop="mainEntityOfPage" href="http://trudbot.cn/posts/29020/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -217,7 +332,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          有点学问在的缩进风格
+          欧拉图
         </h1>
 
         <div class="post-meta">
@@ -227,23 +342,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-08-19 09:20:29" itemprop="dateCreated datePublished" datetime="2022-08-19T09:20:29+08:00">2022-08-19</time>
+              <time title="创建时间：2023-01-10 19:38:34 / 修改时间：22:13:32" itemprop="dateCreated datePublished" datetime="2023-01-10T19:38:34+08:00">2023-01-10</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-23 23:56:02" itemprop="dateModified" datetime="2022-08-23T23:56:02+08:00">2022-08-23</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E8%B0%88/" itemprop="url" rel="index"><span itemprop="name">杂谈</span></a>
+                  <a href="/categories/%E4%B8%80%E6%96%87%E6%90%9E%E5%AE%9A%E7%B3%BB%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">一文搞定系列</span></a>
                 </span>
             </span>
 
@@ -260,14 +369,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -279,87 +388,76 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="什么是缩进风格">什么是缩进风格</h3>
-<p>缩进风格是代码风格的一部分， 是自发形成的一种约定，
-用控制代码块缩进的方式传达程序的结构。</p>
-<p>缩进风格可以分为两个方面：<code>缩进大小</code>和<code>大括号位置</code>。</p>
-<h3 id="缩进大小">缩进大小</h3>
-<p>缩进在大部分语言中并不是强制要求，
-但合理的缩进有利于人类理解程序的结构， 即提高了代码的清晰性。</p>
-<blockquote>
-<p>1983年在PASCAL代码上进行的一项实验发现，缩进大小显着影响了可理解性。2
-到 4 个字符之间的缩进大小被证明是最佳的。</p>
+        <blockquote>
+<p>欧拉通路(路径): 一条经过了图中所有边的路径， 且每条边仅经过一次。
+欧拉回路: 起点和终点相同的欧拉通路。 欧拉图: 存在欧拉回路的图 半欧拉图:
+不存在欧拉回路， 但存在欧拉通路的图</p>
 </blockquote>
-<p>在大部分的程序语言中，
-默认使用四个空格或一个tab键（制表符可以与空格互相转换，
-一个'等于4个空格）</p>
-<span id="more"></span>
-<p>在部分的脚本语言或HTML中， 可能会使用2个空格， 以避免过长的缩进。</p>
-<p>下文中介绍的风格默认使用4字符缩进。</p>
-<h3 id="大括号位置">大括号位置</h3>
-<p>大括号用于声明程序的控制语句的作用域，
-跟在<code>(····)</code>后面。</p>
-<p>下面将介绍几种主流的大括号风格。</p>
-<h4 id="allman风格">Allman风格</h4>
-<p>由一位大牛的名字命名， 又叫做<code>BSD</code>风格。</p>
-<p>该风格的特点是大括号放到控制语句的下一行，
-且与控制语句的缩进相同。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">while</span>(cond)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(cond)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(cond)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以发现代码块中的代码与控制语句形成明显的区分，
-左右大括号位于同一列， 一般而言对人来说更容易匹配到对应的带括号。</p>
-<p>allman风格由于其清晰的代码结构，
-常被用于教育。但它的缺点是，当代码块较短时（特别是只有一句），
-过多的空行会导致程序很长， 容易让人产生阅读压力以及抓不住焦点。</p>
-<h4 id="kr风格">K&amp;R风格</h4>
-<p>不知道你是否听说过被誉为
-<code>“C语言圣经“</code>的《C程序设计语言》(<em><code>The C programming language</code></em>)，
-这本书由两位大牛Kernighan &amp; Ritchie （K&amp;R）编写，
-其中Ritchie正是C语言的创造者。</p>
-<p>K&amp;R风格便是在这本书中使用的缩进风格，
-同时K&amp;R风格及其变体也是目前使用最广泛的风格。</p>
-<p>K&amp;R风格的特点：</p>
+<p>之所以以欧拉的名字命名，
+是因为欧拉解决了与此紧密相关的<strong>一笔画问题</strong>，
+即在不重复、折返的情况下遍历一张无向图。</p>
+<figure>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Blender3D_HouseOfStNiclas.gif/83px-Blender3D_HouseOfStNiclas.gif" alt="图五（图四的动态版）">
+<figcaption aria-hidden="true">图五（图四的动态版）</figcaption>
+</figure>
+<h3 id="判别欧拉图">判别欧拉图</h3>
+<p>欧拉图的判断可以使用欧拉提出的“一笔画定理”。</p>
+<blockquote>
+<p>连通的无向图有欧拉路径的充要条件是：<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f5f3c8921a3b352de45446a6789b104458c9f90b" alt="G">中奇顶点（连接的边数量为奇数的顶点）的数目等于0或者2。</p>
+<p>连通的无向图是欧拉图（存在欧拉回路）的充要条件是：中每个顶点的度都是偶数。</p>
+</blockquote>
+<p>证明可见:<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/一笔画问题">一笔画问题 -
+维基百科</a></p>
+<h4 id="例题欧拉路径">例题——欧拉路径</h4>
+<blockquote>
+<p>判断一无向图是欧拉图、半欧拉图还是非欧拉图
+<strong>输入格式</strong></p>
+<p>第一行包含两个整数 N 和 M，表示无向图的点和边的数量。</p>
+<p>接下来 M 行，每行包含两个整数 a,b，表示点 a 和 b 之间存在一条边。</p>
+<p>所有点的编号从 <strong>1∼N</strong>。</p>
+<p><strong>输出格式</strong>
+输出对该图的判断，<code>Eulerian</code>（欧拉图），<code>Semi-Eulerian</code>（半欧拉图），<code>Non-Eulerian</code>（非欧拉图）。</p>
+<p>行尾不得有多余空格。</p>
+</blockquote>
+<p><strong>代码实现</strong></p>
 <ul>
-<li>函数的大括号位于单独一行</li>
-<li>控制语句的左大括号不换行， else或else if不换行</li>
-<li>只有一条语句的代码块不使用大括号, 而是换行后缩进</li>
+<li>使用并查集判断图是否连通</li>
+<li>构造顶点的度数组， 用于判断欧拉图</li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">while</span> (cond) &#123;</span><br><span class="line">		<span class="keyword">if</span> (cond) </span><br><span class="line">			<span class="built_in">puts</span>(<span class="string">&quot;K&amp;R &quot;</span>);</span><br><span class="line">		<span class="keyword">else</span> (cond)</span><br><span class="line">			<span class="built_in">puts</span>(<span class="string">&quot;is best style!&quot;</span>)</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span> (cond) &#123;<span class="comment">// )与&#123;中间有空格， 这属于其他部分的代码风格</span></span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (cond) &#123;</span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//do something</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>差不多也能体会到， K&amp;R风格总结起来就是：尽可能的压缩代码。
-有人分析这是因为这些代码是要打印到书籍上的，
-为了降低成本而尽可能的减少代码行数， 因此也有人称之为印刷风格。</p>
-<p>K&amp;R的缺点十分明显：左大括号不好找， 尤其在代码块较长时，
-很容易找错左大括号。 就可读性而言确实是比不上Allman的，
-但在现代IDE智能的高亮和匹配功能下， 也还行？</p>
-<h4 id="kr变体---1tbs">K&amp;R变体 - 1TBS</h4>
-<p>”一个真正的大括号风格“（One True Brace Style），
-是K&amp;R的变体之一， 主要区别是：1TBS强制使用大括号，
-也就是说即使只有一行也需要用大括号而不能省略。</p>
-<p>1TBS存在的真实性存有疑问， 有些人认为它是如上所述的K&amp;R变体，
-有些人指出它不过是K&amp;R的”行话“。</p>
-<h4 id="whitesmiths风格">Whitesmiths风格</h4>
-<p>特点是大括号需要换行， 且需要缩进</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cond)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;This is the whitesmiths style&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (cond)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;like it?&quot;</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="圣战">圣战</h4>
-<p>Allman风格(左括号换行， 位于左边)和K&amp;R风格(左括号不换行，
-位于右边)是两种最广泛使用的大括号风格，
-无数程序员争论到底哪种才是最好的。</p>
-<p>在舆论上Allman总是占优，
-K&amp;R被称为"过时"/"伤害眼睛”。但K&amp;R在早期大牛的影响下（如java
-API源码, linux源码， golang语法风格等等)的影响下，
-在除C外的领域仍然是最主流的风格。</p>
-<h3 id="总结">总结</h3>
-<p>永远不存在所谓正确的缩进风格，
-最重要的事情是在整个程序中都保持一致的代码风格。</p>
-<hr />
-<h3 id="参考">参考</h3>
-<p><a
-target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Indentation_style#cite_note-catb.org-7">缩进样式
-- 维基百科)</a></p>
-<p><a target="_blank" rel="noopener" href="http://catb.org/jargon/html/I/indent-style.html">缩进样式
-(catb.org)</a></p>
-<p><a
-target="_blank" rel="noopener" href="https://www.slant.co/topics/2478/~best-indentation-style-in-c">indentation
-style - Slant</a></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">510</span>;</span><br><span class="line"><span class="type">int</span> p[N], d[N];</span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">find</span><span class="params">(<span class="type">int</span> x)</span> </span>{</span><br><span class="line">    <span class="keyword">if</span> (x == p[x]) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">return</span> p[x] = <span class="built_in">find</span>(p[x]);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用并查集判断图是否连通</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isConnected</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>; i &lt;= n; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">find</span>(i) != <span class="built_in">find</span>(<span class="number">1</span>)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断图中是否有欧拉路径</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">hasEulerianPath</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="type">int</span> odd = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n &amp;&amp; odd &lt;= <span class="number">2</span>; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (d[i] &amp; <span class="number">1</span>) odd ++;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> odd == <span class="number">0</span> || odd == <span class="number">2</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断图中是否有欧拉回路</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">hasEulerianCircuit</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) {</span><br><span class="line">        <span class="keyword">if</span> (d[i] &amp; <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span> <span class="params">()</span> </span>{</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) p[i] = i;</span><br><span class="line">    <span class="keyword">while</span> (m --) {</span><br><span class="line">        <span class="type">int</span> a, b; cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line">        d[a] ++, d[b] ++;</span><br><span class="line">        p[<span class="built_in">find</span>(a)] = <span class="built_in">find</span>(b);</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">isConnected</span>()) cout &lt;&lt; <span class="string">"Non-Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">hasEulerianCircuit</span>()) cout &lt;&lt; <span class="string">"Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">hasEulerianPath</span>()) cout &lt;&lt; <span class="string">"Semi-Eulerian"</span>;</span><br><span class="line">    <span class="keyword">else</span> cout &lt;&lt; <span class="string">"Non-Eulerian"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="求欧拉回路">求欧拉回路</h3>
+<p>求欧拉回路一般使用<strong>Hierholzer</strong>算法。</p>
+<p><em>Hierholzer算法</em>的基本流程如下：</p>
+<ul>
+<li>从任一点开始对图进行dfs遍历</li>
+<li>遍历过程中经过的边直接删除</li>
+<li>当一个顶点的出度减为0时， 加入栈中</li>
+<li>dfs结束后， 将栈中元素出栈， 即为一条欧拉回路</li>
+</ul>
+<p>伪代码即为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dfs</span>(node u) {</span><br><span class="line">    <span class="keyword">while</span> (!u.edges.<span class="built_in">empty</span>()) {</span><br><span class="line">        node next = u.edges.<span class="built_in">back</span>();</span><br><span class="line">        u.edges.<span class="built_in">pop_back</span>();</span><br><span class="line">        <span class="built_in">dfs</span>(next);</span><br><span class="line">    }</span><br><span class="line">    stk.<span class="built_in">push</span>(u);</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>性质一： dfs的起点就是得到的欧拉回路的起点</p>
+<p>性质二： 若要求从某起点出发、字典序最小的欧拉回路，
+只需要在遍历边时贪心的选择顶点编号最小的边即可，
+可以使用排序或优先队列。</p>
+<h4 id="例题重新安排行程">例题——重新安排行程</h4>
+<blockquote>
+<p>给你一份航线列表 tickets ，其中 tickets[i] = [fromi, toi]
+表示飞机出发和降落的机场地点。请你对该行程进行重新规划排序。</p>
+<p>所有这些机票都属于一个从
+JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK
+开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。</p>
+<p>例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前。
+假定所有机票至少存在一种合理的行程。且所有的机票 必须都用一次 且
+只能用一次。</p>
+<p>来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/reconstruct-itinerary
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
+</blockquote>
+<p><strong>Solution</strong> 显然这题是有向边求字典序最小的的欧拉回路。
+由于顶点是用字符串代表， 所以用哈希表记录每个顶点的出边集。
+预先对出边集排序， 在遍历时看最小的出边。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    map&lt;string, vector&lt;string&gt;&gt; e;</span><br><span class="line">    vector&lt;string&gt; stk;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(string u)</span> </span>{</span><br><span class="line">        <span class="keyword">while</span> (e[u].<span class="built_in">size</span>()) {</span><br><span class="line">            string ne = e[u].<span class="built_in">back</span>(); e[u].<span class="built_in">pop_back</span>();</span><br><span class="line">            <span class="built_in">dfs</span>(ne);</span><br><span class="line">        }</span><br><span class="line">        stk.<span class="built_in">push_back</span>(u);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">findItinerary</span><span class="params">(vector&lt;vector&lt;string&gt;&gt;&amp; tickets)</span> </span>{</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;v : tickets) {</span><br><span class="line">            e[v[<span class="number">0</span>]].<span class="built_in">push_back</span>(v[<span class="number">1</span>]);</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> &amp;[s, v] : e) {</span><br><span class="line">            <span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), greater&lt;&gt;());</span><br><span class="line">        }</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="string">"JFK"</span>);</span><br><span class="line">        <span class="built_in">reverse</span>(stk.<span class="built_in">begin</span>(), stk.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> stk;</span><br><span class="line">    }</span><br><span class="line">};</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -389,13 +487,10 @@ style - Slant</a></p>
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/36271/" rel="prev" title="认识一下吧">
-      <i class="fa fa-chevron-left"></i> 认识一下吧
+    <a href="/posts/25991/" rel="prev" title="矩阵快速幂">
+      <i class="fa fa-chevron-left"></i> 矩阵快速幂
     </a></div>
-      <div class="post-nav-item">
-    <a href="/posts/45215/" rel="next" title="一文搞定c++自定义排序">
-      一文搞定c++自定义排序 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -455,7 +550,7 @@ style - Slant</a></p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%A9%E8%BF%9B%E9%A3%8E%E6%A0%BC"><span class="nav-number">1.</span> <span class="nav-text">什么是缩进风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%A9%E8%BF%9B%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.</span> <span class="nav-text">缩进大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E6%8B%AC%E5%8F%B7%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">大括号位置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#allman%E9%A3%8E%E6%A0%BC"><span class="nav-number">3.1.</span> <span class="nav-text">Allman风格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kr%E9%A3%8E%E6%A0%BC"><span class="nav-number">3.2.</span> <span class="nav-text">K&amp;R风格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kr%E5%8F%98%E4%BD%93---1tbs"><span class="nav-number">3.3.</span> <span class="nav-text">K&amp;R变体 - 1TBS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#whitesmiths%E9%A3%8E%E6%A0%BC"><span class="nav-number">3.4.</span> <span class="nav-text">Whitesmiths风格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A3%E6%88%98"><span class="nav-number">3.5.</span> <span class="nav-text">圣战</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E5%88%AB%E6%AC%A7%E6%8B%89%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">判别欧拉图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E6%AC%A7%E6%8B%89%E8%B7%AF%E5%BE%84"><span class="nav-number">1.1.</span> <span class="nav-text">例题——欧拉路径</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">求欧拉回路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E9%87%8D%E6%96%B0%E5%AE%89%E6%8E%92%E8%A1%8C%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">例题——重新安排行程</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -899,6 +994,59 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
@@ -913,7 +1061,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'trudbot.github.io',
       owner       : 'trudbot',
       admin       : ['trudbot'],
-      id          : '1523e108d6da8df9e76769d5f88a89c7',
+      id          : 'c48dff44976c3512856f83e42134e6c9',
         language: 'zh-CN',
       distractionFreeMode: true
     });
