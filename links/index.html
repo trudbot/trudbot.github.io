@@ -358,8 +358,17 @@
             </div>
             
 
-            </div>
         </div>
+        <script>
+            let links = document.getElementsByClassName("link-navigation")[0].getElementsByTagName("a");
+            console.log(links);
+            for (let link of links) {
+                link.onclick = function (e) {
+                    e.stopPropagation();
+                }
+            }
+        </script>
+    </div>
 
   
   
