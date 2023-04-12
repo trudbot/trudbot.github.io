@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://trudbot.cn/posts/12115/</loc>
+    <lastmod>2023-04-12</lastmod>
+  </url>
+  <url>
+    <loc>http://trudbot.cn/posts/6078/</loc>
+    <lastmod>2023-04-12</lastmod>
+  </url>
+  <url>
+    <loc>http://trudbot.cn/posts/42877/</loc>
+    <lastmod>2023-03-26</lastmod>
+  </url>
+  <url>
     <loc>http://trudbot.cn/posts/40979/</loc>
     <lastmod>2023-03-17</lastmod>
   </url>
@@ -70,10 +82,6 @@
   </url>
   <url>
     <loc>http://trudbot.cn/posts/61750/</loc>
-    <lastmod>2023-01-26</lastmod>
-  </url>
-  <url>
-    <loc>http://trudbot.cn/posts/42877/</loc>
     <lastmod>2023-01-26</lastmod>
   </url>
 </urlset> 
