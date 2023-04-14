@@ -1290,7 +1290,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #39ff0a;
+  background: #555769;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2828,10 +2828,10 @@ p code {
   border: 1px solid #d6d6d6;
 }
 * {
-  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/a4b07-j6o60-001.ico"), auto !important;
+  cursor: url("/images/mouse/a4b07-j6o60-001.ico"), auto !important;
 }
 :active {
-  cursor: url("https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/a4b07-j6o60-001.ico"), auto !important;
+  cursor: url("/images/mouse/a4b07-j6o60-001.ico"), auto !important;
 }
 .fa {
   font-size: 14px;
