@@ -13,7 +13,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
@@ -83,9 +83,9 @@
 </noscript>
 
 <!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<link rel="stylesheet" href="/npm/katex@0.12.0/dist/katex.min.css">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<link rel="stylesheet" href="/npm/hexo-math@4.0.0/dist/style.css">
 <!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -544,10 +544,10 @@ location模块</p>
 <p>这种方法的好处是一劳永逸， 不用再担心cdn失效问题。</p>
 <ul>
 <li>下载所有文件到指定路径，
-如<code>https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js</code>下载为<code>source/npm/mathjax@3/es5/tex-mml-chtml.js</code></li>
+如<code>/npm/mathjax@3/es5/tex-mml-chtml.js</code>下载为<code>source/npm/mathjax@3/es5/tex-mml-chtml.js</code></li>
 <li>编写shell脚本进行替换, 保存为<code>switch.sh</code>文件</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env sh</span><br><span class="line"># author: trudbot</span><br><span class="line"># Description: invalid cdn switch script</span><br><span class="line"></span><br><span class="line">echo "---------------- Invalid CDN switch local path file ----------------"</span><br><span class="line"># 遍历指定目录及其子目录下的所有HTML文件</span><br><span class="line">find ./public -type f -name "*.html" | while read -r file; do</span><br><span class="line">    # 使用sed命令替换文件中的字符串</span><br><span class="line">    sed -i 's#https://cdn.jsdelivr.net/#/#g' "$file"</span><br><span class="line">    sed -i 's#//cdn.jsdelivr.net/#/#g' "$file"</span><br><span class="line">    echo "替换文件：$file"</span><br><span class="line">done</span><br><span class="line">echo 'ok !'</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env sh</span><br><span class="line"># author: trudbot</span><br><span class="line"># Description: invalid cdn switch script</span><br><span class="line"></span><br><span class="line">echo "---------------- Invalid CDN switch local path file ----------------"</span><br><span class="line"># 遍历指定目录及其子目录下的所有HTML文件</span><br><span class="line">find ./public -type f -name "*.html" | while read -r file; do</span><br><span class="line">    # 使用sed命令替换文件中的字符串</span><br><span class="line">    sed -i 's#/#/#g' "$file"</span><br><span class="line">    sed -i 's#/#/#g' "$file"</span><br><span class="line">    echo "替换文件：$file"</span><br><span class="line">done</span><br><span class="line">echo 'ok !'</span><br></pre></td></tr></table></figure>
 <ul>
 <li>在bash中运行shell脚本文件即可执行替换</li>
 </ul>
@@ -1067,8 +1067,8 @@ if(canvas.getContext){
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -1107,7 +1107,7 @@ if(canvas.getContext){
 
 <script>
 if (document.querySelectorAll('pre.mermaid').length) {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+  NexT.utils.getScript('/npm/mermaid@8/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
       logLevel : 3,
@@ -1164,7 +1164,7 @@ if (document.querySelectorAll('pre.mermaid').length) {
     };
     (function () {
       var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.src = '/npm/mathjax@3/es5/tex-mml-chtml.js';
       script.defer = true;
       document.head.appendChild(script);
     })();
@@ -1178,7 +1178,7 @@ if (document.querySelectorAll('pre.mermaid').length) {
     
 
   
-  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script src="/npm/quicklink@1/dist/quicklink.umd.js"></script>
   <script>
       window.addEventListener('load', () => {
       quicklink({
