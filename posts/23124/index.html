@@ -13,13 +13,13 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-mac-osx.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="图着色问题(Graph Coloring Problem)是一个著名的问题， 其内容是， 对于给定的无向图， 为每个顶点指定一颜色， 且使得相邻的顶点颜色不相同。 将图G以如上规则着色所需要的最少颜色数表示为, 被称为最小着色数。">
@@ -29,17 +29,17 @@
 <meta property="og:site_name" content="trudbot">
 <meta property="og:description" content="图着色问题(Graph Coloring Problem)是一个著名的问题， 其内容是， 对于给定的无向图， 为每个顶点指定一颜色， 且使得相邻的顶点颜色不相同。 将图G以如上规则着色所需要的最少颜色数表示为, 被称为最小着色数。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/graph0.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph3.png">
-<meta property="og:image" content="https://miro.medium.com/max/619/0*fiE_-5ZC7cQZdSxN.gif">
+<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091802878.png">
+<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091803948.png">
+<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091802880.png">
+<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091807605.png">
+<meta property="og:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091809944.gif">
 <meta property="article:published_time" content="2023-02-27T13:46:38.000Z">
-<meta property="article:modified_time" content="2023-07-06T11:24:06.757Z">
+<meta property="article:modified_time" content="2023-07-09T10:09:16.948Z">
 <meta property="article:author" content="trudbot">
 <meta property="article:tag" content="图着色">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/graph0.png">
+<meta name="twitter:image" content="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091802878.png">
 
 <link rel="canonical" href="https://trudbot.cn/posts/23124/">
 
@@ -86,9 +86,9 @@
 </noscript>
 
 <!-- hexo injector head_end start -->
-<link rel="stylesheet" href="/npm/katex@0.12.0/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
-<link rel="stylesheet" href="/npm/hexo-math@4.0.0/dist/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
 <!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -315,6 +315,7 @@ mjx-container[display="true"] + br {
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -360,7 +361,7 @@ mjx-container[display="true"] + br {
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-06 19:24:06" itemprop="dateModified" datetime="2023-07-06T19:24:06+08:00">2023-07-06</time>
+                <time title="修改时间：2023-07-09 18:09:16" itemprop="dateModified" datetime="2023-07-09T18:09:16+08:00">2023-07-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -385,7 +386,7 @@ mjx-container[display="true"] + br {
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -423,7 +424,7 @@ mjx-container[display="true"] + br {
 <h3 id="举例">举例</h3>
 <p>以下无向图举例</p>
 <figure>
-<img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/graph0.png" alt="graph0">
+<img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091802878.png" alt="graph0">
 <figcaption aria-hidden="true">graph0</figcaption>
 </figure>
 <p>根据度数降序排序后， 如下表所示</p>
@@ -469,21 +470,21 @@ mjx-container[display="true"] + br {
 <li>第一轮染色， 5、9、2、6、7被染成相同颜色</li>
 </ul>
 <figure>
-<img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph1.png" alt="graph1">
+<img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091803948.png" alt="graph1">
 <figcaption aria-hidden="true">graph1</figcaption>
 </figure>
 <ul>
 <li>第二轮染色， 4、12、10、3、11被染成相同颜色</li>
 </ul>
 <figure>
-<img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph2.png" alt="graph2">
+<img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091802880.png" alt="graph2">
 <figcaption aria-hidden="true">graph2</figcaption>
 </figure>
 <ul>
 <li>第三轮染色， 0、1、8被染成相同颜色</li>
 </ul>
 <figure>
-<img src="https://raw.githubusercontent.com/trudbot/trudbot_images/main/md_img/graph3.png" alt="graph3">
+<img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091807605.png" alt="graph3">
 <figcaption aria-hidden="true">graph3</figcaption>
 </figure>
 <blockquote>
@@ -505,10 +506,7 @@ Algorithm for Graph Coloring - GeeksforGeeks</a></p>
 theorem）又称为<strong>四色地图定理</strong>（英语：four color map
 theorem），是一个著名的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/数学">数学</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/定理">定理</a>[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-pyx-1">1]</a>：如果在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/平面_(数学)">平面</a>上划出一些邻接的有限区域，那么可以用四种颜色来给这些区域染色，使得每两个邻接区域染的颜色都不一样[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-Fritsch-2">2]</a>[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-soifer-3">3]</a></p>
 </blockquote>
-<figure>
-<img src="https://miro.medium.com/max/619/0*fiE_-5ZC7cQZdSxN.gif" alt="img">
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202307091809944.gif"></p>
 <blockquote>
 <p>四色定理是第一个主要由电脑验证成立的著名数学定理。这一证明刚开始并不被所有的数学家接受。1979年，逻辑哲学和数学哲学家<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=托马斯·蒂莫兹佐&amp;action=edit&amp;redlink=1">托马斯·蒂莫兹佐</a>在《四色定理及其哲学意义》一文中提出，四色定理与其证明能否称之为“定理”和“证明”，尚有疑问。“证明”的定义也需要进行再次审视。蒂莫兹佐的理由包括两点：一方面，计算机辅助下的证明无法由人力进行核查审阅，因为人无法重复计算机的所有运算步骤；另一方面，计算机辅助的证明无法形成逻辑上正则化的表述，因为其中的机器部分依赖于现实经验的反馈，无法转换为抽象的逻辑过程[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-22">22]</a>[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-23">23]</a>。即便在数学界中，对四色定理证明的误解也存在着。有的数学家认为证明是杰出的进展，也有人认为依赖计算机给出的证明很难令人满意[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-soifer-3">3]</a>:197。也有人认为，计算机辅助证明数学定理不过是对人的能力进行延伸的结果，因为电子计算机不过是依照人的逻辑来进行每一步的操作，实际上只是将人能够完成的工作用更短的时间来完成[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-soifer-3">3]</a>:198。还有人将计算机辅助证明和传统证明的差别比喻为借助<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/天文望远镜">天文望远镜</a>发现新星和用肉眼发现新星的区别[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/四色定理#cite_note-pck-24">24]</a>。</p>
 </blockquote>
@@ -549,25 +547,6 @@ Powell Graph colouring Algorithm - GeeksforGeeks</a></p>
 
   
 </div>
-        
-
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
-
-    <div class="social-list">
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
-  </div>
-
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -684,7 +663,7 @@ Powell Graph colouring Algorithm - GeeksforGeeks</a></p>
         <a href="https://github.com/trudbot" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;trudbot" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:SYP2185759039@163.com" title="E-Mail → mailto:SYP2185759039@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:trudbot@163.com" title="E-Mail → mailto:trudbot@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;qu-ge-sha-ming-hao-ni-30" rel="noopener" target="_blank"><i class="zhihu fa-fw"></i>知乎</a>
@@ -1008,13 +987,13 @@ if(canvas.getContext){
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">116k</span>
+    <span title="站点总字数">119k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:13</span>
+    <span title="站点阅读时长">3:19</span>
 </div>
         
 <div class="busuanzi-count">
@@ -1051,8 +1030,8 @@ if(canvas.getContext){
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -1065,6 +1044,8 @@ if(canvas.getContext){
 
 
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
 
 
 
@@ -1089,7 +1070,7 @@ if(canvas.getContext){
 
 <script>
 if (document.querySelectorAll('pre.mermaid').length) {
-  NexT.utils.getScript('/npm/mermaid@8/dist/mermaid.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
       logLevel : 3,
@@ -1146,7 +1127,7 @@ if (document.querySelectorAll('pre.mermaid').length) {
     };
     (function () {
       var script = document.createElement('script');
-      script.src = '/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
       script.defer = true;
       document.head.appendChild(script);
     })();
@@ -1160,6 +1141,16 @@ if (document.querySelectorAll('pre.mermaid').length) {
     
 
   
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://trudbot.cn/posts/23124/',]
+      });
+      });
+  </script>
 
 
   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
