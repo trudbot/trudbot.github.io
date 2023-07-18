@@ -1,187 +1,1050 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-  background: #000;
-  color: #aaa;
-  font: 100%/20px helvetica, arial, sans-serif;
-}
-canvas {
-  display: block;
-  height: 100%;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  top: 0;
-  width: 100%
-}
-#control-panel {
-  background: rgba(0,0,0,.75);
-  border: 1px solid #333;
-  left: 20px;
-  padding: 10px 15px;
-  position: absolute;
-  top: 20px;
-  z-index: 2;
-}
-p {
-	font-size: 12px;
-  margin: 0 0 5px;
-}
-label {
-  font-size: 12px;
-  font-weight: bold;
-}	
-button {
-  display: block; 
-  margin: 10px 0 5px;
-}
-a {
-  border-bottom: 1px dotted #444;
-  color: #fff;
-  font-size: 12px;
-  text-decoration: none;
-}
-</style>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body {
+			background: #000;
+			color: #aaa;
+			font: 100%/20px helvetica, arial, sans-serif;
+		}
+
+		canvas {
+			display: block;
+			height: 100%;
+			left: 0;
+			margin: 0;
+			padding: 0;
+			position: absolute;
+			top: 0;
+			width: 100%
+		}
+
+		#control-panel {
+			background: rgba(0, 0, 0, .75);
+			border: 1px solid #333;
+			left: 20px;
+			padding: 10px 15px;
+			position: absolute;
+			top: 20px;
+			z-index: 2;
+		}
+
+		p {
+			font-size: 12px;
+			margin: 0 0 5px;
+		}
+
+		label {
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		button {
+			display: block;
+			margin: 10px 0 5px;
+		}
+
+		a {
+			border-bottom: 1px dotted #444;
+			color: #fff;
+			font-size: 12px;
+			text-decoration: none;
+		}
+
+		#title {
+			position: absolute;
+			top: 20%;
+			left: 50%;
+			height: 150px;
+			transform: translate(-50%, -50%);
+			z-index: 3;
+			color: white;
+			font-size: 150px;
+			line-height: 150px;
+			border: none;
+			background-color: rgba(0, 0, 0, 0);
+		}
+
+		.text {
+			display: inline-block;
+			font-weight: 600;
+			padding: 0 4px;
+			color: white;
+			position: relative;
+		}
+
+		@keyframes animation-before {
+			0% {
+				clip-path: inset(0.34em 0 0.00em 0);
+			}
+
+			1% {
+				clip-path: inset(0.05em 0 0.45em 0);
+			}
+
+			2% {
+				clip-path: inset(0.02em 0 0.53em 0);
+			}
+
+			3% {
+				clip-path: inset(0.21em 0 0.16em 0);
+			}
+
+			4% {
+				clip-path: inset(0.03em 0 0.11em 0);
+			}
+
+			5% {
+				clip-path: inset(0.22em 0 0.33em 0);
+			}
+
+			6% {
+				clip-path: inset(0.41em 0 0.11em 0);
+			}
+
+			7% {
+				clip-path: inset(0.16em 0 0.35em 0);
+			}
+
+			8% {
+				clip-path: inset(0.46em 0 0.05em 0);
+			}
+
+			9% {
+				clip-path: inset(0.06em 0 0.01em 0);
+			}
+
+			10% {
+				clip-path: inset(0.29em 0 0.23em 0);
+			}
+
+			11% {
+				clip-path: inset(0.31em 0 0.08em 0);
+			}
+
+			12% {
+				clip-path: inset(0.26em 0 0.23em 0);
+			}
+
+			13% {
+				clip-path: inset(0.33em 0 0.15em 0);
+			}
+
+			14% {
+				clip-path: inset(0.04em 0 0.30em 0);
+			}
+
+			15% {
+				clip-path: inset(0.07em 0 0.37em 0);
+			}
+
+			16% {
+				clip-path: inset(0.45em 0 0.09em 0);
+			}
+
+			17% {
+				clip-path: inset(0.06em 0 0.30em 0);
+			}
+
+			18% {
+				clip-path: inset(0.02em 0 0.50em 0);
+			}
+
+			19% {
+				clip-path: inset(0.18em 0 0.38em 0);
+			}
+
+			20% {
+				clip-path: inset(0.07em 0 0.21em 0);
+			}
+
+			21% {
+				clip-path: inset(0.10em 0 0.17em 0);
+			}
+
+			22% {
+				clip-path: inset(0.13em 0 0.14em 0);
+			}
+
+			23% {
+				clip-path: inset(0.09em 0 0.16em 0);
+			}
+
+			24% {
+				clip-path: inset(0.00em 0 0.49em 0);
+			}
+
+			25% {
+				clip-path: inset(0.24em 0 0.08em 0);
+			}
+
+			26% {
+				clip-path: inset(0.44em 0 0.09em 0);
+			}
+
+			27% {
+				clip-path: inset(0.14em 0 0.03em 0);
+			}
+
+			28% {
+				clip-path: inset(0.48em 0 0.00em 0);
+			}
+
+			29% {
+				clip-path: inset(0.02em 0 0.34em 0);
+			}
+
+			30% {
+				clip-path: inset(0.44em 0 0.16em 0);
+			}
+
+			31% {
+				clip-path: inset(0.00em 0 0.10em 0);
+			}
+
+			32% {
+				clip-path: inset(0.41em 0 0.12em 0);
+			}
+
+			33% {
+				clip-path: inset(0.14em 0 0.01em 0);
+			}
+
+			34% {
+				clip-path: inset(0.12em 0 0.08em 0);
+			}
+
+			35% {
+				clip-path: inset(0.02em 0 0.25em 0);
+			}
+
+			36% {
+				clip-path: inset(0.14em 0 0.24em 0);
+			}
+
+			37% {
+				clip-path: inset(0.13em 0 0.27em 0);
+			}
+
+			38% {
+				clip-path: inset(0.27em 0 0.25em 0);
+			}
+
+			39% {
+				clip-path: inset(0.03em 0 0.32em 0);
+			}
+
+			40% {
+				clip-path: inset(0.25em 0 0.31em 0);
+			}
+
+			41% {
+				clip-path: inset(0.19em 0 0.25em 0);
+			}
+
+			42% {
+				clip-path: inset(0.58em 0 0.02em 0);
+			}
+
+			43% {
+				clip-path: inset(0.25em 0 0.27em 0);
+			}
+
+			44% {
+				clip-path: inset(0.29em 0 0.28em 0);
+			}
+
+			45% {
+				clip-path: inset(0.23em 0 0.20em 0);
+			}
+
+			46% {
+				clip-path: inset(0.02em 0 0.16em 0);
+			}
+
+			47% {
+				clip-path: inset(0.30em 0 0.26em 0);
+			}
+
+			48% {
+				clip-path: inset(0.11em 0 0.47em 0);
+			}
+
+			49% {
+				clip-path: inset(0.00em 0 0.13em 0);
+			}
+
+			50% {
+				clip-path: inset(0.01em 0 0.50em 0);
+			}
+
+			51% {
+				clip-path: inset(0.05em 0 0.40em 0);
+			}
+
+			52% {
+				clip-path: inset(0.11em 0 0.04em 0);
+			}
+
+			53% {
+				clip-path: inset(0.17em 0 0.12em 0);
+			}
+
+			54% {
+				clip-path: inset(0.23em 0 0.29em 0);
+			}
+
+			55% {
+				clip-path: inset(0.11em 0 0.35em 0);
+			}
+
+			56% {
+				clip-path: inset(0.13em 0 0.41em 0);
+			}
+
+			57% {
+				clip-path: inset(0.40em 0 0.13em 0);
+			}
+
+			58% {
+				clip-path: inset(0.18em 0 0.10em 0);
+			}
+
+			59% {
+				clip-path: inset(0.17em 0 0.32em 0);
+			}
+
+			60% {
+				clip-path: inset(0.03em 0 0.29em 0);
+			}
+
+			61% {
+				clip-path: inset(0.24em 0 0.01em 0);
+			}
+
+			62% {
+				clip-path: inset(0.04em 0 0.03em 0);
+			}
+
+			63% {
+				clip-path: inset(0.19em 0 0.13em 0);
+			}
+
+			64% {
+				clip-path: inset(0.18em 0 0.32em 0);
+			}
+
+			65% {
+				clip-path: inset(0.50em 0 0.05em 0);
+			}
+
+			66% {
+				clip-path: inset(0.03em 0 0.22em 0);
+			}
+
+			67% {
+				clip-path: inset(0.45em 0 0.12em 0);
+			}
+
+			68% {
+				clip-path: inset(0.45em 0 0.08em 0);
+			}
+
+			69% {
+				clip-path: inset(0.01em 0 0.23em 0);
+			}
+
+			70% {
+				clip-path: inset(0.01em 0 0.03em 0);
+			}
+
+			71% {
+				clip-path: inset(0.23em 0 0.27em 0);
+			}
+
+			72% {
+				clip-path: inset(0.30em 0 0.20em 0);
+			}
+
+			73% {
+				clip-path: inset(0.18em 0 0.26em 0);
+			}
+
+			74% {
+				clip-path: inset(0.11em 0 0.25em 0);
+			}
+
+			75% {
+				clip-path: inset(0.55em 0 0.01em 0);
+			}
+
+			76% {
+				clip-path: inset(0.26em 0 0.06em 0);
+			}
+
+			77% {
+				clip-path: inset(0.04em 0 0.05em 0);
+			}
+
+			78% {
+				clip-path: inset(0.26em 0 0.12em 0);
+			}
+
+			79% {
+				clip-path: inset(0.15em 0 0.31em 0);
+			}
+
+			80% {
+				clip-path: inset(0.25em 0 0.11em 0);
+			}
+
+			81% {
+				clip-path: inset(0.03em 0 0.34em 0);
+			}
+
+			82% {
+				clip-path: inset(0.03em 0 0.56em 0);
+			}
+
+			83% {
+				clip-path: inset(0.17em 0 0.13em 0);
+			}
+
+			84% {
+				clip-path: inset(0.09em 0 0.28em 0);
+			}
+
+			85% {
+				clip-path: inset(0.43em 0 0.09em 0);
+			}
+
+			86% {
+				clip-path: inset(0.02em 0 0.23em 0);
+			}
+
+			87% {
+				clip-path: inset(0.08em 0 0.19em 0);
+			}
+
+			88% {
+				clip-path: inset(0.22em 0 0.38em 0);
+			}
+
+			89% {
+				clip-path: inset(0.37em 0 0.10em 0);
+			}
+
+			90% {
+				clip-path: inset(0.58em 0 0.00em 0);
+			}
+
+			91% {
+				clip-path: inset(0.17em 0 0.15em 0);
+			}
+
+			92% {
+				clip-path: inset(0.13em 0 0.08em 0);
+			}
+
+			93% {
+				clip-path: inset(0.21em 0 0.05em 0);
+			}
+
+			94% {
+				clip-path: inset(0.26em 0 0.16em 0);
+			}
+
+			95% {
+				clip-path: inset(0.16em 0 0.26em 0);
+			}
+
+			96% {
+				clip-path: inset(0.09em 0 0.15em 0);
+			}
+
+			97% {
+				clip-path: inset(0.23em 0 0.31em 0);
+			}
+
+			98% {
+				clip-path: inset(0.18em 0 0.02em 0);
+			}
+
+			99% {
+				clip-path: inset(0.07em 0 0.07em 0);
+			}
+
+			100% {
+				clip-path: inset(0.14em 0 0.09em 0);
+			}
+		}
+
+		@keyframes animation-after {
+			0% {
+				clip-path: inset(0.34em 0 0.00em 0);
+			}
+
+			1% {
+				clip-path: inset(0.05em 0 0.45em 0);
+			}
+
+			2% {
+				clip-path: inset(0.02em 0 0.53em 0);
+			}
+
+			3% {
+				clip-path: inset(0.21em 0 0.16em 0);
+			}
+
+			4% {
+				clip-path: inset(0.03em 0 0.11em 0);
+			}
+
+			5% {
+				clip-path: inset(0.22em 0 0.33em 0);
+			}
+
+			6% {
+				clip-path: inset(0.41em 0 0.11em 0);
+			}
+
+			7% {
+				clip-path: inset(0.16em 0 0.35em 0);
+			}
+
+			8% {
+				clip-path: inset(0.46em 0 0.05em 0);
+			}
+
+			9% {
+				clip-path: inset(0.06em 0 0.01em 0);
+			}
+
+			10% {
+				clip-path: inset(0.29em 0 0.23em 0);
+			}
+
+			11% {
+				clip-path: inset(0.31em 0 0.08em 0);
+			}
+
+			12% {
+				clip-path: inset(0.26em 0 0.23em 0);
+			}
+
+			13% {
+				clip-path: inset(0.33em 0 0.15em 0);
+			}
+
+			14% {
+				clip-path: inset(0.04em 0 0.30em 0);
+			}
+
+			15% {
+				clip-path: inset(0.07em 0 0.37em 0);
+			}
+
+			16% {
+				clip-path: inset(0.45em 0 0.09em 0);
+			}
+
+			17% {
+				clip-path: inset(0.06em 0 0.30em 0);
+			}
+
+			18% {
+				clip-path: inset(0.02em 0 0.50em 0);
+			}
+
+			19% {
+				clip-path: inset(0.18em 0 0.38em 0);
+			}
+
+			20% {
+				clip-path: inset(0.07em 0 0.21em 0);
+			}
+
+			21% {
+				clip-path: inset(0.10em 0 0.17em 0);
+			}
+
+			22% {
+				clip-path: inset(0.13em 0 0.14em 0);
+			}
+
+			23% {
+				clip-path: inset(0.09em 0 0.16em 0);
+			}
+
+			24% {
+				clip-path: inset(0.00em 0 0.49em 0);
+			}
+
+			25% {
+				clip-path: inset(0.24em 0 0.08em 0);
+			}
+
+			26% {
+				clip-path: inset(0.44em 0 0.09em 0);
+			}
+
+			27% {
+				clip-path: inset(0.14em 0 0.03em 0);
+			}
+
+			28% {
+				clip-path: inset(0.48em 0 0.00em 0);
+			}
+
+			29% {
+				clip-path: inset(0.02em 0 0.34em 0);
+			}
+
+			30% {
+				clip-path: inset(0.44em 0 0.16em 0);
+			}
+
+			31% {
+				clip-path: inset(0.00em 0 0.10em 0);
+			}
+
+			32% {
+				clip-path: inset(0.41em 0 0.12em 0);
+			}
+
+			33% {
+				clip-path: inset(0.14em 0 0.01em 0);
+			}
+
+			34% {
+				clip-path: inset(0.12em 0 0.08em 0);
+			}
+
+			35% {
+				clip-path: inset(0.02em 0 0.25em 0);
+			}
+
+			36% {
+				clip-path: inset(0.14em 0 0.24em 0);
+			}
+
+			37% {
+				clip-path: inset(0.13em 0 0.27em 0);
+			}
+
+			38% {
+				clip-path: inset(0.27em 0 0.25em 0);
+			}
+
+			39% {
+				clip-path: inset(0.03em 0 0.32em 0);
+			}
+
+			40% {
+				clip-path: inset(0.25em 0 0.31em 0);
+			}
+
+			41% {
+				clip-path: inset(0.19em 0 0.25em 0);
+			}
+
+			42% {
+				clip-path: inset(0.58em 0 0.02em 0);
+			}
+
+			43% {
+				clip-path: inset(0.25em 0 0.27em 0);
+			}
+
+			44% {
+				clip-path: inset(0.29em 0 0.28em 0);
+			}
+
+			45% {
+				clip-path: inset(0.23em 0 0.20em 0);
+			}
+
+			46% {
+				clip-path: inset(0.02em 0 0.16em 0);
+			}
+
+			47% {
+				clip-path: inset(0.30em 0 0.26em 0);
+			}
+
+			48% {
+				clip-path: inset(0.11em 0 0.47em 0);
+			}
+
+			49% {
+				clip-path: inset(0.00em 0 0.13em 0);
+			}
+
+			50% {
+				clip-path: inset(0.01em 0 0.50em 0);
+			}
+
+			51% {
+				clip-path: inset(0.05em 0 0.40em 0);
+			}
+
+			52% {
+				clip-path: inset(0.11em 0 0.04em 0);
+			}
+
+			53% {
+				clip-path: inset(0.17em 0 0.12em 0);
+			}
+
+			54% {
+				clip-path: inset(0.23em 0 0.29em 0);
+			}
+
+			55% {
+				clip-path: inset(0.11em 0 0.35em 0);
+			}
+
+			56% {
+				clip-path: inset(0.13em 0 0.41em 0);
+			}
+
+			57% {
+				clip-path: inset(0.40em 0 0.13em 0);
+			}
+
+			58% {
+				clip-path: inset(0.18em 0 0.10em 0);
+			}
+
+			59% {
+				clip-path: inset(0.17em 0 0.32em 0);
+			}
+
+			60% {
+				clip-path: inset(0.03em 0 0.29em 0);
+			}
+
+			61% {
+				clip-path: inset(0.24em 0 0.01em 0);
+			}
+
+			62% {
+				clip-path: inset(0.04em 0 0.03em 0);
+			}
+
+			63% {
+				clip-path: inset(0.19em 0 0.13em 0);
+			}
+
+			64% {
+				clip-path: inset(0.18em 0 0.32em 0);
+			}
+
+			65% {
+				clip-path: inset(0.50em 0 0.05em 0);
+			}
+
+			66% {
+				clip-path: inset(0.03em 0 0.22em 0);
+			}
+
+			67% {
+				clip-path: inset(0.45em 0 0.12em 0);
+			}
+
+			68% {
+				clip-path: inset(0.45em 0 0.08em 0);
+			}
+
+			69% {
+				clip-path: inset(0.01em 0 0.23em 0);
+			}
+
+			70% {
+				clip-path: inset(0.01em 0 0.03em 0);
+			}
+
+			71% {
+				clip-path: inset(0.23em 0 0.27em 0);
+			}
+
+			72% {
+				clip-path: inset(0.30em 0 0.20em 0);
+			}
+
+			73% {
+				clip-path: inset(0.18em 0 0.26em 0);
+			}
+
+			74% {
+				clip-path: inset(0.11em 0 0.25em 0);
+			}
+
+			75% {
+				clip-path: inset(0.55em 0 0.01em 0);
+			}
+
+			76% {
+				clip-path: inset(0.26em 0 0.06em 0);
+			}
+
+			77% {
+				clip-path: inset(0.04em 0 0.05em 0);
+			}
+
+			78% {
+				clip-path: inset(0.26em 0 0.12em 0);
+			}
+
+			79% {
+				clip-path: inset(0.15em 0 0.31em 0);
+			}
+
+			80% {
+				clip-path: inset(0.25em 0 0.11em 0);
+			}
+
+			81% {
+				clip-path: inset(0.03em 0 0.34em 0);
+			}
+
+			82% {
+				clip-path: inset(0.03em 0 0.56em 0);
+			}
+
+			83% {
+				clip-path: inset(0.17em 0 0.13em 0);
+			}
+
+			84% {
+				clip-path: inset(0.09em 0 0.28em 0);
+			}
+
+			85% {
+				clip-path: inset(0.43em 0 0.09em 0);
+			}
+
+			86% {
+				clip-path: inset(0.02em 0 0.23em 0);
+			}
+
+			87% {
+				clip-path: inset(0.08em 0 0.19em 0);
+			}
+
+			88% {
+				clip-path: inset(0.22em 0 0.38em 0);
+			}
+
+			89% {
+				clip-path: inset(0.37em 0 0.10em 0);
+			}
+
+			90% {
+				clip-path: inset(0.58em 0 0.00em 0);
+			}
+
+			91% {
+				clip-path: inset(0.17em 0 0.15em 0);
+			}
+
+			92% {
+				clip-path: inset(0.13em 0 0.08em 0);
+			}
+
+			93% {
+				clip-path: inset(0.21em 0 0.05em 0);
+			}
+
+			94% {
+				clip-path: inset(0.26em 0 0.16em 0);
+			}
+
+			95% {
+				clip-path: inset(0.16em 0 0.26em 0);
+			}
+
+			96% {
+				clip-path: inset(0.09em 0 0.15em 0);
+			}
+
+			97% {
+				clip-path: inset(0.23em 0 0.31em 0);
+			}
+
+			98% {
+				clip-path: inset(0.18em 0 0.02em 0);
+			}
+
+			99% {
+				clip-path: inset(0.07em 0 0.07em 0);
+			}
+
+			100% {
+				clip-path: inset(0.14em 0 0.09em 0);
+			}
+		}
+
+		.text::before {
+			content: attr(data-text);
+			position: absolute;
+			left: -2px;
+			width: 100%;
+			background-color: rgba(0, 0, 0, 0);
+			text-shadow: 2px 0 red;
+			animation: animation-before 2s infinite linear alternate-reverse;
+		}
+
+		.text::after {
+			content: attr(data-text);
+			position: absolute;
+			left: 2px;
+			width: 100%;
+			background-color: rgba(0, 0, 0, 0);
+			text-shadow: -2px 0 blue;
+			animation: animation-after 4s infinite linear alternate-reverse;
+		}
+	</style>
 </head>
+
 <body>
-    <div id="control-panel">
-        <p>404 error!</p>
-        <p>点击并拖拽试试吧</p>
-        <label>Trails: </label>
-        <input type="checkbox" id="trail" name="trail" checked />
-        <button id="clear">Clear</button>
-        <a href="http://trudbot.cn/">回到首页</a>
-        </div>
-        <canvas id="c"></canvas>
+	<a href="http://trudbot.cn/" id="title" class="text" data-text="404!">404!</a>
+	<div id="control-panel">
+		<p>点击并拖拽试试吧</p>
+		<label>Trails: </label>
+		<input type="checkbox" id="trail" name="trail" checked />
+		<button id="clear">Clear</button>
+		<a href="http://trudbot.cn/">回到首页</a>
+	</div>
+	<canvas id="c"></canvas>
 </body>
+
 </html>
 <script>
-    window.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(a){window.setTimeout(a,1E3/60)}}();
-document.onselectstart = function() {
-  return false;
-};
-var c = document.getElementById('c');
-var ctx = c.getContext('2d');
-var dpr = window.devicePixelRatio;
-var cw = window.innerWidth;
-var ch = window.innerHeight;
-c.width = cw * dpr;
-c.height = ch * dpr;
-ctx.scale(dpr, dpr);
-var rand = function(rMi, rMa){return ~~((Math.random()*(rMa-rMi+1))+rMi);}
-ctx.lineCap = 'round';
-var orbs = [];
-var orbCount = 30;
-var radius;
-var trailCB = document.getElementById('trail');
-var trail = trailCB.checked;
-var clearer = document.getElementById('clear');
-function createOrb(mx,my){
-  var dx = (cw/2) - mx;
-	var dy = (ch/2) - my;
-	var dist = Math.sqrt(dx * dx + dy * dy);
-	var angle = Math.atan2(dy, dx);
-	orbs.push({
-		x: mx,
-		y: my,
-		lastX: mx,
-		lastY: my,
-		hue: 0,
-		colorAngle: 0,
-		angle: angle + Math.PI/2,
-		//size: .5+dist/250,
-		size: rand(1,3)/2,
-		centerX: cw/2,
-		centerY: ch/2,		
-		radius: dist,
-		speed: (rand(5,10)/1000)*(dist/750)+.015,
-		alpha: 1 - Math.abs(dist)/cw,
-		draw: function() {			
-			ctx.strokeStyle = 'hsla('+this.colorAngle+',100%,50%,1)';	
-			ctx.lineWidth = this.size;			
-			ctx.beginPath();
-			ctx.moveTo(this.lastX, this.lastY);
-			ctx.lineTo(this.x, this.y);
-			ctx.stroke();
-		},	
-		update: function(){
-			var mx = this.x;
-			var my = this.y;	
-			this.lastX = this.x;
-			this.lastY = this.y;
-			var x1 = cw/2;
-			var y1 = ch/2;
-			var x2 = mx;
-			var y2 = my;		
-			var rise = y1-y2;
-			var run = x1-x2;
-			var slope = -(rise/run);
-			var radian = Math.atan(slope);
-			var angleH = Math.floor(radian*(180/Math.PI));		
-			if(x2 < x1 && y2 < y1){angleH += 180;}		
-			if(x2 < x1 && y2 > y1){angleH += 180;}		
-			if(x2 > x1 && y2 > y1){angleH += 360;}		
-			if(y2 < y1 && slope =='-Infinity'){angleH = 90;}		
-			if(y2 > y1 && slope =='Infinity'){angleH = 270;}		
-			if(x2 < x1 && slope =='0'){angleH = 180;}
-			if(isNaN(angleH)){angleH = 0;}
-			this.colorAngle = angleH;
-			this.x = this.centerX + Math.sin(this.angle*-1) * this.radius;
-			this.y = this.centerY + Math.cos(this.angle*-1) * this.radius;
-			this.angle += this.speed;
-		}
-	});
-}
-function orbGo(e){
-	var mx = e.pageX - c.offsetLeft;
-	var my = e.pageY - c.offsetTop;		
-	createOrb(mx,my);
-}
-function turnOnMove(){
-	c.addEventListener('mousemove', orbGo, false);	
-}
-function turnOffMove(){
-	c.removeEventListener('mousemove', orbGo, false);	
-}
-function toggleTrails(){
-	trail = trailCB.checked;
-}
-function clear(){
- orbs = []; 
-}
-c.addEventListener('mousedown', orbGo, false);
-c.addEventListener('mousedown', turnOnMove, false);
-c.addEventListener('mouseup', turnOffMove, false);
-trailCB.addEventListener('change', toggleTrails, false);
-clearer.addEventListener('click', clear, false);
-var count = 100;
-while(count--){
-		createOrb(cw/2, ch/2+(count*2));
-}
-var loop = function(){
-  window.requestAnimFrame(loop);
-	if(trail){
-		ctx.fillStyle = 'rgba(0,0,0,.1)';
-		ctx.fillRect(0,0,cw,ch);
-	} else {
-		ctx.clearRect(0,0,cw,ch);
+	window.requestAnimFrame = function () { return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (a) { window.setTimeout(a, 1E3 / 60) } }();
+	document.onselectstart = function () {
+		return false;
+	};
+	var c = document.getElementById('c');
+	var ctx = c.getContext('2d');
+	var dpr = window.devicePixelRatio;
+	var cw = window.innerWidth;
+	var ch = window.innerHeight;
+	c.width = cw * dpr;
+	c.height = ch * dpr;
+	ctx.scale(dpr, dpr);
+	var rand = function (rMi, rMa) { return ~~((Math.random() * (rMa - rMi + 1)) + rMi); }
+	ctx.lineCap = 'round';
+	var orbs = [];
+	var orbCount = 30;
+	var radius;
+	var trailCB = document.getElementById('trail');
+	var trail = trailCB.checked;
+	var clearer = document.getElementById('clear');
+	function createOrb(mx, my) {
+		var dx = (cw / 2) - mx;
+		var dy = (ch / 2) - my;
+		var dist = Math.sqrt(dx * dx + dy * dy);
+		var angle = Math.atan2(dy, dx);
+		orbs.push({
+			x: mx,
+			y: my,
+			lastX: mx,
+			lastY: my,
+			hue: 0,
+			colorAngle: 0,
+			angle: angle + Math.PI / 2,
+			//size: .5+dist/250,
+			size: rand(1, 3) / 2,
+			centerX: cw / 2,
+			centerY: ch / 2,
+			radius: dist,
+			speed: (rand(5, 10) / 1000) * (dist / 750) + .015,
+			alpha: 1 - Math.abs(dist) / cw,
+			draw: function () {
+				ctx.strokeStyle = 'hsla(' + this.colorAngle + ',100%,50%,1)';
+				ctx.lineWidth = this.size;
+				ctx.beginPath();
+				ctx.moveTo(this.lastX, this.lastY);
+				ctx.lineTo(this.x, this.y);
+				ctx.stroke();
+			},
+			update: function () {
+				var mx = this.x;
+				var my = this.y;
+				this.lastX = this.x;
+				this.lastY = this.y;
+				var x1 = cw / 2;
+				var y1 = ch / 2;
+				var x2 = mx;
+				var y2 = my;
+				var rise = y1 - y2;
+				var run = x1 - x2;
+				var slope = -(rise / run);
+				var radian = Math.atan(slope);
+				var angleH = Math.floor(radian * (180 / Math.PI));
+				if (x2 < x1 && y2 < y1) { angleH += 180; }
+				if (x2 < x1 && y2 > y1) { angleH += 180; }
+				if (x2 > x1 && y2 > y1) { angleH += 360; }
+				if (y2 < y1 && slope == '-Infinity') { angleH = 90; }
+				if (y2 > y1 && slope == 'Infinity') { angleH = 270; }
+				if (x2 < x1 && slope == '0') { angleH = 180; }
+				if (isNaN(angleH)) { angleH = 0; }
+				this.colorAngle = angleH;
+				this.x = this.centerX + Math.sin(this.angle * -1) * this.radius;
+				this.y = this.centerY + Math.cos(this.angle * -1) * this.radius;
+				this.angle += this.speed;
+			}
+		});
 	}
-	var i = orbs.length;
-	while(i--){	
-		var orb = orbs[i];	
-		var updateCount = 3;
-		while(updateCount--){
-		orb.update();		
-		orb.draw(ctx);
+	function orbGo(e) {
+		var mx = e.pageX - c.offsetLeft;
+		var my = e.pageY - c.offsetTop;
+		createOrb(mx, my);
+	}
+	function turnOnMove() {
+		c.addEventListener('mousemove', orbGo, false);
+	}
+	function turnOffMove() {
+		c.removeEventListener('mousemove', orbGo, false);
+	}
+	function toggleTrails() {
+		trail = trailCB.checked;
+	}
+	function clear() {
+		orbs = [];
+	}
+	c.addEventListener('mousedown', orbGo, false);
+	c.addEventListener('mousedown', turnOnMove, false);
+	c.addEventListener('mouseup', turnOffMove, false);
+	trailCB.addEventListener('change', toggleTrails, false);
+	clearer.addEventListener('click', clear, false);
+	var count = 100;
+	while (count--) {
+		createOrb(cw / 2, ch / 2 + (count * 2));
+	}
+	var loop = function () {
+		window.requestAnimFrame(loop);
+		if (trail) {
+			ctx.fillStyle = 'rgba(0,0,0,.1)';
+			ctx.fillRect(0, 0, cw, ch);
+		} else {
+			ctx.clearRect(0, 0, cw, ch);
+		}
+		var i = orbs.length;
+		while (i--) {
+			var orb = orbs[i];
+			var updateCount = 3;
+			while (updateCount--) {
+				orb.update();
+				orb.draw(ctx);
+			}
 		}
 	}
-}
-loop();
+	loop();
 </script>
