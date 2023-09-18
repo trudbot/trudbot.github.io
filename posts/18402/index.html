@@ -22,17 +22,21 @@
     var CONFIG = {"hostname":"trudbot.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}}},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="wohoo">
-<meta property="og:type" content="website">
-<meta property="og:title" content="trudbot">
-<meta property="og:url" content="https://trudbot.cn/categories/%E5%89%8D%E7%AB%AF/index.html">
+  <meta name="description" content="commit message的规范格式很有必要， 让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。 规范 123&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;&#x2F;&#x2F; 空一行&lt;body&gt; type 本次commit的归类。  Feat– feature | 新功能 Fix– bug fixes | 修补bu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git commit message 规范">
+<meta property="og:url" content="https://trudbot.cn/posts/18402/index.html">
 <meta property="og:site_name" content="trudbot">
-<meta property="og:description" content="wohoo">
+<meta property="og:description" content="commit message的规范格式很有必要， 让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。 规范 123&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;&#x2F;&#x2F; 空一行&lt;body&gt; type 本次commit的归类。  Feat– feature | 新功能 Fix– bug fixes | 修补bu">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T14:24:55.000Z">
+<meta property="article:modified_time" content="2023-09-18T14:36:29.210Z">
 <meta property="article:author" content="trudbot">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="规范">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://trudbot.cn/categories/%E5%89%8D%E7%AB%AF/">
+<link rel="canonical" href="https://trudbot.cn/posts/18402/">
 
 
 <script id="page-configurations">
@@ -40,12 +44,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>分类: 前端 | trudbot</title>
+  <title>git commit message 规范 | trudbot</title>
   
 
 
@@ -80,7 +84,119 @@
 <link rel="stylesheet" href="/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="trudbot" type="application/atom+xml">
+<!-- hexo injector head_end end --><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="trudbot" type="application/atom+xml">
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -202,51 +318,155 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">前端
-          <small>分类</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://trudbot.cn/posts/18402/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/trudbot.webp">
+      <meta itemprop="name" content="trudbot">
+      <meta itemprop="description" content="wohoo">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="trudbot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          git commit message 规范
+        </h1>
+
+        <div class="post-meta">
+       
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-09-18 22:24:55 / 修改时间：22:36:29" itemprop="dateCreated datePublished" datetime="2023-09-18T22:24:55+08:00">2023-09-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>783</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <p>commit message的规范格式很有必要，
+让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。</p>
+<h2 id="规范">规范</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="type">type</h3>
+<p>本次commit的归类。</p>
+<ul>
+<li><p><code>Feat</code>– feature | 新功能</p></li>
+<li><p><code>Fix</code>– bug fixes | 修补bug</p></li>
+<li><p><code>Docs</code>– changes to the documentation like README |
+文档</p></li>
+<li><p><code>Style</code>– style or formatting change |
+格式（不影响代码运行的变动）</p></li>
+<li><p><code>Perf</code> – improves code performance |
+优化相关，比如提升性能、体验。</p></li>
+<li><p><code>Test</code>– test a feature | 增加测试</p></li>
+<li><p><code>ReFactor</code>- A code that neither fix bug nor adds a
+feature. | 重构（即不是新增功能，也不是修改bug的代码变动）</p></li>
+<li><p><code>Chore</code>: Changes that do not affect the external user
+| 构建过程或辅助工具的变动。</p></li>
+<li><p><code>Revert</code>：回滚</p></li>
+<li><p><code>Merge</code>：代码合并。</p></li>
+</ul>
+<h3 id="scope">scope</h3>
+<p>The “scope” field should be a noun that represents the part of the
+codebase affected by the commit.</p>
+<p>For example, if the commit changes the login page, the scope could be
+“login”. If the commit affects multiple areas of the codebase, “global”
+or “all” could be used as the scope.</p>
+<h3 id="subject">subject</h3>
+<p><code>subject</code>是 commit 目的的简短描述，不超过50个字符。</p>
+<h3 id="body">Body</h3>
+<p>Body 部分是对本次 commit 的详细描述，可以分成多行。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+  
+<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-09-18T19:02:15+08:00"
-              content="2023-09-18">
-          09-18
-        </time>
-      </div>
+  
+</div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/posts/50865/" itemprop="url">
-            <span itemprop="name">react bug记录: useEffect中使用响应式变量</span>
-          </a>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/git/" rel="tag"># git</a>
+              <a href="/tags/%E8%A7%84%E8%8C%83/" rel="tag"># 规范</a>
+          </div>
 
-    </header>
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/50865/" rel="prev" title="react bug记录: useEffect中使用响应式变量">
+      <i class="fa fa-chevron-left"></i> react bug记录: useEffect中使用响应式变量
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -299,6 +519,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#type"><span class="nav-number">1.1.</span> <span class="nav-text">type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#scope"><span class="nav-number">1.2.</span> <span class="nav-text">scope</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#subject"><span class="nav-number">1.3.</span> <span class="nav-text">subject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#body"><span class="nav-number">1.4.</span> <span class="nav-text">Body</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -763,6 +984,59 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
