@@ -6,7 +6,7 @@
   <link href="https://trudbot.cn/atom.xml" rel="self"/>
   
   <link href="https://trudbot.cn/"/>
-  <updated>2023-09-18T14:36:29.210Z</updated>
+  <updated>2023-09-19T01:38:29.739Z</updated>
   <id>https://trudbot.cn/</id>
   
   <author>
@@ -21,18 +21,13 @@
     <link href="https://trudbot.cn/posts/18402/"/>
     <id>https://trudbot.cn/posts/18402/</id>
     <published>2023-09-18T14:24:55.000Z</published>
-    <updated>2023-09-18T14:36:29.210Z</updated>
+    <updated>2023-09-19T01:38:29.739Z</updated>
     
-    <content type="html"><![CDATA[<p>commit message的规范格式很有必要，让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。</p><h2 id="规范">规范</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure><h3 id="type">type</h3><p>本次commit的归类。</p><ul><li><p><code>Feat</code>– feature | 新功能</p></li><li><p><code>Fix</code>– bug fixes | 修补bug</p></li><li><p><code>Docs</code>– changes to the documentation like README |文档</p></li><li><p><code>Style</code>– style or formatting change |格式（不影响代码运行的变动）</p></li><li><p><code>Perf</code> – improves code performance |优化相关，比如提升性能、体验。</p></li><li><p><code>Test</code>– test a feature | 增加测试</p></li><li><p><code>ReFactor</code>- A code that neither fix bug nor adds afeature. | 重构（即不是新增功能，也不是修改bug的代码变动）</p></li><li><p><code>Chore</code>: Changes that do not affect the external user| 构建过程或辅助工具的变动。</p></li><li><p><code>Revert</code>：回滚</p></li><li><p><code>Merge</code>：代码合并。</p></li></ul><h3 id="scope">scope</h3><p>The “scope” field should be a noun that represents the part of thecodebase affected by the commit.</p><p>For example, if the commit changes the login page, the scope could be“login”. If the commit affects multiple areas of the codebase, “global”or “all” could be used as the scope.</p><h3 id="subject">subject</h3><p><code>subject</code>是 commit 目的的简短描述，不超过50个字符。</p><h3 id="body">Body</h3><p>Body 部分是对本次 commit 的详细描述，可以分成多行。</p>]]></content>
+    <content type="html"><![CDATA[<p>commit message的规范格式很有必要，让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。</p><span id="more"></span><h2 id="规范">规范</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure><h3 id="type">type</h3><p>本次commit的归类。</p><ul><li><p><code>Feat</code>– feature | 新功能</p></li><li><p><code>Fix</code>– bug fixes | 修补bug</p></li><li><p><code>Docs</code>– changes to the documentation like README |文档</p></li><li><p><code>Style</code>– style or formatting change |格式（不影响代码运行的变动）</p></li><li><p><code>Perf</code> – improves code performance |优化相关，比如提升性能、体验。</p></li><li><p><code>Test</code>– test a feature | 增加测试</p></li><li><p><code>ReFactor</code>- A code that neither fix bug nor adds afeature. | 重构（即不是新增功能，也不是修改bug的代码变动）</p></li><li><p><code>Chore</code>: Changes that do not affect the external user| 构建过程或辅助工具的变动。</p></li><li><p><code>Revert</code>：回滚</p></li><li><p><code>Merge</code>：代码合并。</p></li></ul><h3 id="scope">scope</h3><p>The “scope” field should be a noun that represents the part of thecodebase affected by the commit.</p><p>For example, if the commit changes the login page, the scope could be“login”. If the commit affects multiple areas of the codebase, “global”or “all” could be used as the scope.</p><h3 id="subject">subject</h3><p><code>subject</code>是 commit 目的的简短描述，不超过50个字符。</p><h3 id="body">Body</h3><p>Body 部分是对本次 commit 的详细描述，可以分成多行。</p>]]></content>
     
     
-      
-      
     <summary type="html">&lt;p&gt;commit message的规范格式很有必要，
-让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。&lt;/p&gt;
-&lt;h2 id=&quot;规范&quot;&gt;规范&lt;/h2&gt;
-&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;</summary>
-      
+让别人和未来的自己都能更快速的浏览commits。在此记录相关规则供自查。&lt;/p&gt;</summary>
     
     
     
