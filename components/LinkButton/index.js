@@ -84,7 +84,7 @@ class LinkButton extends HTMLElement {
     
     // href是必填项
     if (!href) {
-      throw new Error('href are required');
+      throw new Error('href is required');
     }
 
     if (!icon || !icon.length) {
