@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>trudbot here!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    html {
+      font-size: 100px;
+      padding: .64rem .16rem .32rem;
+      background-color: #3E3B47;
+    }
+
+    .content {
+      width: min(100%, 580px);
+    }
+
+    .link-item {
+      margin-bottom: 16px;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    .info-container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .links-container {
+      margin-top: 32px;
+    }
+
+    .avatar {
+      --size: 160px;
+      display: block;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      margin-bottom: 16px;
+    }
+
+    .name {
+      color: #fff;
+      font-size: .2rem;
+      font-weight: 600;
+    }
+
+    .link-text {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
+  <script type="module" src="components/LinkButton/index.js"></script>
+</head>
+
+<body>
+  <div class="content">
+    <div class="info-container">
+      <img class="avatar" src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="avatar"></img>
+      <div class="name">@trudbot</div>
+    </div>
+    <div class="links-container"></div>
+  </div>
+</body>
+
+<script>
+const links = [
+  {
+    href: 'https://github.com/trudbot',
+    name: 'github',
+    icon: 'https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407092201811.png'
+  },
+  {
+    href: 'https://trudbot.cn',
+    name: 'blog',
+    icon: 'https://trudbot-pic.oss-cn-hangzhou.aliyuncs.com/20240110214815285776-7322466096995979814-3.webp'
+  },
+  {
+    href: 'https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30',
+    name: 'zhihu',
+    icon: 'https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407092211689.png'
+  }
+];
+
+const linksContainer = document.querySelector('.links-container');
+links.forEach(link => {
+  const item = document.createElement('div');
+  item.classList.add('link-item');
+  item.innerHTML = `
+    <link-button href="${link.href}" icon="${link.icon}">
+      <span slot="link-text" class="link-text">${link.name}</span>
+    </link-button>
+  `;
+
+  linksContainer.appendChild(item);
+});
+</script>
+</html>
