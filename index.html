@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+  name="description"
+  content="trdubot的网络索引.
+            zhihu: https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30,
+            blog: https://blog.trudbot.cn,
+            github: https://github.com/trudbot"
+  >
   <link rel="icon" type="image/png" sizes="32x32" href="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg">
   <title>trudbot here!</title>
   <style>
@@ -20,7 +27,7 @@
     }
 
     .content {
-      width: min(100%, 580px);
+      width: min(580px, 100%);
     }
 
     .link-item {
@@ -105,7 +112,7 @@
   </div>
   <div class="beian">
     <a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">蜀ICP备2023017814号-1 </a>
-    <img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407071401918.png" style="display: inline-block;">
+    <img src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407071401918.png" style="display: inline-block;" alt="gongan">
     <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51011402000613" rel="noopener" target="_blank">蜀公网安备 51011402000613 号 </a>
   </div>
 </body>
@@ -133,12 +140,18 @@ const linksContainer = document.querySelector('.links-container');
 links.forEach(link => {
   const item = document.createElement('div');
   item.classList.add('link-item');
-  item.innerHTML = `
-    <link-button href="${link.href}" icon="${link.icon}">
-      <span slot="link-text" class="link-text">${link.name}</span>
-    </link-button>
-  `;
 
+  const linkButton = document.createElement('link-button');
+  linkButton.setAttribute('href', link.href);
+  linkButton.setAttribute('icon', link.icon);
+
+  const linkText = document.createElement('span');
+  linkText.classList.add('link-text');
+  linkText.textContent = link.name;
+  linkText.slot = 'link-text';
+
+  linkButton.appendChild(linkText);
+  item.appendChild(linkButton);
   linksContainer.appendChild(item);
 });
 </script>
