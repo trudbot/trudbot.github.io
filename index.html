@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,6 +57,16 @@
       height: var(--size);
       border-radius: 50%;
       margin-bottom: 16px;
+      /* animation: float 6s ease-in-out infinite; */
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
     }
 
     .name {
@@ -107,6 +117,24 @@
 
     .tip {
       color: #aaa;
+    }
+
+    .transition-opacity {
+      transition-property: opacity;
+      transition-timing-function: cubic-bezier(.4,0,.2,1);
+      transition-duration: .15s;
+    }
+
+    .animate-pulse-slow {
+      animation: 
+        float 6s ease-in-out infinite,
+        pulse 6s cubic-bezier(.4,0,.6,1) infinite;
+    }
+
+    @keyframes pulse {
+      50% {
+        opacity: .8;
+      }
     }
   </style>
   <script type="module" src="components/LinkButton/index.js"></script>
@@ -194,12 +222,12 @@
 
   <div class="content">
     <div class="info-container">
-      <img class="avatar" src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="avatar"></img>
+      <img class="avatar transition-opacity animate-pulse-slow" src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="avatar"></img>
       <div class="name">@trudbot</div>
     </div>
     <div class="links-container"></div>
   </div>
-  <div class="tip">
+  <!-- <div class="tip">
     阿里云备案太恶心人, 目前暂时跳到了github page, 访问速度很慢, 抱歉!
   </div>
   
@@ -212,7 +240,7 @@
   <span id="busuanzi_container_site_pv">
     PV: <span id="busuanzi_value_site_pv"></span>,&nbsp;
     UV: <span id="busuanzi_value_site_uv"></span>
-  </span>
+  </span> -->
 
 <script>
 const links = [
