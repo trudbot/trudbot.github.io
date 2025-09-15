@@ -292,9 +292,8 @@ links.forEach(link => {
       const pv = document.querySelector('#busuanzi_value_site_pv');
       const uv = document.querySelector('#busuanzi_value_site_uv');
       const container = document.querySelector('#busuanzi_container_site_pv');
-
-      if (!pv.textContent || !uv.textContent) {
-        container.style.display = 'none';
+      if (!pv?.textContent || !uv?.textContent) {
+        container && (container.style.display = 'none');
       }
     }, 1500);
   }
