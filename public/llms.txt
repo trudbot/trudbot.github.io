@@ -1,0 +1,35 @@
+# trudbot
+
+> Frontend Developer | Creative Mind
+
+## 关于我
+
+你好！我是 trudbot (@trudbot)，一名前端开发者。我热爱 Web 技术和开源世界，致力于创造美观、实用的 Web 应用。
+
+## 职业身份
+
+- **前端开发者 (Frontend Developer)**
+- 就职于百度
+
+## 技能领域
+
+- 前端开发与架构
+- Web 技术探索与实践
+- UI/UX 设计与实现
+- 开源项目开发
+
+## 在线足迹
+
+你可以在这些地方找到我：
+
+- **GitHub**: https://github.com/trudbot - 我的开源项目和代码仓库
+- **个人博客**: https://trudbot.cn/Blog - 技术文章和思考分享
+- **知乎**: https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30 - 专业讨论与交流
+- **NPM**: https://www.npmjs.com/org/trudbot - 发布的 npm 包
+
+## 联系方式
+
+trudbot@outlook.com
+---
+
+*Creative Mind | 保持创造力*
