@@ -1,0 +1,227 @@
+/* app/json-format/styles.css */
+
+.json-format-lab {
+  width: 100%;
+  min-height: calc(100vh - 64px); /* 假设导航栏/Header高度 */
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
+  position: relative;
+  align-items: stretch;
+}
+
+/* 只有当只有一个模块时才居中和限制宽度 */
+.json-format-lab.single-mode {
+  justify-content: center;
+}
+
+.json-format-lab.single-mode .json-input,
+.json-format-lab.single-mode .json-format-view {
+  width: 70%;
+  flex: none;
+}
+
+.json-format-lab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
+              linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
+              linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 75%), 
+              linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.1) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.json-input {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.json-input h3,
+.json-format-view h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.json-input h3:hover,
+.json-format-view h3:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.json-input h3:active,
+.json-format-view h3:active {
+  transform: scale(0.98);
+}
+
+.json-input h3::before,
+.json-format-view h3::before {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.json-input h3::before {
+  content: '📝';
+}
+
+.json-format-view h3::before {
+  content: '✨';
+}
+
+.json-input h3:hover::before {
+  transform: rotate(10deg);
+}
+
+.json-format-view h3:hover::before {
+  transform: rotate(-10deg);
+}
+
+.json-input textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 300px;
+  padding: 20px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #2d3748;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.json-input textarea:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8),
+              0 0 0 3px rgba(102, 126, 234, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+
+.json-input textarea::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+.json-input textarea:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.json-format-view {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  overflow-x: auto;
+}
+
+.json-view-container {
+  flex: 1;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  overflow: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.json-view-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .json-format-lab {
+    flex-direction: column;
+    padding: 16px;
+    gap: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .json-format-lab.single-mode .json-input,
+  .json-format-lab.single-mode .json-format-view {
+    width: 100%;
+  }
+  
+  .json-input h3, .json-format-view h3 {
+    font-size: 16px;
+  }
+  
+  .json-input h3::before, .json-format-view h3::before {
+    font-size: 18px;
+  }
+  
+  .json-input textarea {
+    min-height: 250px;
+    padding: 16px;
+  }
+  
+  .json-view-container {
+    padding: 16px;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .json-format-lab {
+    background: linear-gradient(135deg, #1a365d 0%, #553c9a 100%);
+  }
+  
+  .json-input textarea,
+  .json-view-container {
+    background: rgba(26, 32, 44, 0.95);
+    color: #e2e8f0;
+  }
+  
+  .json-input textarea:focus,
+  .json-input textarea:hover,
+  .json-view-container:hover {
+    background: rgba(26, 32, 44, 1);
+  }
+  
+  .json-input textarea::placeholder {
+    color: #718096;
+  }
+
+  .json-input h3,
+  .json-format-view h3 {
+    color: #e2e8f0;
+  }
+}

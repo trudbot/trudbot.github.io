@@ -6,6 +6,7 @@ import { Caveat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+// mobile.css 已移除，页面特定样式应在各自页面目录中导入
 
 const caveat = Caveat({
   subsets: ["latin"],

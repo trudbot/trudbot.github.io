@@ -1,0 +1,282 @@
+/* app/text-share/styles.css */
+
+.text-share-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.text-share-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-share-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 20px 0;
+  border-bottom: 1px solid #eee;
+  background: transparent;
+}
+
+.text-share-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.text-share-btn-text {
+  background: none;
+  border: none;
+  color: #3451b2;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.text-share-btn-text:hover {
+  background-color: #f5f5f5;
+}
+
+.text-share-section {
+  padding: 30px 0;
+}
+
+.text-share-input-wrapper {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.text-share-input-area {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 200px;
+  background-color: #f8f9fa;
+  color: #333;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.text-share-input-area:focus {
+  outline: none;
+  border-color: #3451b2;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(52, 81, 178, 0.1);
+}
+
+.text-share-char-count {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+.text-share-char-count.warning {
+  color: #e6a23c;
+}
+
+.text-share-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  animation: slideUp 0.3s ease-out;
+  padding-top: 20px;
+  border-top: 1px dashed #eee;
+}
+
+.text-share-qr-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text-share-hint {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.text-share-result-box {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  margin-bottom: 30px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.text-share-content {
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.text-share-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.text-share-btn {
+  flex: 0 1 auto;
+  min-width: 160px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.text-share-btn.primary {
+  background-color: #3451b2;
+  color: white;
+  border: none;
+}
+
+.text-share-btn.primary:hover {
+  background-color: #2a408e;
+  transform: translateY(-1px);
+}
+
+.text-share-btn.primary:active {
+  transform: translateY(0);
+}
+
+.text-share-btn.outline {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.text-share-btn.outline:hover {
+  border-color: #3451b2;
+  color: #3451b2;
+  background-color: #f9f9f9;
+}
+
+.text-share-btn.success {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.text-share-btn.full-width {
+  width: 100%;
+}
+
+.text-share-empty {
+  text-align: center;
+  color: #666;
+  padding: 60px 0;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .text-share-title, .text-share-content {
+    color: #eee;
+  }
+  
+  .text-share-header {
+    border-bottom-color: #333;
+  }
+  
+  .text-share-input-area {
+    background-color: #1a1a1a;
+    border-color: #333;
+    color: #eee;
+  }
+  
+  .text-share-input-area:focus {
+    background-color: #000;
+  }
+  
+  .text-share-qr-card {
+    background: #fff; /* QR code needs white background */
+  }
+  
+  .text-share-result-box {
+    background: #1a1a1a;
+    border-color: #333;
+  }
+  
+  .text-share-btn.outline {
+    border-color: #444;
+    color: #eee;
+  }
+  
+  .text-share-btn.outline:hover {
+    background-color: #1a1a1a;
+  }
+}
+
+@media (max-width: 600px) {
+  .text-share-container {
+    padding: 20px;
+  }
+
+  .text-share-header {
+    padding: 0 0 16px 0;
+  }
+  
+  .text-share-section {
+    padding: 20px 0;
+  }
+  
+  .text-share-actions {
+    flex-direction: column;
+  }
+  
+  .text-share-btn {
+    width: 100%;
+    flex: 1;
+  }
+}
