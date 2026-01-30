@@ -3,9 +3,13 @@
 import { useState, useMemo, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Trash2, FileJson, Columns, PanelLeft, PanelRight } from 'lucide-react'
+import { Copy, Trash2, FileJson, Columns, PanelLeft, PanelRight, Pencil, Wrench, FileCode2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { jsonrepair } from 'jsonrepair'
+import JSON5 from 'json5'
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false })
 
@@ -13,7 +17,13 @@ export default function JsonFormatPage() {
   const [iv, setIv] = useState('{"text":"hello world","features":["json","format","modern"]}')
   const [layout, setLayout] = useState<'split' | 'input' | 'output'>('split')
   const [mounted, setMounted] = useState(false)
+  const [isJson5Mode, setIsJson5Mode] = useState(false)
   const [jsonTheme, setJsonTheme] = useState('rjv-default')
+  const [isEditable, setIsEditable] = useState(false)
+
+  const handleJsonUpdate = (update: any) => {
+    setIv(JSON.stringify(update.updated_src, null, 2))
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -24,11 +34,24 @@ export default function JsonFormatPage() {
 
   const jsonObj = useMemo(() => {
     try {
+      if (isJson5Mode) {
+        return JSON5.parse(iv)
+      }
       return JSON.parse(iv)
     } catch (e) {
       return null
     }
-  }, [iv])
+  }, [iv, isJson5Mode])
+
+  const handleRepair = () => {
+    try {
+        const repaired = jsonrepair(iv)
+        setIv(JSON.stringify(JSON.parse(repaired), null, 2))
+        toast.success('JSON 已修复')
+    } catch (e) {
+        toast.error('无法修复此 JSON')
+    }
+  }
 
   const handleCopy = () => {
     if (!jsonObj) {
@@ -57,7 +80,7 @@ export default function JsonFormatPage() {
                         <FileJson className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="flex flex-col">
-                        <h1 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">JSON 实验室</h1>
+                        <h1 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">JSON 编辑器</h1>
                         <span className="text-xs text-slate-500 font-medium">Validation & Formatting</span>
                     </div>
                 </div>
@@ -87,6 +110,40 @@ export default function JsonFormatPage() {
                             <PanelRight className="w-4 h-4" />
                         </button>
                     </div>
+
+                    <div className="hidden sm:flex items-center gap-4 mr-2 border-r border-slate-200 dark:border-slate-800 pr-4">
+                        <div className="flex items-center gap-2">
+                            <Switch
+                                id="json5-mode"
+                                checked={isJson5Mode}
+                                onCheckedChange={setIsJson5Mode}
+                            />
+                            <Label htmlFor="json5-mode" className="text-sm font-medium cursor-pointer text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                <FileCode2 className="w-3.5 h-3.5" />
+                                <span>JSON5</span>
+                            </Label>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                            <Switch 
+                                id="edit-mode" 
+                                checked={isEditable}
+                                onCheckedChange={setIsEditable}
+                            />
+                            <Label htmlFor="edit-mode" className="text-sm font-medium cursor-pointer text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                                <Pencil className="w-3.5 h-3.5" />
+                                <span>编辑</span>
+                            </Label>
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={handleRepair}
+                        className="p-2.5 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-slate-500 hover:text-amber-500 transition-colors"
+                        title="尝试修复 JSON"
+                    >
+                        <Wrench className="w-5 h-5" />
+                    </button>
 
                     <button 
                         onClick={handleClear}
@@ -152,8 +209,11 @@ export default function JsonFormatPage() {
                                         enableClipboard={true}
                                         displayObjectSize={true}
                                         collapsed={false}
-                                        theme={jsonTheme}
+                                        theme={jsonTheme as any}
                                         style={{ backgroundColor: 'transparent', fontSize: '15px', fontFamily: 'monospace' }}
+                                        onEdit={isEditable ? handleJsonUpdate : undefined}
+                                        onAdd={isEditable ? handleJsonUpdate : undefined}
+                                        onDelete={isEditable ? handleJsonUpdate : undefined}
                                     />
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-slate-400">
