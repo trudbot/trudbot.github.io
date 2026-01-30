@@ -80,3 +80,9 @@ lib/
 ### Theme System
 - Built on `next-themes`.
 - CSS variables defined in `:root` and `.dark` selectors within `globals.css` allow for instant, flicker-free theme switching.
+
+### ROUTING
+[ROUTING_GUIDE.md](./ROUTING_GUIDE.md)
+
+### PAGES
+[PAGES](./PAGES.md)
