@@ -31,9 +31,6 @@ The project uses the modern **OKLCH** color space for better perceptual uniformi
     - **Geometry-Driven**: Emphasis on geometric shapes and compositions.
     - **Anti-Pattern**: Avoid generic design tropes (standard cards, muddy gradients, unexplained shadows).
     - **Childlike Wonder**: Fresh, bright colors reminiscent of a child's stick figure drawing - clean, innocent, and vivid.
-- **Glassmorphism**: Extensive use of transparency and blur effects.
-- **Rounded Corners**: Large border radius (`--radius: 1.5rem`) for a friendly, organic feel.
-- **Dark Mode**: Fully supported with a custom CSS variable strategy.
 
 ## 3. Project Architecture
 
