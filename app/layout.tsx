@@ -20,7 +20,9 @@ export const metadata: Metadata = {
             zhihu: https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30,
             blog: https://blog.trudbot.cn,
             github: https://github.com/trudbot`,
-  icons: 'https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg'
+  icons: 'https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg',
+  authors: [{ name: "trudbot", url: "https://trudbot.cn" }],
+  generator: "Next.js",
 }
 
 export default function RootLayout({
