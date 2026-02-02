@@ -109,7 +109,7 @@ export function ProfileCard() {
                   : undefined,
               }}
             >
-              <AvatarImage src="/images/design-mode/202407082112768.jpg" alt="trudbot" />
+              <AvatarImage src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="trudbot" />
               <AvatarFallback className="bg-primary text-6xl text-primary-foreground">T</AvatarFallback>
             </Avatar>
 
