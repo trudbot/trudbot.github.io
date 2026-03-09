@@ -3,10 +3,38 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SocialLinks } from "@/components/social-links"
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 
 export function ProfileCard() {
   const [isAvatarHovered, setIsAvatarHovered] = useState(false)
+  const [isBursting, setIsBursting] = useState(false)
+  const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 复合状态：鼠标悬停 或 移动端点击触发的短期爆发
+  const isActive = isAvatarHovered || isBursting
+
+  const handleTap = () => {
+    setIsBursting(true)
+    
+    // 清除上一次的计时器，重新开始计秒
+    if (burstTimeoutRef.current) {
+      clearTimeout(burstTimeoutRef.current)
+    }
+    
+    // 3秒后自动恢复平静
+    burstTimeoutRef.current = setTimeout(() => {
+      setIsBursting(false)
+    }, 3000)
+  }
+
+  // 组件卸载时清理定时器防止内存泄漏
+  useEffect(() => {
+    return () => {
+      if (burstTimeoutRef.current) {
+        clearTimeout(burstTimeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
@@ -21,14 +49,14 @@ export function ProfileCard() {
           {/* 装饰性几何形状 */}
           <motion.div
             animate={{
-              rotate: isAvatarHovered ? [0, 180] : [0, 5, -5, 0],
-              scale: isAvatarHovered ? 1.2 : [1, 1.05, 0.95, 1],
-              x: isAvatarHovered ? -20 : 0,
-              y: isAvatarHovered ? -20 : 0,
+              rotate: isActive ? [0, 180] : [0, 5, -5, 0],
+              scale: isActive ? 1.2 : [1, 1.05, 0.95, 1],
+              x: isActive ? -20 : 0,
+              y: isActive ? -20 : 0,
             }}
             transition={{
-              duration: isAvatarHovered ? 0.6 : 8,
-              repeat: isAvatarHovered ? 0 : Number.POSITIVE_INFINITY,
+              duration: isActive ? 0.6 : 8,
+              repeat: isActive ? 0 : Number.POSITIVE_INFINITY,
               ease: "easeInOut",
             }}
             className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30"
@@ -37,14 +65,14 @@ export function ProfileCard() {
 
           <motion.div
             animate={{
-              rotate: isAvatarHovered ? [0, -180] : [0, -5, 5, 0],
-              scale: isAvatarHovered ? 1.3 : 1,
-              x: isAvatarHovered ? 20 : 0,
-              y: isAvatarHovered ? 20 : 0,
+              rotate: isActive ? [0, -180] : [0, -5, 5, 0],
+              scale: isActive ? 1.3 : 1,
+              x: isActive ? 20 : 0,
+              y: isActive ? 20 : 0,
             }}
             transition={{
-              duration: isAvatarHovered ? 0.6 : 6,
-              repeat: isAvatarHovered ? 0 : Number.POSITIVE_INFINITY,
+              duration: isActive ? 0.6 : 6,
+              repeat: isActive ? 0 : Number.POSITIVE_INFINITY,
               ease: "easeInOut",
             }}
             className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20"
@@ -54,9 +82,10 @@ export function ProfileCard() {
           <motion.div
             onHoverStart={() => setIsAvatarHovered(true)}
             onHoverEnd={() => setIsAvatarHovered(false)}
+            onTap={handleTap}
             animate={{
-              rotate: isAvatarHovered ? [0, -5, 5, -5, 0] : 0,
-              scale: isAvatarHovered ? 1.1 : 1,
+              rotate: isActive ? [0, -5, 5, -5, 0] : 0,
+              scale: isActive ? 1.1 : 1,
             }}
             transition={{
               duration: 0.5,
@@ -68,12 +97,12 @@ export function ProfileCard() {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
-                opacity: isAvatarHovered ? [0, 0.6, 0] : 0,
-                scale: isAvatarHovered ? [0.8, 1.3, 1.5] : 0.8,
+                opacity: isActive ? [0, 0.6, 0] : 0,
+                scale: isActive ? [0.8, 1.3, 1.5] : 0.8,
               }}
               transition={{
                 duration: 1.2,
-                repeat: isAvatarHovered ? Number.POSITIVE_INFINITY : 0,
+                repeat: isActive ? Number.POSITIVE_INFINITY : 0,
                 ease: "easeOut",
               }}
               className="absolute inset-0 rounded-full"
@@ -86,25 +115,25 @@ export function ProfileCard() {
             {/* 旋转的彩色边框 */}
             <motion.div
               animate={{
-                rotate: isAvatarHovered ? 360 : 0,
+                rotate: isActive ? 360 : 0,
               }}
               transition={{
                 duration: 2,
-                repeat: isAvatarHovered ? Number.POSITIVE_INFINITY : 0,
+                repeat: isActive ? Number.POSITIVE_INFINITY : 0,
                 ease: "linear",
               }}
               className="absolute -inset-2 rounded-full opacity-0"
               style={{
                 background:
                   "conic-gradient(from 0deg, transparent 0deg, #00d4ff 90deg, transparent 180deg, #ff00ff 270deg, transparent 360deg)",
-                opacity: isAvatarHovered ? 0.8 : 0,
+                opacity: isActive ? 0.8 : 0,
               }}
             />
 
             <Avatar
               className="relative h-48 w-48 border-8 border-background shadow-2xl transition-shadow duration-300 md:h-64 md:w-64"
               style={{
-                boxShadow: isAvatarHovered
+                boxShadow: isActive
                   ? "0 0 60px rgba(0, 212, 255, 0.6), 0 0 100px rgba(255, 0, 255, 0.4)"
                   : undefined,
               }}
@@ -137,7 +166,7 @@ export function ProfileCard() {
             </Avatar>
 
             {/* 悬停时出现的粒子效果 */}
-            {isAvatarHovered && (
+            {isActive && (
               <>
                 {[...Array(8)].map((_, i) => (
                   <motion.div
@@ -169,7 +198,7 @@ export function ProfileCard() {
             <motion.div
               initial={{ width: 0 }}
               animate={{
-                width: isAvatarHovered ? "6rem" : "4rem",
+                width: isActive ? "6rem" : "4rem",
               }}
               transition={{ delay: 0.5, duration: 0.6 }}
               className="h-1 bg-primary"
@@ -177,7 +206,7 @@ export function ProfileCard() {
             <motion.div
               initial={{ width: 0 }}
               animate={{
-                width: isAvatarHovered ? "8rem" : "6rem",
+                width: isActive ? "8rem" : "6rem",
               }}
               transition={{ delay: 0.7, duration: 0.6 }}
               className="h-1 bg-accent"
@@ -185,7 +214,7 @@ export function ProfileCard() {
             <motion.div
               initial={{ width: 0 }}
               animate={{
-                width: isAvatarHovered ? "5rem" : "3rem",
+                width: isActive ? "5rem" : "3rem",
               }}
               transition={{ delay: 0.9, duration: 0.6 }}
               className="h-1 bg-secondary"
