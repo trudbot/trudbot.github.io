@@ -110,7 +110,30 @@ export function ProfileCard() {
               }}
             >
               <AvatarImage src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="trudbot" />
-              <AvatarFallback className="bg-primary text-6xl text-primary-foreground">T</AvatarFallback>
+              <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="h-full w-full p-8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g className="animate-[pulse_4s_ease-in-out_infinite]">
+                    {/* T - 横杠的左侧 (青翠绿) */}
+                    <path d="M20 30 Q35 25 48 30 L48 45 Q35 50 20 45 Z" className="fill-primary" />
+                    
+                    {/* T - 横杠的右侧圆角矩形 (暖珊瑚橘) */}
+                    <rect x="52" y="26" width="28" height="18" rx="9" className="fill-secondary" transform="rotate(-4 66 35)" />
+                    
+                    {/* T - 主干 (柔光蓝紫) */}
+                    <rect x="42" y="52" width="16" height="32" rx="6" className="fill-accent" transform="rotate(2 50 68)" />
+                  </g>
+                  
+                  {/* 悬浮的点缀装饰，带有时长不同的微小动画 */}
+                  <circle cx="28" cy="72" r="3" className="fill-primary/60 animate-[bounce_3s_infinite]" />
+                  <circle cx="78" cy="62" r="4" className="fill-secondary/50 animate-[pulse_2s_infinite]" />
+                  <circle cx="22" cy="22" r="2.5" className="fill-accent/60 animate-[ping_4s_infinite]" />
+                </svg>
+              </AvatarFallback>
             </Avatar>
 
             {/* 悬停时出现的粒子效果 */}
