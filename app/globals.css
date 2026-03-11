@@ -32,6 +32,12 @@
   --input: oklch(0.88 0.02 85);
   --ring: oklch(0.55 0.18 160);
 
+  /* 装饰特效色 */
+  --effect-cyan: #00d4ff;
+  --effect-magenta: #ff00ff;
+  --effect-yellow: #ffff00;
+  --effect-green: #00ff00;
+
   --radius: 1.5rem;
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -69,6 +75,12 @@
   --input: oklch(0.3 0.02 280);
   --ring: oklch(0.6 0.18 160);
 
+  /* 装饰特效色 */
+  --effect-cyan: #00d4ff;
+  --effect-magenta: #ff00ff;
+  --effect-yellow: #ffff00;
+  --effect-green: #00ff00;
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -80,6 +92,10 @@
 }
 
 @theme inline {
+  --color-effect-cyan: var(--effect-cyan);
+  --color-effect-magenta: var(--effect-magenta);
+  --color-effect-yellow: var(--effect-yellow);
+  --color-effect-green: var(--effect-green);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   /* 添加手写体字体配置 */
@@ -136,4 +152,17 @@
   .clip-hexagon {
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   }
+}
+
+/* 装饰几何形状空闲动画（CSS 驱动，释放 JS 主线程） */
+@keyframes idle-sway {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(5deg) scale(1.05); }
+  75% { transform: rotate(-5deg) scale(0.95); }
+}
+
+@keyframes idle-sway-reverse {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-5deg) scale(1); }
+  75% { transform: rotate(5deg) scale(1); }
 }

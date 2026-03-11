@@ -2,29 +2,322 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SocialLinks } from "@/components/social-links"
-import { motion, useAnimation } from "framer-motion"
+import { motion, useAnimation, useReducedMotion } from "framer-motion"
 import { useState, useRef, useEffect, useCallback } from "react"
 
+// ─── Constants ───────────────────────────────────────────────────────────────
+const AVATAR_IMAGE_URL =
+  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg"
+
+const PARTICLE_COUNT = 8
+const PARTICLE_RADIUS = 150
+const PARTICLE_DURATION = 1.5
+const PARTICLE_STAGGER = 0.1
+const BURST_TIMEOUT_MS = 3000
+const MOUSE_SETTLE_MS = 150
+const MOUSE_SETTLE_THRESHOLD_SQ = 400 // 20px²
+// 入场动画最大时长：最晚 delay(1.3s) + duration(0.8s)
+const ENTRY_ANIMATION_MS = 2100
+
+const EFFECT_COLORS = [
+  "var(--effect-cyan)",
+  "var(--effect-magenta)",
+  "var(--effect-yellow)",
+  "var(--effect-green)",
+]
+
+const GLOW_GRADIENT = `conic-gradient(from 0deg, ${EFFECT_COLORS.join(", ")}, ${EFFECT_COLORS[0]})`
+const BORDER_GRADIENT = `conic-gradient(from 0deg, transparent 0deg, ${EFFECT_COLORS[0]} 90deg, transparent 180deg, ${EFFECT_COLORS[1]} 270deg, transparent 360deg)`
+
+// ─── DecorativeShapes ────────────────────────────────────────────────────────
+function DecorativeShapes({ isActive, reducedMotion }: { isActive: boolean; reducedMotion: boolean }) {
+  if (reducedMotion) {
+    return (
+      <>
+        <div
+          className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond"
+        />
+        <div
+          className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle"
+        />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <motion.div
+        animate={
+          isActive
+            ? { rotate: [0, 180], scale: 1.2, x: -20, y: -20 }
+            : undefined
+        }
+        transition={
+          isActive
+            ? { duration: 0.6, ease: "easeInOut" }
+            : undefined
+        }
+        className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond"
+        style={!isActive ? { animation: "idle-sway 8s ease-in-out infinite" } : undefined}
+      />
+      <motion.div
+        animate={
+          isActive
+            ? { rotate: [0, -180], scale: 1.3, x: 20, y: 20 }
+            : undefined
+        }
+        transition={
+          isActive
+            ? { duration: 0.6, ease: "easeInOut" }
+            : undefined
+        }
+        className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle"
+        style={!isActive ? { animation: "idle-sway-reverse 6s ease-in-out infinite" } : undefined}
+      />
+    </>
+  )
+}
+
+// ─── GlowEffects ─────────────────────────────────────────────────────────────
+function GlowEffects({ isActive }: { isActive: boolean }) {
+  return (
+    <>
+      {/* 彩色光环 */}
+      <motion.div
+        animate={{
+          opacity: isActive ? [0, 0.6, 0] : 0,
+          scale: isActive ? [0.8, 1.3, 1.5] : 0.8,
+        }}
+        transition={{
+          duration: 2.5,
+          repeat: isActive ? Number.POSITIVE_INFINITY : 0,
+          ease: "easeOut",
+        }}
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: GLOW_GRADIENT,
+          filter: "blur(20px)",
+        }}
+      />
+      {/* 旋转的彩色边框 */}
+      <motion.div
+        animate={{
+          rotate: isActive ? [0, 360] : 0,
+          opacity: isActive ? 0.8 : 0,
+        }}
+        transition={{
+          rotate: {
+            duration: 2,
+            repeat: isActive ? Number.POSITIVE_INFINITY : 0,
+            ease: "linear",
+          },
+          opacity: { duration: 0.3, ease: "easeOut" },
+        }}
+        className="absolute -inset-2 rounded-full"
+        style={{ background: BORDER_GRADIENT }}
+      />
+      {/* 发光阴影 */}
+      <motion.div
+        animate={{
+          boxShadow: isActive
+            ? `0 0 60px color-mix(in oklch, ${EFFECT_COLORS[0]} 60%, transparent), 0 0 100px color-mix(in oklch, ${EFFECT_COLORS[1]} 40%, transparent)`
+            : "0 0 0px transparent, 0 0 0px transparent",
+        }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="rounded-full"
+      >
+        <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
+          <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
+          <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
+            <AvatarFallbackSvg />
+          </AvatarFallback>
+        </Avatar>
+      </motion.div>
+    </>
+  )
+}
+
+// ─── AvatarFallbackSvg ───────────────────────────────────────────────────────
+function AvatarFallbackSvg() {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className="h-full w-full p-8"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g className="animate-[pulse_4s_ease-in-out_infinite]">
+        <path d="M20 30 Q35 25 48 30 L48 45 Q35 50 20 45 Z" className="fill-primary" />
+        <rect x="52" y="26" width="28" height="18" rx="9" className="fill-secondary" transform="rotate(-4 66 35)" />
+        <rect x="42" y="52" width="16" height="32" rx="6" className="fill-accent" transform="rotate(2 50 68)" />
+      </g>
+      <circle cx="28" cy="72" r="3" className="fill-primary/60 animate-[bounce_3s_infinite]" />
+      <circle cx="78" cy="62" r="4" className="fill-secondary/50 animate-[pulse_2s_infinite]" />
+      <circle cx="22" cy="22" r="2.5" className="fill-accent/60 animate-[ping_4s_infinite]" />
+    </svg>
+  )
+}
+
+// ─── Particles ───────────────────────────────────────────────────────────────
+function Particles({
+  isActive,
+  controls,
+}: {
+  isActive: boolean
+  controls: ReturnType<typeof useAnimation>
+}) {
+  if (!isActive) return null
+
+  return (
+    <>
+      {Array.from({ length: PARTICLE_COUNT }, (_, i) => (
+        <motion.div
+          key={i}
+          custom={i}
+          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+          animate={controls}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{ background: EFFECT_COLORS[i % EFFECT_COLORS.length] }}
+        />
+      ))}
+    </>
+  )
+}
+
+// ─── ColorBars ───────────────────────────────────────────────────────────────
+function ColorBars({ isActive, hasEntered }: { isActive: boolean; hasEntered: boolean }) {
+  const bars = [
+    { active: "6rem", idle: "4rem", delay: 0.5, color: "bg-primary" },
+    { active: "8rem", idle: "6rem", delay: 0.7, color: "bg-accent" },
+    { active: "5rem", idle: "3rem", delay: 0.9, color: "bg-secondary" },
+  ]
+  return (
+    <div className="absolute -right-12 top-1/4 flex flex-col gap-2">
+      {bars.map((bar) => (
+        <motion.div
+          key={bar.color}
+          initial={{ width: 0 }}
+          animate={{ width: isActive ? bar.active : bar.idle }}
+          transition={{ delay: hasEntered ? 0 : bar.delay, duration: 0.6 }}
+          className={`h-1 ${bar.color}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+// ─── ProfileInfo ─────────────────────────────────────────────────────────────
+function ProfileInfo({ reducedMotion }: { reducedMotion: boolean }) {
+  const Wrapper = reducedMotion ? "div" : motion.div
+  const Span = reducedMotion ? "span" : motion.span
+
+  return (
+    <Wrapper
+      {...(!reducedMotion && {
+        initial: { opacity: 0, y: 30 },
+        animate: { opacity: 1, y: 0 },
+        transition: { delay: 0.3, duration: 0.8 },
+      })}
+      className="md:col-span-7 md:col-start-6 md:row-start-1 md:pt-12"
+    >
+      <div className="relative mb-8">
+        {!reducedMotion ? (
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="absolute -left-4 top-0 h-full w-2 bg-gradient-to-b from-primary via-accent to-secondary"
+          />
+        ) : (
+          <div className="absolute -left-4 top-0 h-full w-2 bg-gradient-to-b from-primary via-accent to-secondary" />
+        )}
+
+        <h1 className="font-handwriting text-6xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
+          <Span
+            {...(!reducedMotion && {
+              initial: { opacity: 0, x: -20 },
+              animate: { opacity: 1, x: 0 },
+              transition: { delay: 0.6, duration: 0.5 },
+            })}
+          >
+            @trudbot
+          </Span>
+        </h1>
+
+        {!reducedMotion ? (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30"
+          />
+        ) : (
+          <div className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30" />
+        )}
+      </div>
+
+      {!reducedMotion ? (
+        <motion.div
+          initial={{ opacity: 0, rotate: -2 }}
+          animate={{ opacity: 1, rotate: 0 }}
+          transition={{ delay: 0.9, duration: 0.6 }}
+          className="relative mb-12 border-l-4 border-accent pl-6"
+        >
+          <BioContent />
+        </motion.div>
+      ) : (
+        <div className="relative mb-12 border-l-4 border-accent pl-6">
+          <BioContent />
+        </div>
+      )}
+
+      {!reducedMotion ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1, duration: 0.6 }}
+        >
+          <SocialLinks />
+        </motion.div>
+      ) : (
+        <SocialLinks />
+      )}
+    </Wrapper>
+  )
+}
+
+function BioContent() {
+  return (
+    <>
+      <p className="text-pretty text-xl leading-relaxed text-muted-foreground md:text-2xl">Frontend Developer</p>
+      <div className="mt-4 flex gap-2">
+        <div className="h-3 w-3 bg-primary" />
+        <div className="h-3 w-3 bg-accent" />
+        <div className="h-3 w-3 bg-secondary" />
+        <div className="h-3 w-3 bg-highlight" />
+      </div>
+    </>
+  )
+}
+
+// ─── ProfileCard (main) ──────────────────────────────────────────────────────
 export function ProfileCard() {
+  const reducedMotion = useReducedMotion() ?? false
   const [isAvatarHovered, setIsAvatarHovered] = useState(false)
   const [isBursting, setIsBursting] = useState(false)
-  // 桌面端：鼠标停止在头像内时才显示粒子
   const [isMouseSettled, setIsMouseSettled] = useState(false)
   const [hasEntered, setHasEntered] = useState(false)
   const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const mouseStopTimerRef = useRef<NodeJS.Timeout | null>(null)
   const mousePos = useRef({ x: 0, y: 0 })
+  const settledPos = useRef({ x: 0, y: 0 })
   const particleControls = useAnimation()
-
-  // 装饰特效（光环、旋转边框、几何形状等）：悬停或点击即触发
-  const isActive = isAvatarHovered || isBursting
-  // 粒子动画：桌面端需要鼠标悬停且停止移动，移动端点击即触发
-  const isParticleActive = (isAvatarHovered && isMouseSettled) || isBursting
-
   const avatarRef = useRef<HTMLDivElement>(null)
 
+  const isActive = isAvatarHovered || isBursting
+  const isParticleActive = (isAvatarHovered && isMouseSettled) || isBursting
+
   const handleTap = useCallback((_: unknown, info: { point: { x: number; y: number } }) => {
-    // 移动端点击时，将粒子中心设为点击位置
     if (avatarRef.current) {
       const rect = avatarRef.current.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
@@ -37,37 +330,32 @@ export function ProfileCard() {
 
     setIsBursting(true)
 
-    // 清除上一次的计时器，重新开始计秒
     if (burstTimeoutRef.current) {
       clearTimeout(burstTimeoutRef.current)
     }
-
-    // 3秒后自动恢复平静
     burstTimeoutRef.current = setTimeout(() => {
       setIsBursting(false)
-    }, 3000)
+    }, BURST_TIMEOUT_MS)
   }, [])
 
-  // 组件卸载时清理定时器防止内存泄漏
+  // 清理定时器
   useEffect(() => {
     return () => {
-      if (burstTimeoutRef.current) {
-        clearTimeout(burstTimeoutRef.current)
-      }
-      if (mouseStopTimerRef.current) {
-        clearTimeout(mouseStopTimerRef.current)
-      }
+      if (burstTimeoutRef.current) clearTimeout(burstTimeoutRef.current)
+      if (mouseStopTimerRef.current) clearTimeout(mouseStopTimerRef.current)
     }
   }, [])
 
-  // 入场动画完成后标记，后续交互不再使用 delay
+  // 入场动画完成标记
   useEffect(() => {
-    const timer = setTimeout(() => setHasEntered(true), 1500)
+    const timer = setTimeout(() => setHasEntered(true), ENTRY_ANIMATION_MS)
     return () => clearTimeout(timer)
   }, [])
 
   // 粒子动画循环
   useEffect(() => {
+    if (reducedMotion) return
+
     let isMounted = true
 
     const runParticles = async () => {
@@ -80,15 +368,16 @@ export function ProfileCard() {
       while (isMounted && isParticleActive) {
         try {
           const { x, y } = mousePos.current
+          particleControls.set(() => ({ opacity: 0, scale: 0, x, y }))
 
-          await particleControls.start((i) => ({
+          await particleControls.start((i: number) => ({
             opacity: [0, 1, 0],
             scale: [0, 1, 0],
-            x: [x, x + Math.cos((i * Math.PI * 2) / 8) * 150],
-            y: [y, y + Math.sin((i * Math.PI * 2) / 8) * 150],
+            x: [x, x + Math.cos((i * Math.PI * 2) / PARTICLE_COUNT) * PARTICLE_RADIUS],
+            y: [y, y + Math.sin((i * Math.PI * 2) / PARTICLE_COUNT) * PARTICLE_RADIUS],
             transition: {
-              duration: 1.5,
-              delay: i * 0.1,
+              duration: PARTICLE_DURATION,
+              delay: i * PARTICLE_STAGGER,
               ease: "easeOut",
             },
           }))
@@ -99,14 +388,10 @@ export function ProfileCard() {
     }
 
     runParticles()
-
-    return () => {
-      isMounted = false
-    }
-  }, [isParticleActive, particleControls])
+    return () => { isMounted = false }
+  }, [isParticleActive, particleControls, reducedMotion])
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    // 忽略 touch 事件，移动端由 handleTap 处理
     if (e.pointerType === "touch") return
 
     const rect = e.currentTarget.getBoundingClientRect()
@@ -117,20 +402,62 @@ export function ProfileCard() {
       y: e.clientY - centerY,
     }
 
-    // 鼠标还在移动，取消之前的"停止"判定，重新计时
+    const dx = mousePos.current.x - settledPos.current.x
+    const dy = mousePos.current.y - settledPos.current.y
+    if (mouseStopTimerRef.current === null && dx * dx + dy * dy < MOUSE_SETTLE_THRESHOLD_SQ) {
+      return
+    }
+
     setIsMouseSettled(false)
     if (mouseStopTimerRef.current) {
       clearTimeout(mouseStopTimerRef.current)
     }
     mouseStopTimerRef.current = setTimeout(() => {
-      // 鼠标停止移动 150ms 后，判定为停下
+      settledPos.current = { ...mousePos.current }
+      mouseStopTimerRef.current = null
       setIsMouseSettled(true)
-    }, 150)
+    }, MOUSE_SETTLE_MS)
   }, [])
 
+  const handleHoverEnd = useCallback(() => {
+    setIsAvatarHovered(false)
+    setIsMouseSettled(false)
+    if (mouseStopTimerRef.current) {
+      clearTimeout(mouseStopTimerRef.current)
+      mouseStopTimerRef.current = null
+    }
+    mousePos.current = { x: 0, y: 0 }
+  }, [])
+
+  // ─── Reduced motion: static layout ──────────────────────────────────────
+  if (reducedMotion) {
+    return (
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+        <div className="md:col-span-5 md:col-start-1 md:row-start-1">
+          <div className="relative inline-block">
+            <DecorativeShapes isActive={false} reducedMotion />
+            <div className="relative">
+              <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
+                <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
+                <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
+                  <AvatarFallbackSvg />
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+        </div>
+        <ProfileInfo reducedMotion />
+        <div className="md:col-span-12 md:row-start-2">
+          <BottomTagline />
+        </div>
+      </div>
+    )
+  }
+
+  // ─── Full animated layout ───────────────────────────────────────────────
   return (
     <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
-      {/* 左侧：头像区域 - 不规则位置 */}
+      {/* 左侧：头像区域 */}
       <motion.div
         initial={{ opacity: 0, x: -50, rotate: -5 }}
         animate={{ opacity: 1, x: 0, rotate: 0 }}
@@ -138,245 +465,30 @@ export function ProfileCard() {
         className="md:col-span-5 md:col-start-1 md:row-start-1"
       >
         <div className="relative inline-block">
-          {/* 装饰性几何形状 */}
-          <motion.div
-            animate={{
-              rotate: isActive ? [0, 180] : [0, 5, -5, 0],
-              scale: isActive ? 1.2 : [1, 1.05, 0.95, 1],
-              x: isActive ? -20 : 0,
-              y: isActive ? -20 : 0,
-            }}
-            transition={{
-              duration: isActive ? 0.6 : 8,
-              repeat: isActive ? 0 : Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-            className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30"
-            style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
-          />
-
-          <motion.div
-            animate={{
-              rotate: isActive ? [0, -180] : [0, -5, 5, 0],
-              scale: isActive ? 1.3 : 1,
-              x: isActive ? 20 : 0,
-              y: isActive ? 20 : 0,
-            }}
-            transition={{
-              duration: isActive ? 0.6 : 6,
-              repeat: isActive ? 0 : Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-            className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20"
-            style={{ clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
-          />
+          <DecorativeShapes isActive={isActive} reducedMotion={false} />
 
           <motion.div
             ref={avatarRef}
             onHoverStart={() => setIsAvatarHovered(true)}
-            onHoverEnd={() => {
-              setIsAvatarHovered(false)
-              setIsMouseSettled(false)
-              if (mouseStopTimerRef.current) {
-                clearTimeout(mouseStopTimerRef.current)
-              }
-              mousePos.current = { x: 0, y: 0 }
-            }}
+            onHoverEnd={handleHoverEnd}
             onPointerMove={handlePointerMove}
             onTap={handleTap}
             animate={{
               rotate: isActive ? [0, -5, 5, -5, 0] : 0,
               scale: isActive ? 1.1 : 1,
             }}
-            transition={{
-              duration: 0.5,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="relative cursor-pointer"
           >
-            {/* 悬停时出现的彩色光环 */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: isActive ? [0, 0.6, 0] : 0,
-                scale: isActive ? [0.8, 1.3, 1.5] : 0.8,
-              }}
-              transition={{
-                duration: 2.5,
-                repeat: isActive ? Number.POSITIVE_INFINITY : 0,
-                ease: "easeOut",
-              }}
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: "conic-gradient(from 0deg, #00d4ff, #ff00ff, #ffff00, #00ff00, #00d4ff)",
-                filter: "blur(20px)",
-              }}
-            />
-
-            {/* 旋转的彩色边框 */}
-            <motion.div
-              animate={{
-                rotate: isActive ? [0, 360] : 0,
-                opacity: isActive ? 0.8 : 0,
-              }}
-              transition={{
-                duration: 2,
-                repeat: isActive ? Number.POSITIVE_INFINITY : 0,
-                ease: "linear",
-              }}
-              className="absolute -inset-2 rounded-full"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, transparent 0deg, #00d4ff 90deg, transparent 180deg, #ff00ff 270deg, transparent 360deg)",
-              }}
-            />
-
-            <motion.div
-              animate={{
-                boxShadow: isActive
-                  ? "0 0 60px rgba(0, 212, 255, 0.6), 0 0 100px rgba(255, 0, 255, 0.4)"
-                  : "0 0 0px rgba(0, 212, 255, 0), 0 0 0px rgba(255, 0, 255, 0)",
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="rounded-full"
-            >
-            <Avatar
-              className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64"
-            >
-              <AvatarImage src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="trudbot" />
-              <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="h-full w-full p-8"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g className="animate-[pulse_4s_ease-in-out_infinite]">
-                    {/* T - 横杠的左侧 (青翠绿) */}
-                    <path d="M20 30 Q35 25 48 30 L48 45 Q35 50 20 45 Z" className="fill-primary" />
-                    
-                    {/* T - 横杠的右侧圆角矩形 (暖珊瑚橘) */}
-                    <rect x="52" y="26" width="28" height="18" rx="9" className="fill-secondary" transform="rotate(-4 66 35)" />
-                    
-                    {/* T - 主干 (柔光蓝紫) */}
-                    <rect x="42" y="52" width="16" height="32" rx="6" className="fill-accent" transform="rotate(2 50 68)" />
-                  </g>
-                  
-                  {/* 悬浮的点缀装饰，带有时长不同的微小动画 */}
-                  <circle cx="28" cy="72" r="3" className="fill-primary/60 animate-[bounce_3s_infinite]" />
-                  <circle cx="78" cy="62" r="4" className="fill-secondary/50 animate-[pulse_2s_infinite]" />
-                  <circle cx="22" cy="22" r="2.5" className="fill-accent/60 animate-[ping_4s_infinite]" />
-                </svg>
-              </AvatarFallback>
-            </Avatar>
-            </motion.div>
-
-            {/* 悬停时出现的粒子效果 */}
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                animate={particleControls}
-                className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                style={{
-                  background: ["#00d4ff", "#ff00ff", "#ffff00", "#00ff00"][i % 4],
-                }}
-              />
-            ))}
+            <GlowEffects isActive={isActive} />
+            <Particles isActive={isParticleActive} controls={particleControls} />
           </motion.div>
 
-          {/* 彩色装饰线条 */}
-          <div className="absolute -right-12 top-1/4 flex flex-col gap-2">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{
-                width: isActive ? "6rem" : "4rem",
-              }}
-              transition={{ delay: hasEntered ? 0 : 0.5, duration: 0.6 }}
-              className="h-1 bg-primary"
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{
-                width: isActive ? "8rem" : "6rem",
-              }}
-              transition={{ delay: hasEntered ? 0 : 0.7, duration: 0.6 }}
-              className="h-1 bg-accent"
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{
-                width: isActive ? "5rem" : "3rem",
-              }}
-              transition={{ delay: hasEntered ? 0 : 0.9, duration: 0.6 }}
-              className="h-1 bg-secondary"
-            />
-          </div>
+          <ColorBars isActive={isActive} hasEntered={hasEntered} />
         </div>
       </motion.div>
 
-      {/* 右侧：用户名和信息 - 错位排列 */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        className="md:col-span-7 md:col-start-6 md:row-start-1 md:pt-12"
-      >
-        <div className="relative mb-8">
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute -left-4 top-0 h-full w-2 bg-gradient-to-b from-cyan-400 via-teal-400 to-blue-400"
-          />
-
-          <h1 className="font-handwriting text-6xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
-            <motion.span
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-            >
-              @trudbot
-            </motion.span>
-          </h1>
-
-          {/* 装饰性色块 */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30"
-          />
-        </div>
-
-        {/* 简介 - 倾斜的文字块 */}
-        <motion.div
-          initial={{ opacity: 0, rotate: -2 }}
-          animate={{ opacity: 1, rotate: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          className="relative mb-12 border-l-4 border-accent pl-6"
-        >
-          <p className="text-pretty text-xl leading-relaxed text-muted-foreground md:text-2xl">Fontend Developer</p>
-
-          {/* 装饰性小方块 */}
-          <div className="mt-4 flex gap-2">
-            <div className="h-3 w-3 bg-primary" />
-            <div className="h-3 w-3 bg-accent" />
-            <div className="h-3 w-3 bg-secondary" />
-            <div className="h-3 w-3 bg-highlight" />
-          </div>
-        </motion.div>
-
-        {/* 社交链接 - 不规则排列 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.6 }}
-        >
-          <SocialLinks />
-        </motion.div>
-      </motion.div>
+      <ProfileInfo reducedMotion={false} />
 
       {/* 底部装饰性文字 */}
       <motion.div
@@ -385,12 +497,19 @@ export function ProfileCard() {
         transition={{ delay: 1.3, duration: 0.8 }}
         className="md:col-span-12 md:row-start-2"
       >
-        <div className="flex items-center justify-center gap-8 pt-12 md:justify-end md:pt-0">
-          <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
-          <p className="font-mono text-sm text-muted-foreground">CREATIVE MIND</p>
-          <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
-        </div>
+        <BottomTagline />
       </motion.div>
+    </div>
+  )
+}
+
+// ─── BottomTagline ───────────────────────────────────────────────────────────
+function BottomTagline() {
+  return (
+    <div className="flex items-center justify-center gap-8 pt-12 md:justify-end md:pt-0">
+      <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
+      <p className="font-mono text-sm text-muted-foreground">CREATIVE MIND</p>
+      <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
     </div>
   )
 }
