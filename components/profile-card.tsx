@@ -2,13 +2,15 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SocialLinks } from "@/components/social-links"
-import { motion } from "framer-motion"
+import { motion, useAnimation } from "framer-motion"
 import { useState, useRef, useEffect } from "react"
 
 export function ProfileCard() {
   const [isAvatarHovered, setIsAvatarHovered] = useState(false)
   const [isBursting, setIsBursting] = useState(false)
   const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const mousePos = useRef({ x: 0, y: 0 })
+  const particleControls = useAnimation()
 
   // 复合状态：鼠标悬停 或 移动端点击触发的短期爆发
   const isActive = isAvatarHovered || isBursting
@@ -35,6 +37,50 @@ export function ProfileCard() {
       }
     }
   }, [])
+
+  // 粒子动画循环
+  useEffect(() => {
+    let isMounted = true
+
+    const runParticles = async () => {
+      if (!isActive) {
+        particleControls.stop()
+        return
+      }
+
+      while (isMounted) {
+        const { x, y } = mousePos.current
+
+        await particleControls.start((i) => ({
+          opacity: [0, 1, 0],
+          scale: [0, 1, 0],
+          x: [x, x + Math.cos((i * Math.PI * 2) / 8) * 150],
+          y: [y, y + Math.sin((i * Math.PI * 2) / 8) * 150],
+          transition: {
+            duration: 1.5,
+            delay: i * 0.1,
+            ease: "easeOut",
+          },
+        }))
+      }
+    }
+
+    runParticles()
+
+    return () => {
+      isMounted = false
+    }
+  }, [isActive, particleControls])
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    mousePos.current = {
+      x: e.clientX - centerX,
+      y: e.clientY - centerY,
+    }
+  }
 
   return (
     <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
@@ -81,7 +127,11 @@ export function ProfileCard() {
 
           <motion.div
             onHoverStart={() => setIsAvatarHovered(true)}
-            onHoverEnd={() => setIsAvatarHovered(false)}
+            onHoverEnd={() => {
+              setIsAvatarHovered(false)
+              mousePos.current = { x: 0, y: 0 }
+            }}
+            onPointerMove={handlePointerMove}
             onTap={handleTap}
             animate={{
               rotate: isActive ? [0, -5, 5, -5, 0] : 0,
@@ -101,7 +151,7 @@ export function ProfileCard() {
                 scale: isActive ? [0.8, 1.3, 1.5] : 0.8,
               }}
               transition={{
-                duration: 1.2,
+                duration: 2.5,
                 repeat: isActive ? Number.POSITIVE_INFINITY : 0,
                 ease: "easeOut",
               }}
@@ -115,7 +165,7 @@ export function ProfileCard() {
             {/* 旋转的彩色边框 */}
             <motion.div
               animate={{
-                rotate: isActive ? 360 : 0,
+                rotate: isActive ? [0, 360] : 0,
               }}
               transition={{
                 duration: 2,
@@ -166,31 +216,18 @@ export function ProfileCard() {
             </Avatar>
 
             {/* 悬停时出现的粒子效果 */}
-            {isActive && (
-              <>
-                {[...Array(8)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{
-                      opacity: [0, 1, 0],
-                      scale: [0, 1, 0],
-                      x: Math.cos((i * Math.PI * 2) / 8) * 150,
-                      y: Math.sin((i * Math.PI * 2) / 8) * 150,
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Number.POSITIVE_INFINITY,
-                      delay: i * 0.1,
-                    }}
-                    className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                    style={{
-                      background: ["#00d4ff", "#ff00ff", "#ffff00", "#00ff00"][i % 4],
-                    }}
-                  />
-                ))}
-              </>
-            )}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                custom={i}
+                initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                animate={particleControls}
+                className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  background: ["#00d4ff", "#ff00ff", "#ffff00", "#00ff00"][i % 4],
+                }}
+              />
+            ))}
           </motion.div>
 
           {/* 彩色装饰线条 */}
