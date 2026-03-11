@@ -1,4 +1,41 @@
 /* 首页专属样式 */
 /* 这里的样式只会在首页加载，不会影响其他页面 */
 
-/* 如果需要从 mobile.css 迁移样式，可以在这里添加 */
+/* ─── 入场动画 (CSS 驱动，SSG 静态 HTML 立即可见) ─── */
+@keyframes pc-slide-left {
+  from { opacity: 0; transform: translateX(-50px) rotate(-5deg); }
+}
+@keyframes pc-fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+}
+@keyframes pc-scale-x {
+  from { transform: scaleX(0); }
+}
+@keyframes pc-text-left {
+  from { opacity: 0; transform: translateX(-20px); }
+}
+@keyframes pc-pop {
+  from { transform: scale(0); }
+}
+@keyframes pc-tilt-in {
+  from { opacity: 0; transform: rotate(-2deg); }
+}
+@keyframes pc-fade-up-sm {
+  from { opacity: 0; transform: translateY(20px); }
+}
+@keyframes pc-fade-in {
+  from { opacity: 0; }
+}
+
+/* 浮动背景形状 */
+@keyframes float-shape {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+  33% { transform: translateY(-30px) translateX(10px) scale(1.05); }
+  66% { transform: translateY(-15px) translateX(20px) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-entry {
+    animation: none !important;
+  }
+}

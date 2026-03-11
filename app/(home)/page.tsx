@@ -1,7 +1,13 @@
 import { ProfileCard } from "@/components/profile-card"
 import { FloatingShapes } from "@/components/floating-shapes"
-import { BottomDecoration } from "@/components/bottom-decoration"
-import { GamesSection } from "@/components/games-section"
+import dynamic from "next/dynamic"
+
+const GamesSection = dynamic(
+  () => import("@/components/games-section").then((mod) => mod.GamesSection),
+)
+const BottomDecoration = dynamic(
+  () => import("@/components/bottom-decoration").then((mod) => mod.BottomDecoration),
+)
 
 export default function Home() {
   return (

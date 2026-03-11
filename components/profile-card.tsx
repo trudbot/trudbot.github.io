@@ -36,20 +36,8 @@ const PARTICLE_DIRECTIONS = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
 })
 
 // ─── DecorativeShapes ────────────────────────────────────────────────────────
-function DecorativeShapes({ isActive, reducedMotion }: { isActive: boolean; reducedMotion: boolean }) {
-  if (reducedMotion) {
-    return (
-      <>
-        <div
-          className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond"
-        />
-        <div
-          className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle"
-        />
-      </>
-    )
-  }
-
+// 仅在非 reducedMotion 时渲染，idle/active 态由 framer-motion 驱动
+function DecorativeShapes({ isActive }: { isActive: boolean }) {
   return (
     <>
       <motion.div
@@ -214,82 +202,48 @@ function ColorBars({ isActive, hasEntered }: { isActive: boolean; hasEntered: bo
 }
 
 // ─── ProfileInfo ─────────────────────────────────────────────────────────────
-function ProfileInfo({ reducedMotion }: { reducedMotion: boolean }) {
-  const Wrapper = reducedMotion ? "div" : motion.div
-  const Span = reducedMotion ? "span" : motion.span
-
+// 入场动画完全由 CSS @keyframes 驱动，SSG 静态 HTML 立即可见，无需等待 JS 加载
+function ProfileInfo() {
   return (
-    <Wrapper
-      {...(!reducedMotion && {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: 1, y: 0 },
-        transition: { delay: 0.3, duration: 0.8 },
-      })}
-      className="md:col-span-7 md:col-start-6 md:row-start-1 md:pt-12"
+    <div
+      className="md:col-span-7 md:col-start-6 md:row-start-1 md:pt-12 pc-entry"
+      style={{ animation: 'pc-fade-up 0.8s ease-out 0.3s both' }}
     >
       <div className="relative mb-8">
-        {!reducedMotion ? (
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute -left-4 top-0 h-full w-2 bg-gradient-to-b from-primary via-accent to-secondary"
-          />
-        ) : (
-          <div className="absolute -left-4 top-0 h-full w-2 bg-gradient-to-b from-primary via-accent to-secondary" />
-        )}
+        <div
+          className="absolute -left-4 top-0 h-full w-2 origin-left bg-gradient-to-b from-primary via-accent to-secondary pc-entry"
+          style={{ animation: 'pc-scale-x 0.8s ease-out 0.5s both' }}
+        />
 
         <h1 className="font-handwriting text-6xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
-          <Span
-            {...(!reducedMotion && {
-              initial: { opacity: 0, x: -20 },
-              animate: { opacity: 1, x: 0 },
-              transition: { delay: 0.6, duration: 0.5 },
-            })}
+          <span
+            className="inline-block pc-entry"
+            style={{ animation: 'pc-text-left 0.5s ease-out 0.6s both' }}
           >
             @trudbot
-          </Span>
+          </span>
         </h1>
 
-        {!reducedMotion ? (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30"
-          />
-        ) : (
-          <div className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30" />
-        )}
+        <div
+          className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30 pc-entry"
+          style={{ animation: 'pc-pop 0.5s ease-out 1s both' }}
+        />
       </div>
 
-      {!reducedMotion ? (
-        <motion.div
-          initial={{ opacity: 0, rotate: -2 }}
-          animate={{ opacity: 1, rotate: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          className="relative mb-12 border-l-4 border-accent pl-6"
-        >
-          <BioContent />
-        </motion.div>
-      ) : (
-        <div className="relative mb-12 border-l-4 border-accent pl-6">
-          <BioContent />
-        </div>
-      )}
+      <div
+        className="relative mb-12 border-l-4 border-accent pl-6 pc-entry"
+        style={{ animation: 'pc-tilt-in 0.6s ease-out 0.9s both' }}
+      >
+        <BioContent />
+      </div>
 
-      {!reducedMotion ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.6 }}
-        >
-          <SocialLinks />
-        </motion.div>
-      ) : (
+      <div
+        className="pc-entry"
+        style={{ animation: 'pc-fade-up-sm 0.6s ease-out 1.1s both' }}
+      >
         <SocialLinks />
-      )}
-    </Wrapper>
+      </div>
+    </div>
   )
 }
 
@@ -457,76 +411,64 @@ export function ProfileCard() {
     cachedRectRef.current = null // hover 离开时清除缓存，下次 hover 重新计算
   }, [])
 
-  // ─── Reduced motion: static layout ──────────────────────────────────────
-  if (reducedMotion) {
-    return (
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
-        <div className="md:col-span-5 md:col-start-1 md:row-start-1">
-          <div className="relative inline-block">
-            <DecorativeShapes isActive={false} reducedMotion />
-            <div className="relative">
-              <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
-                <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
-                <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
-                  <AvatarFallbackSvg />
-                </AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </div>
-        <ProfileInfo reducedMotion />
-        <div className="md:col-span-12 md:row-start-2">
-          <BottomTagline />
-        </div>
-      </div>
-    )
-  }
-
-  // ─── Full animated layout ───────────────────────────────────────────────
+  // ─── 统一布局：入场由 CSS 驱动，交互由 framer-motion 驱动 ─────────────
   return (
     <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
       {/* 左侧：头像区域 */}
-      <motion.div
-        initial={{ opacity: 0, x: -50, rotate: -5 }}
-        animate={{ opacity: 1, x: 0, rotate: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="md:col-span-5 md:col-start-1 md:row-start-1"
+      <div
+        className="md:col-span-5 md:col-start-1 md:row-start-1 pc-entry"
+        style={{ animation: 'pc-slide-left 0.8s ease-out both' }}
       >
         <div className="relative inline-block">
-          <DecorativeShapes isActive={isActive} reducedMotion={false} />
+          {reducedMotion ? (
+            <>
+              <div className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond" />
+              <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle" />
+              <div className="relative rounded-full">
+                <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
+                  <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
+                  <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
+                    <AvatarFallbackSvg />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            </>
+          ) : (
+            <>
+              <DecorativeShapes isActive={isActive} />
 
-          <motion.div
-            ref={avatarRef}
-            onHoverStart={() => setIsAvatarHovered(true)}
-            onHoverEnd={handleHoverEnd}
-            onPointerMove={handlePointerMove}
-            onTap={handleTap}
-            animate={{
-              rotate: isActive ? [0, -5, 5, -5, 0] : 0,
-              scale: isActive ? 1.1 : 1,
-            }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="relative cursor-pointer"
-          >
-            <GlowEffects isActive={isActive} />
-            <Particles isActive={isParticleActive} controls={particleControls} />
-          </motion.div>
+              <motion.div
+                ref={avatarRef}
+                onHoverStart={() => setIsAvatarHovered(true)}
+                onHoverEnd={handleHoverEnd}
+                onPointerMove={handlePointerMove}
+                onTap={handleTap}
+                animate={{
+                  rotate: isActive ? [0, -5, 5, -5, 0] : 0,
+                  scale: isActive ? 1.1 : 1,
+                }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="relative cursor-pointer"
+              >
+                <GlowEffects isActive={isActive} />
+                <Particles isActive={isParticleActive} controls={particleControls} />
+              </motion.div>
 
-          <ColorBars isActive={isActive} hasEntered={hasEntered} />
+              <ColorBars isActive={isActive} hasEntered={hasEntered} />
+            </>
+          )}
         </div>
-      </motion.div>
+      </div>
 
-      <ProfileInfo reducedMotion={false} />
+      <ProfileInfo />
 
       {/* 底部装饰性文字 */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.3, duration: 0.8 }}
-        className="md:col-span-12 md:row-start-2"
+      <div
+        className="md:col-span-12 md:row-start-2 pc-entry"
+        style={{ animation: 'pc-fade-in 0.8s ease-out 1.3s both' }}
       >
         <BottomTagline />
-      </motion.div>
+      </div>
     </div>
   )
 }
