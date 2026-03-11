@@ -50,29 +50,27 @@ function DecorativeShapes({ isActive, reducedMotion }: { isActive: boolean; redu
         animate={
           isActive
             ? { rotate: [0, 180], scale: 1.2, x: -20, y: -20 }
-            : undefined
+            : { rotate: 5, scale: 1.05, x: 0, y: 0 }
         }
         transition={
           isActive
             ? { duration: 0.6, ease: "easeInOut" }
-            : undefined
+            : { duration: 4, repeat: Number.POSITIVE_INFINITY, repeatType: "mirror", ease: "easeInOut" }
         }
         className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond"
-        style={!isActive ? { animation: "idle-sway 8s ease-in-out infinite" } : undefined}
       />
       <motion.div
         animate={
           isActive
             ? { rotate: [0, -180], scale: 1.3, x: 20, y: 20 }
-            : undefined
+            : { rotate: [0, -5, 5, 0], scale: 1, x: 0, y: 0 }
         }
         transition={
           isActive
             ? { duration: 0.6, ease: "easeInOut" }
-            : undefined
+            : { duration: 6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
         }
         className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle"
-        style={!isActive ? { animation: "idle-sway-reverse 6s ease-in-out infinite" } : undefined}
       />
     </>
   )
