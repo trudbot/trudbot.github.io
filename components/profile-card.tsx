@@ -120,7 +120,7 @@ function GlowEffects({ isActive }: { isActive: boolean }) {
       <motion.div
         animate={{
           boxShadow: isActive
-            ? `0 0 60px color-mix(in oklch, ${EFFECT_COLORS[0]} 60%, transparent), 0 0 100px color-mix(in oklch, ${EFFECT_COLORS[1]} 40%, transparent)`
+            ? `0 0 60px ${EFFECT_COLORS[0]}99, 0 0 100px ${EFFECT_COLORS[1]}66`
             : "0 0 0px transparent, 0 0 0px transparent",
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
