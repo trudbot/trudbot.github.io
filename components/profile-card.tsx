@@ -29,6 +29,12 @@ const EFFECT_COLORS = [
 const GLOW_GRADIENT = `conic-gradient(from 0deg, ${EFFECT_COLORS.join(", ")}, ${EFFECT_COLORS[0]})`
 const BORDER_GRADIENT = `conic-gradient(from 0deg, transparent 0deg, ${EFFECT_COLORS[0]} 90deg, transparent 180deg, ${EFFECT_COLORS[1]} 270deg, transparent 360deg)`
 
+// 预计算粒子扩散方向（固定 8 方向，避免每帧重复 cos/sin）
+const PARTICLE_DIRECTIONS = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+  const angle = (i * Math.PI * 2) / PARTICLE_COUNT
+  return { dx: Math.cos(angle) * PARTICLE_RADIUS, dy: Math.sin(angle) * PARTICLE_RADIUS }
+})
+
 // ─── DecorativeShapes ────────────────────────────────────────────────────────
 function DecorativeShapes({ isActive, reducedMotion }: { isActive: boolean; reducedMotion: boolean }) {
   if (reducedMotion) {
@@ -80,23 +86,26 @@ function DecorativeShapes({ isActive, reducedMotion }: { isActive: boolean; redu
 function GlowEffects({ isActive }: { isActive: boolean }) {
   return (
     <>
-      {/* 彩色光环 */}
-      <motion.div
-        animate={{
-          opacity: isActive ? [0, 0.6, 0] : 0,
-          scale: isActive ? [0.8, 1.3, 1.5] : 0.8,
-        }}
-        transition={{
-          duration: 2.5,
-          repeat: isActive ? Number.POSITIVE_INFINITY : 0,
-          ease: "easeOut",
-        }}
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: GLOW_GRADIENT,
-          filter: "blur(20px)",
-        }}
-      />
+      {/* 彩色光环 — idle 时不渲染，避免 blur(20px) 空耗 GPU 合成层 */}
+      {isActive && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: [0, 0.6, 0],
+            scale: [0.8, 1.3, 1.5],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeOut",
+          }}
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: GLOW_GRADIENT,
+            filter: "blur(20px)",
+          }}
+        />
+      )}
       {/* 旋转的彩色边框 */}
       <motion.div
         animate={{
@@ -114,23 +123,23 @@ function GlowEffects({ isActive }: { isActive: boolean }) {
         className="absolute -inset-2 rounded-full"
         style={{ background: BORDER_GRADIENT }}
       />
-      {/* 发光阴影 */}
-      <motion.div
-        animate={{
-          boxShadow: isActive
-            ? `0 0 60px ${EFFECT_COLORS[0]}99, 0 0 100px ${EFFECT_COLORS[1]}66`
-            : "0 0 0px transparent, 0 0 0px transparent",
-        }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="rounded-full"
-      >
+      {/* 发光阴影 — 用 opacity 控制预设阴影，避免每帧重绘 boxShadow */}
+      <div className="relative rounded-full">
+        <motion.div
+          animate={{ opacity: isActive ? 1 : 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="pointer-events-none absolute inset-0 rounded-full"
+          style={{
+            boxShadow: `0 0 60px ${EFFECT_COLORS[0]}99, 0 0 100px ${EFFECT_COLORS[1]}66`,
+          }}
+        />
         <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
           <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
           <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
             <AvatarFallbackSvg />
           </AvatarFallback>
         </Avatar>
-      </motion.div>
+      </div>
     </>
   )
 }
@@ -350,7 +359,7 @@ export function ProfileCard() {
     return () => clearTimeout(timer)
   }, [])
 
-  // 粒子动画循环
+  // 粒子动画循环（后台标签页自动暂停）
   useEffect(() => {
     if (reducedMotion) return
 
@@ -364,21 +373,36 @@ export function ProfileCard() {
       }
 
       while (isMounted && isParticleActive) {
+        // 标签页不可见时暂停，避免后台空耗
+        if (document.hidden) {
+          await new Promise<void>((resolve) => {
+            const onVisible = () => {
+              document.removeEventListener("visibilitychange", onVisible)
+              resolve()
+            }
+            document.addEventListener("visibilitychange", onVisible)
+          })
+          if (!isMounted) break
+        }
+
         try {
           const { x, y } = mousePos.current
           particleControls.set(() => ({ opacity: 0, scale: 0, x, y }))
 
-          await particleControls.start((i: number) => ({
-            opacity: [0, 1, 0],
-            scale: [0, 1, 0],
-            x: [x, x + Math.cos((i * Math.PI * 2) / PARTICLE_COUNT) * PARTICLE_RADIUS],
-            y: [y, y + Math.sin((i * Math.PI * 2) / PARTICLE_COUNT) * PARTICLE_RADIUS],
-            transition: {
-              duration: PARTICLE_DURATION,
-              delay: i * PARTICLE_STAGGER,
-              ease: "easeOut",
-            },
-          }))
+          await particleControls.start((i: number) => {
+            const { dx, dy } = PARTICLE_DIRECTIONS[i]
+            return {
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+              x: [x, x + dx],
+              y: [y, y + dy],
+              transition: {
+                duration: PARTICLE_DURATION,
+                delay: i * PARTICLE_STAGGER,
+                ease: "easeOut",
+              },
+            }
+          })
         } catch {
           break
         }
@@ -389,10 +413,15 @@ export function ProfileCard() {
     return () => { isMounted = false }
   }, [isParticleActive, particleControls, reducedMotion])
 
+  // 缓存头像区域 rect，避免 pointerMove 每帧触发同步布局
+  const cachedRectRef = useRef<DOMRect | null>(null)
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "touch") return
 
-    const rect = e.currentTarget.getBoundingClientRect()
+    if (!cachedRectRef.current) {
+      cachedRectRef.current = e.currentTarget.getBoundingClientRect()
+    }
+    const rect = cachedRectRef.current
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
     mousePos.current = {
@@ -425,6 +454,7 @@ export function ProfileCard() {
       mouseStopTimerRef.current = null
     }
     mousePos.current = { x: 0, y: 0 }
+    cachedRectRef.current = null // hover 离开时清除缓存，下次 hover 重新计算
   }, [])
 
   // ─── Reduced motion: static layout ──────────────────────────────────────
