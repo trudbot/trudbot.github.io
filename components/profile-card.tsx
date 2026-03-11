@@ -3,26 +3,44 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SocialLinks } from "@/components/social-links"
 import { motion, useAnimation } from "framer-motion"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 
 export function ProfileCard() {
   const [isAvatarHovered, setIsAvatarHovered] = useState(false)
   const [isBursting, setIsBursting] = useState(false)
+  // 桌面端：鼠标停止在头像内时才显示粒子
+  const [isMouseSettled, setIsMouseSettled] = useState(false)
   const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const mouseStopTimerRef = useRef<NodeJS.Timeout | null>(null)
   const mousePos = useRef({ x: 0, y: 0 })
   const particleControls = useAnimation()
 
-  // 复合状态：鼠标悬停 或 移动端点击触发的短期爆发
+  // 装饰特效（光环、旋转边框、几何形状等）：悬停或点击即触发
   const isActive = isAvatarHovered || isBursting
+  // 粒子动画：桌面端需要鼠标悬停且停止移动，移动端点击即触发
+  const isParticleActive = (isAvatarHovered && isMouseSettled) || isBursting
 
-  const handleTap = () => {
+  const avatarRef = useRef<HTMLDivElement>(null)
+
+  const handleTap = (_: unknown, info: { point: { x: number; y: number } }) => {
+    // 移动端点击时，将粒子中心设为点击位置
+    if (avatarRef.current) {
+      const rect = avatarRef.current.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      mousePos.current = {
+        x: info.point.x - centerX,
+        y: info.point.y - centerY,
+      }
+    }
+
     setIsBursting(true)
-    
+
     // 清除上一次的计时器，重新开始计秒
     if (burstTimeoutRef.current) {
       clearTimeout(burstTimeoutRef.current)
     }
-    
+
     // 3秒后自动恢复平静
     burstTimeoutRef.current = setTimeout(() => {
       setIsBursting(false)
@@ -35,6 +53,9 @@ export function ProfileCard() {
       if (burstTimeoutRef.current) {
         clearTimeout(burstTimeoutRef.current)
       }
+      if (mouseStopTimerRef.current) {
+        clearTimeout(mouseStopTimerRef.current)
+      }
     }
   }, [])
 
@@ -43,8 +64,9 @@ export function ProfileCard() {
     let isMounted = true
 
     const runParticles = async () => {
-      if (!isActive) {
+      if (!isParticleActive) {
         particleControls.stop()
+        particleControls.set({ opacity: 0, scale: 0, x: 0, y: 0 })
         return
       }
 
@@ -70,9 +92,12 @@ export function ProfileCard() {
     return () => {
       isMounted = false
     }
-  }, [isActive, particleControls])
+  }, [isParticleActive, particleControls])
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // 忽略 touch 事件，移动端由 handleTap 处理
+    if (e.pointerType === "touch") return
+
     const rect = e.currentTarget.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
@@ -80,7 +105,17 @@ export function ProfileCard() {
       x: e.clientX - centerX,
       y: e.clientY - centerY,
     }
-  }
+
+    // 鼠标还在移动，取消之前的"停止"判定，重新计时
+    setIsMouseSettled(false)
+    if (mouseStopTimerRef.current) {
+      clearTimeout(mouseStopTimerRef.current)
+    }
+    mouseStopTimerRef.current = setTimeout(() => {
+      // 鼠标停止移动 150ms 后，判定为停下
+      setIsMouseSettled(true)
+    }, 150)
+  }, [])
 
   return (
     <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
@@ -126,9 +161,14 @@ export function ProfileCard() {
           />
 
           <motion.div
+            ref={avatarRef}
             onHoverStart={() => setIsAvatarHovered(true)}
             onHoverEnd={() => {
               setIsAvatarHovered(false)
+              setIsMouseSettled(false)
+              if (mouseStopTimerRef.current) {
+                clearTimeout(mouseStopTimerRef.current)
+              }
               mousePos.current = { x: 0, y: 0 }
             }}
             onPointerMove={handlePointerMove}
