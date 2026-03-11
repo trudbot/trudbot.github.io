@@ -9,11 +9,6 @@ function ProfileInfo() {
       style={{ animation: 'pc-fade-up 0.8s ease-out 0.3s both' }}
     >
       <div className="relative mb-8">
-        <div
-          className="absolute -left-4 top-0 h-full w-2 origin-left bg-gradient-to-b from-primary via-accent to-secondary pc-entry"
-          style={{ animation: 'pc-scale-x 0.8s ease-out 0.5s both' }}
-        />
-
         <h1 className="font-handwriting text-6xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
           <span
             className="inline-block pc-entry"
@@ -23,15 +18,29 @@ function ProfileInfo() {
           </span>
         </h1>
 
+        {/* 名字下方的蜡笔色条 — 童趣梦境感 */}
         <div
-          className="absolute -right-8 top-1/3 h-16 w-16 bg-highlight/30 pc-entry"
-          style={{ animation: 'pc-pop 0.5s ease-out 1s both' }}
+          className="mt-3 flex items-center gap-1.5 pc-entry"
+          style={{ animation: 'pc-scale-x 0.6s ease-out 0.8s both', transformOrigin: 'left' }}
+        >
+          <div className="h-2 w-16 rounded-full" style={{ background: '#5CE0D8' }} />
+          <div className="h-2 w-10 rounded-full" style={{ background: '#FF8FAB' }} />
+          <div className="h-2 w-6 rounded-full" style={{ background: '#FFD166' }} />
+          <div className="h-2 w-2 rounded-full" style={{ background: '#A78BFA' }} />
+        </div>
+
+        <div
+          className="absolute -right-8 top-1/3 h-16 w-16 rounded-full pc-entry"
+          style={{ animation: 'pc-pop 0.5s ease-out 1s both', background: '#FFD16620' }}
         />
       </div>
 
       <div
-        className="relative mb-12 border-l-4 border-accent pl-6 pc-entry"
-        style={{ animation: 'pc-tilt-in 0.6s ease-out 0.9s both' }}
+        className="relative mb-12 pl-6 pc-entry"
+        style={{
+          animation: 'pc-tilt-in 0.6s ease-out 0.9s both',
+          borderLeft: '4px solid #5CE0D860',
+        }}
       >
         <BioContent />
       </div>
@@ -51,10 +60,10 @@ function BioContent() {
     <>
       <p className="text-pretty text-xl leading-relaxed text-muted-foreground md:text-2xl">Frontend Developer</p>
       <div className="mt-4 flex gap-2">
-        <div className="h-3 w-3 bg-primary" />
-        <div className="h-3 w-3 bg-accent" />
-        <div className="h-3 w-3 bg-secondary" />
-        <div className="h-3 w-3 bg-highlight" />
+        <div className="h-3 w-3 rounded-full" style={{ background: '#5CE0D8' }} />
+        <div className="h-3 w-3 rounded-full" style={{ background: '#FF8FAB' }} />
+        <div className="h-3 w-3 rounded-full" style={{ background: '#FFD166' }} />
+        <div className="h-3 w-3 rounded-full" style={{ background: '#A78BFA' }} />
       </div>
     </>
   )
