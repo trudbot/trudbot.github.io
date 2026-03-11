@@ -10,6 +10,7 @@ export function ProfileCard() {
   const [isBursting, setIsBursting] = useState(false)
   // 桌面端：鼠标停止在头像内时才显示粒子
   const [isMouseSettled, setIsMouseSettled] = useState(false)
+  const [hasEntered, setHasEntered] = useState(false)
   const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const mouseStopTimerRef = useRef<NodeJS.Timeout | null>(null)
   const mousePos = useRef({ x: 0, y: 0 })
@@ -22,7 +23,7 @@ export function ProfileCard() {
 
   const avatarRef = useRef<HTMLDivElement>(null)
 
-  const handleTap = (_: unknown, info: { point: { x: number; y: number } }) => {
+  const handleTap = useCallback((_: unknown, info: { point: { x: number; y: number } }) => {
     // 移动端点击时，将粒子中心设为点击位置
     if (avatarRef.current) {
       const rect = avatarRef.current.getBoundingClientRect()
@@ -45,7 +46,7 @@ export function ProfileCard() {
     burstTimeoutRef.current = setTimeout(() => {
       setIsBursting(false)
     }, 3000)
-  }
+  }, [])
 
   // 组件卸载时清理定时器防止内存泄漏
   useEffect(() => {
@@ -59,6 +60,12 @@ export function ProfileCard() {
     }
   }, [])
 
+  // 入场动画完成后标记，后续交互不再使用 delay
+  useEffect(() => {
+    const timer = setTimeout(() => setHasEntered(true), 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
   // 粒子动画循环
   useEffect(() => {
     let isMounted = true
@@ -70,20 +77,24 @@ export function ProfileCard() {
         return
       }
 
-      while (isMounted) {
-        const { x, y } = mousePos.current
+      while (isMounted && isParticleActive) {
+        try {
+          const { x, y } = mousePos.current
 
-        await particleControls.start((i) => ({
-          opacity: [0, 1, 0],
-          scale: [0, 1, 0],
-          x: [x, x + Math.cos((i * Math.PI * 2) / 8) * 150],
-          y: [y, y + Math.sin((i * Math.PI * 2) / 8) * 150],
-          transition: {
-            duration: 1.5,
-            delay: i * 0.1,
-            ease: "easeOut",
-          },
-        }))
+          await particleControls.start((i) => ({
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0],
+            x: [x, x + Math.cos((i * Math.PI * 2) / 8) * 150],
+            y: [y, y + Math.sin((i * Math.PI * 2) / 8) * 150],
+            transition: {
+              duration: 1.5,
+              delay: i * 0.1,
+              ease: "easeOut",
+            },
+          }))
+        } catch {
+          break
+        }
       }
     }
 
@@ -206,27 +217,31 @@ export function ProfileCard() {
             <motion.div
               animate={{
                 rotate: isActive ? [0, 360] : 0,
+                opacity: isActive ? 0.8 : 0,
               }}
               transition={{
                 duration: 2,
                 repeat: isActive ? Number.POSITIVE_INFINITY : 0,
                 ease: "linear",
               }}
-              className="absolute -inset-2 rounded-full opacity-0"
+              className="absolute -inset-2 rounded-full"
               style={{
                 background:
                   "conic-gradient(from 0deg, transparent 0deg, #00d4ff 90deg, transparent 180deg, #ff00ff 270deg, transparent 360deg)",
-                opacity: isActive ? 0.8 : 0,
               }}
             />
 
-            <Avatar
-              className="relative h-48 w-48 border-8 border-background shadow-2xl transition-shadow duration-300 md:h-64 md:w-64"
-              style={{
+            <motion.div
+              animate={{
                 boxShadow: isActive
                   ? "0 0 60px rgba(0, 212, 255, 0.6), 0 0 100px rgba(255, 0, 255, 0.4)"
-                  : undefined,
+                  : "0 0 0px rgba(0, 212, 255, 0), 0 0 0px rgba(255, 0, 255, 0)",
               }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="rounded-full"
+            >
+            <Avatar
+              className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64"
             >
               <AvatarImage src="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg" alt="trudbot" />
               <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
@@ -254,6 +269,7 @@ export function ProfileCard() {
                 </svg>
               </AvatarFallback>
             </Avatar>
+            </motion.div>
 
             {/* 悬停时出现的粒子效果 */}
             {[...Array(8)].map((_, i) => (
@@ -277,7 +293,7 @@ export function ProfileCard() {
               animate={{
                 width: isActive ? "6rem" : "4rem",
               }}
-              transition={{ delay: 0.5, duration: 0.6 }}
+              transition={{ delay: hasEntered ? 0 : 0.5, duration: 0.6 }}
               className="h-1 bg-primary"
             />
             <motion.div
@@ -285,7 +301,7 @@ export function ProfileCard() {
               animate={{
                 width: isActive ? "8rem" : "6rem",
               }}
-              transition={{ delay: 0.7, duration: 0.6 }}
+              transition={{ delay: hasEntered ? 0 : 0.7, duration: 0.6 }}
               className="h-1 bg-accent"
             />
             <motion.div
@@ -293,7 +309,7 @@ export function ProfileCard() {
               animate={{
                 width: isActive ? "5rem" : "3rem",
               }}
-              transition={{ delay: 0.9, duration: 0.6 }}
+              transition={{ delay: hasEntered ? 0 : 0.9, duration: 0.6 }}
               className="h-1 bg-secondary"
             />
           </div>
