@@ -1,8 +1,10 @@
 "use client"
 import { useState, useMemo, useEffect } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
 
-// Custom hook for window size to replace useWindowSize
+// Lightweight QR Code using external API - zero bundle size for QR generation
+// Using quickchart.io - free, reliable, returns PNG
+
+// Custom hook for window size
 function useWindowSize() {
   const [size, setSize] = useState({ width: 0, height: 0 })
   useEffect(() => {
@@ -16,10 +18,10 @@ function useWindowSize() {
   return size
 }
 
-// Custom hook for clipboard to replace useClipboard
+// Custom hook for clipboard
 function useClipboard() {
   const [copied, setCopied] = useState(false)
-  
+
   useEffect(() => {
     if (copied) {
       const timer = setTimeout(() => setCopied(false), 2000)
@@ -33,7 +35,6 @@ function useClipboard() {
         await navigator.clipboard.writeText(text)
         setCopied(true)
       } else {
-        // Fallback
         const textarea = document.createElement('textarea')
         textarea.value = text
         document.body.appendChild(textarea)
@@ -50,12 +51,53 @@ function useClipboard() {
   return { copy, copied }
 }
 
-export default function TextSharePage() {
+// Lightweight QR Image component
+function QRCodeImg({ value, size }: { value: string; size: number }) {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  // Generate QR code URL - using quickchart.io free API
+  const qrUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      text: value,
+      size: size.toString(),
+      format: 'png',
+      margin: '1',
+      errorCorrectionLevel: 'L',
+    })
+    return `https://quickchart.io/qr?${params.toString()}`
+  }, [value, size])
+
+  return (
+    <div className="text-share-qr-card">
+      {loading && !error && (
+        <div className="text-share-qr-loading">生成二维码中...</div>
+      )}
+      {error ? (
+        <div className="text-share-qr-error">生成失败</div>
+      ) : (
+        <img
+          src={qrUrl}
+          alt="QR Code"
+          width={size}
+          height={size}
+          className="text-share-qrcode"
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setLoading(false)
+            setError(true)
+          }}
+        />
+      )}
+      {!error && <p className="text-share-hint">手机扫码查看</p>}
+    </div>
+  )
+}
+
+export default function SharePage() {
   const [inputText, setInputText] = useState('')
-  const [isReceiverMode, setIsReceiverMode] = useState(false)
-  const [receivedContent, setReceivedContent] = useState('')
   const [currentOrigin, setCurrentOrigin] = useState('')
-  
+
   const { width } = useWindowSize()
   const { copy, copied } = useClipboard()
 
@@ -65,147 +107,63 @@ export default function TextSharePage() {
     if (len > 800) size = 320
     else if (len > 400) size = 280
     else if (len > 150) size = 240
-    
-    // Server-side rendering safe-guard
-    if (width === 0) return size 
-    
-    // Responsive constraint
+
+    if (width === 0) return size
+
     const maxScreenSize = Math.min(width - 60, 400)
     return Math.min(size, maxScreenSize)
   }, [inputText.length, width])
 
   const shareUrl = useMemo(() => {
     if (!inputText) return ''
-    return `${currentOrigin}#share=${encodeURIComponent(inputText)}`
+    const encoded = encodeURIComponent(inputText)
+    return `${currentOrigin}/r?content=${encoded}`
   }, [inputText, currentOrigin])
 
-  // Initial check and hash change listener
   useEffect(() => {
     setCurrentOrigin(window.location.origin + window.location.pathname)
-
-    const checkHash = () => {
-      const hash = window.location.hash
-      if (hash.startsWith('#share=')) {
-        try {
-          const content = decodeURIComponent(hash.substring(7))
-          if (content) {
-            setReceivedContent(content)
-            setIsReceiverMode(true)
-          }
-        } catch (e) {
-          console.error('Failed to decode content', e)
-        }
-      }
-    }
-
-    checkHash()
-    window.addEventListener('hashchange', checkHash)
-    return () => window.removeEventListener('hashchange', checkHash)
   }, [])
-
-  const reset = () => {
-    setIsReceiverMode(false)
-    setReceivedContent('')
-    setInputText('')
-    if (typeof window !== 'undefined') {
-      history.pushState("", document.title, window.location.pathname + window.location.search)
-    }
-  }
-
-  const isUrl = (text: string) => {
-    try {
-      new URL(text)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  const openInNewTab = () => {
-    if (isUrl(receivedContent)) {
-      window.open(receivedContent, '_blank')
-    }
-  }
 
   return (
     <main className="text-share-container">
       <div className="text-share-card">
-        {/* Header */}
         <div className="text-share-header">
-          <h2 className="text-share-title">
-            {isReceiverMode ? '📦 收到分享内容' : '🔗 文本/链接分享'}
-          </h2>
-          {isReceiverMode && (
-            <button className="text-share-btn-text" onClick={reset}>
-              ← 返回生成
-            </button>
-          )}
+          <h2 className="text-share-title">🔗 文本/链接分享</h2>
         </div>
 
-        {/* Receiver Mode */}
-        {isReceiverMode ? (
-          <div className="text-share-section fade-in">
-            <div className="text-share-result-box">
-              <div className="text-share-content">{receivedContent}</div>
-            </div>
-            <div className="text-share-actions">
-              <button 
-                className={`text-share-btn primary ${copied ? 'success' : ''}`}
-                onClick={() => copy(receivedContent)}
-              >
-                {copied ? '✅ 已复制' : '复制内容'}
-              </button>
-              {isUrl(receivedContent) && (
-                <button className="text-share-btn outline" onClick={openInNewTab}>
-                  打开链接
-                </button>
-              )}
+        <div className="text-share-section fade-in">
+          <div className="text-share-input-wrapper">
+            <textarea
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              className="text-share-input-area"
+              placeholder="在此输入要分享的文本或长链接..."
+              rows={5}
+            ></textarea>
+            <div className={`text-share-char-count ${inputText.length > 1000 ? 'warning' : ''}`}>
+              {inputText.length} 字符
             </div>
           </div>
-        ) : (
-          /* Generator Mode */
-          <div className="text-share-section fade-in">
-            <div className="text-share-input-wrapper">
-              <textarea
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                className="text-share-input-area"
-                placeholder="在此输入要分享的文本或长链接..."
-                rows={5}
-              ></textarea>
-              <div className={`text-share-char-count ${inputText.length > 1000 ? 'warning' : ''}`}>
-                {inputText.length} 字符
-              </div>
-            </div>
 
-            {inputText ? (
-              <div className="text-share-preview">
-                <div className="text-share-qr-card">
-                  <QRCodeSVG
-                    value={shareUrl}
-                    size={qrSize}
-                    level="L"
-                    className="text-share-qrcode"
-                  />
-                  <p className="text-share-hint">手机扫码查看</p>
-                </div>
-      
-                <div className="text-share-actions">
-                  <button 
-                    className={`text-share-btn outline full-width ${copied ? 'success' : ''}`}
-                    onClick={() => copy(shareUrl)}
-                  >
-                    {copied ? '✅ 链接已复制' : '复制分享链接'}
-                  </button>
-                </div>
+          {inputText ? (
+            <div className="text-share-preview">
+              <QRCodeImg value={shareUrl} size={qrSize} />
+
+              <div className="text-share-actions">
+                <button
+                  className={`text-share-btn outline full-width ${copied ? 'success' : ''}`}
+                  onClick={() => copy(shareUrl)}
+                >
+                  {copied ? '✅ 链接已复制' : '复制分享链接'}
+                </button>
               </div>
-            ) : (
-              <div className="text-share-empty">
-                <p>输入内容后自动生成二维码</p>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="text-share-empty">
+              <p>输入内容后自动生成二维码</p>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   )
