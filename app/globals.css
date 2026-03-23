@@ -5,32 +5,32 @@
 
 :root {
   /* 清新的米白色背景 */
-  --background: oklch(0.98 0.01 85);
-  --foreground: oklch(0.2 0.02 280);
+  --background: rgb(251 248 241);
+  --foreground: rgb(20 21 31);
 
   /* 多彩但协调的主色调 */
-  --primary: oklch(0.55 0.18 160); /* 清新的青绿色 */
-  --primary-foreground: oklch(0.98 0.01 85);
+  --primary: rgb(0 143 74); /* 清新的青绿色 */
+  --primary-foreground: rgb(251 248 241);
 
-  --secondary: oklch(0.65 0.15 45); /* 温暖的珊瑚橙 */
-  --secondary-foreground: oklch(0.98 0.01 85);
+  --secondary: rgb(216 109 56); /* 温暖的珊瑚橙 */
+  --secondary-foreground: rgb(251 248 241);
 
-  --accent: oklch(0.7 0.16 280); /* 柔和的蓝紫色 */
-  --accent-foreground: oklch(0.98 0.01 85);
+  --accent: rgb(141 144 255); /* 柔和的蓝紫色 */
+  --accent-foreground: rgb(251 248 241);
 
-  --highlight: oklch(0.75 0.14 85); /* 明亮的黄色调 */
-  --highlight-foreground: oklch(0.25 0.02 280);
+  --highlight: rgb(214 166 46); /* 明亮的黄色调 */
+  --highlight-foreground: rgb(32 33 43);
 
   /* 中性色 */
-  --muted: oklch(0.94 0.01 85);
-  --muted-foreground: oklch(0.5 0.02 280);
+  --muted: rgb(238 235 228);
+  --muted-foreground: rgb(97 98 111);
 
-  --card: oklch(0.99 0.005 85);
-  --card-foreground: oklch(0.2 0.02 280);
+  --card: rgb(253 252 248);
+  --card-foreground: rgb(20 21 31);
 
-  --border: oklch(0.88 0.02 85);
-  --input: oklch(0.88 0.02 85);
-  --ring: oklch(0.55 0.18 160);
+  --border: rgb(221 215 201);
+  --input: rgb(221 215 201);
+  --ring: rgb(0 143 74);
 
   /* 装饰特效色 */
   --effect-cyan: #00d4ff;
@@ -39,41 +39,41 @@
   --effect-green: #00ff00;
 
   --radius: 1.5rem;
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: rgb(255 255 255);
+  --sidebar-foreground: rgb(10 10 10);
+  --sidebar-primary: rgb(23 23 23);
+  --sidebar-primary-foreground: rgb(250 250 250);
+  --sidebar-accent: rgb(245 245 245);
+  --sidebar-accent-foreground: rgb(23 23 23);
+  --sidebar-border: rgb(229 229 229);
+  --sidebar-ring: rgb(161 161 161);
 }
 
 .dark {
-  --background: oklch(0.15 0.02 280);
-  --foreground: oklch(0.95 0.01 85);
+  --background: rgb(9 10 19);
+  --foreground: rgb(241 238 231);
 
-  --primary: oklch(0.6 0.18 160);
-  --primary-foreground: oklch(0.15 0.02 280);
+  --primary: rgb(0 159 89);
+  --primary-foreground: rgb(9 10 19);
 
-  --secondary: oklch(0.7 0.15 45);
-  --secondary-foreground: oklch(0.15 0.02 280);
+  --secondary: rgb(233 124 72);
+  --secondary-foreground: rgb(9 10 19);
 
-  --accent: oklch(0.75 0.16 280);
-  --accent-foreground: oklch(0.15 0.02 280);
+  --accent: rgb(155 160 255);
+  --accent-foreground: rgb(9 10 19);
 
-  --highlight: oklch(0.8 0.14 85);
-  --highlight-foreground: oklch(0.15 0.02 280);
+  --highlight: rgb(231 182 67);
+  --highlight-foreground: rgb(9 10 19);
 
-  --muted: oklch(0.25 0.02 280);
-  --muted-foreground: oklch(0.6 0.02 280);
+  --muted: rgb(32 33 43);
+  --muted-foreground: rgb(125 127 140);
 
-  --card: oklch(0.18 0.02 280);
-  --card-foreground: oklch(0.95 0.01 85);
+  --card: rgb(16 17 26);
+  --card-foreground: rgb(241 238 231);
 
-  --border: oklch(0.3 0.02 280);
-  --input: oklch(0.3 0.02 280);
-  --ring: oklch(0.6 0.18 160);
+  --border: rgb(44 45 56);
+  --input: rgb(44 45 56);
+  --ring: rgb(0 159 89);
 
   /* 装饰特效色 */
   --effect-cyan: #00d4ff;
@@ -81,14 +81,14 @@
   --effect-yellow: #ffff00;
   --effect-green: #00ff00;
 
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar: rgb(23 23 23);
+  --sidebar-foreground: rgb(250 250 250);
+  --sidebar-primary: rgb(20 71 230);
+  --sidebar-primary-foreground: rgb(250 250 250);
+  --sidebar-accent: rgb(38 38 38);
+  --sidebar-accent-foreground: rgb(250 250 250);
+  --sidebar-border: rgb(38 38 38);
+  --sidebar-ring: rgb(82 82 82);
 }
 
 @theme inline {
