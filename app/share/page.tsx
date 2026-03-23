@@ -79,6 +79,7 @@ function QRCodeImg({ value, size }: { value: string; size: number }) {
         <img
           src={qrUrl}
           alt="QR Code"
+          crossOrigin="anonymous"
           width={size}
           height={size}
           className="text-share-qrcode"

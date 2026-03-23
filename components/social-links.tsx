@@ -75,6 +75,7 @@ export function SocialLinks() {
                 fill
                 className="object-contain"
                 unoptimized
+                crossOrigin="anonymous"
               />
             </div>
             <span className="sr-only">{link.name}</span>
