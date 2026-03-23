@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Caveat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import GlobalScripts from "@/components/global-scripts"
 import "./globals.css"
 // mobile.css 已移除，页面特定样式应在各自页面目录中导入
 
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${caveat.variable}`}>
         <Suspense fallback={null}>{children}</Suspense>
+        <GlobalScripts />
         <Analytics />
       </body>
     </html>
