@@ -12,20 +12,21 @@ interface ShatterConfig {
 const DEFAULT_CONFIG: ShatterConfig = {
   crackDuration: 300,
   fallDuration: 2000,
-  thickness: 3,
+  thickness: 5,
   gravity: 2500,
   origin: { x: 0, y: 0 },
 }
 
 /**
  * Run the crack animation phase using Canvas2D overlay.
- * Progressively draws Voronoi edges from center outward.
+ * Progressively draws Voronoi edges from center outward with a glass-like effect.
  */
 export function runCrackPhase(
   edges: VoronoiEdge[],
   width: number,
   height: number,
   duration: number,
+  origin?: { x: number; y: number },
 ): Promise<HTMLCanvasElement> {
   return new Promise((resolve) => {
     const dpr = Math.min(window.devicePixelRatio, 2)
@@ -40,8 +41,16 @@ export function runCrackPhase(
     const ctx = canvas.getContext("2d")!
     ctx.scale(dpr, dpr)
 
+    const ox = origin?.x ?? width / 2
+    const oy = origin?.y ?? height / 2
     const maxDist = edges.length > 0 ? edges[edges.length - 1].distanceFromOrigin : 1
     const startTime = performance.now()
+
+    // Pre-compute stable jitter per edge so cracks don't flicker
+    const edgeJitter = edges.map(() => ({
+      mx: (Math.random() - 0.5) * 3,
+      my: (Math.random() - 0.5) * 3,
+    }))
 
     function drawFrame() {
       const elapsed = performance.now() - startTime
@@ -49,33 +58,60 @@ export function runCrackPhase(
 
       ctx.clearRect(0, 0, width, height)
 
-      // Draw cracks with glow
-      ctx.save()
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.7)"
-      ctx.shadowColor = "rgba(255, 255, 255, 0.9)"
-      ctx.shadowBlur = 4
-      ctx.lineWidth = 1.5
-
       const targetDist = progress * maxDist
 
+      // Impact flash — radial burst at origin, fades quickly
+      const flashIntensity = Math.max(0, 1 - progress * 3)
+      if (flashIntensity > 0) {
+        const gradient = ctx.createRadialGradient(ox, oy, 0, ox, oy, maxDist * 0.35)
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${0.7 * flashIntensity})`)
+        gradient.addColorStop(0.25, `rgba(210, 235, 255, ${0.35 * flashIntensity})`)
+        gradient.addColorStop(1, "rgba(180, 220, 255, 0)")
+        ctx.fillStyle = gradient
+        ctx.fillRect(0, 0, width, height)
+      }
+
+      // Layer 1: Wide outer glow (soft cyan)
+      ctx.save()
+      ctx.strokeStyle = "rgba(120, 190, 255, 0.12)"
+      ctx.shadowColor = "rgba(80, 160, 255, 0.5)"
+      ctx.shadowBlur = 16
+      ctx.lineWidth = 5
       for (const edge of edges) {
         if (edge.distanceFromOrigin > targetDist) break
+        ctx.beginPath()
+        ctx.moveTo(edge.from[0], edge.from[1])
+        ctx.lineTo(edge.to[0], edge.to[1])
+        ctx.stroke()
+      }
+      ctx.restore()
 
-        // Jitter edge for natural crack look
-        const midX = (edge.from[0] + edge.to[0]) / 2 + (Math.random() - 0.5) * 3
-        const midY = (edge.from[1] + edge.to[1]) / 2 + (Math.random() - 0.5) * 3
-
+      // Layer 2: Blue-white mid glow
+      ctx.save()
+      ctx.strokeStyle = "rgba(200, 230, 255, 0.55)"
+      ctx.shadowColor = "rgba(160, 210, 255, 0.7)"
+      ctx.shadowBlur = 6
+      ctx.lineWidth = 2
+      for (let i = 0; i < edges.length; i++) {
+        const edge = edges[i]
+        if (edge.distanceFromOrigin > targetDist) break
+        const j = edgeJitter[i]
+        const midX = (edge.from[0] + edge.to[0]) / 2 + j.mx
+        const midY = (edge.from[1] + edge.to[1]) / 2 + j.my
         ctx.beginPath()
         ctx.moveTo(edge.from[0], edge.from[1])
         ctx.lineTo(midX, midY)
         ctx.lineTo(edge.to[0], edge.to[1])
         ctx.stroke()
       }
+      ctx.restore()
 
-      // Secondary finer cracks
-      ctx.strokeStyle = "rgba(200, 220, 255, 0.3)"
+      // Layer 3: Bright white core (thin, sharp)
+      ctx.save()
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.95)"
+      ctx.shadowColor = "rgba(255, 255, 255, 0.6)"
       ctx.shadowBlur = 2
-      ctx.lineWidth = 0.5
+      ctx.lineWidth = 0.8
       for (const edge of edges) {
         if (edge.distanceFromOrigin > targetDist) break
         ctx.beginPath()
@@ -83,7 +119,25 @@ export function runCrackPhase(
         ctx.lineTo(edge.to[0], edge.to[1])
         ctx.stroke()
       }
+      ctx.restore()
 
+      // Sparkle points at crack vertices
+      ctx.save()
+      for (let i = 0; i < edges.length; i++) {
+        const edge = edges[i]
+        if (edge.distanceFromOrigin > targetDist) break
+        // Only sparkle near the crack front for a spreading-light feel
+        if (edge.distanceFromOrigin > targetDist * 0.85) {
+          const sx = edge.to[0]
+          const sy = edge.to[1]
+          const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 4)
+          sg.addColorStop(0, "rgba(255, 255, 255, 0.9)")
+          sg.addColorStop(0.5, "rgba(200, 230, 255, 0.4)")
+          sg.addColorStop(1, "rgba(160, 210, 255, 0)")
+          ctx.fillStyle = sg
+          ctx.fillRect(sx - 4, sy - 4, 8, 8)
+        }
+      }
       ctx.restore()
 
       if (progress < 1) {
@@ -97,8 +151,16 @@ export function runCrackPhase(
   })
 }
 
+interface FragmentData {
+  group: THREE.Group
+  frontMaterial: THREE.MeshBasicMaterial
+  sideMaterial: THREE.MeshBasicMaterial
+  edgeMaterial: THREE.LineBasicMaterial
+  state: FragmentState
+}
+
 /**
- * Build Three.js fragment meshes from Voronoi cells.
+ * Build Three.js fragment meshes from Voronoi cells with glass-like materials.
  */
 function buildFragments(
   cells: VoronoiCell[],
@@ -106,8 +168,8 @@ function buildFragments(
   width: number,
   height: number,
   config: ShatterConfig,
-): { mesh: THREE.Mesh; state: FragmentState }[] {
-  const fragments: { mesh: THREE.Mesh; state: FragmentState }[] = []
+): FragmentData[] {
+  const fragments: FragmentData[] = []
 
   for (const cell of cells) {
     const { vertices, centroid } = cell
@@ -134,15 +196,14 @@ function buildFragments(
     const uvAttr = geometry.getAttribute("uv")
     const posAttr = geometry.getAttribute("position")
     for (let i = 0; i < uvAttr.count; i++) {
-      // Position is relative to centroid, convert back to absolute pixel coords
       const px = posAttr.getX(i) + centroid[0]
-      const py = -posAttr.getY(i) + centroid[1] // flip Y back
+      const py = -posAttr.getY(i) + centroid[1]
       uvAttr.setX(i, px / width)
       uvAttr.setY(i, 1 - py / height)
     }
     uvAttr.needsUpdate = true
 
-    // Materials: front/back with texture, sides with dark color
+    // Glass-like materials
     const frontMaterial = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
@@ -151,13 +212,30 @@ function buildFragments(
     })
 
     const sideMaterial = new THREE.MeshBasicMaterial({
-      color: 0x1a1a2e,
+      color: 0x9ecfff,
       transparent: true,
+      opacity: 0.55,
       depthWrite: false,
     })
 
     const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial])
-    mesh.position.set(centroid[0], -centroid[1], 0)
+
+    // Glass edge highlight — bright lines along fragment edges
+    const edgeGeometry = new THREE.EdgesGeometry(geometry)
+    const edgeMaterial = new THREE.LineBasicMaterial({
+      color: 0xddeeff,
+      transparent: true,
+      opacity: 0.5,
+      linewidth: 1,
+    })
+    const edgeLines = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+
+    // Group mesh + edge lines so they transform together
+    const group = new THREE.Group()
+    group.add(mesh)
+    group.add(edgeLines)
+    group.position.set(centroid[0], -centroid[1], 0)
+    mesh.position.set(0, 0, 0)
 
     // Compute physics state
     const dx = centroid[0] - config.origin.x
@@ -180,7 +258,7 @@ function buildFragments(
       delay: dist * 0.0003 + Math.random() * 0.05,
     }
 
-    fragments.push({ mesh, state })
+    fragments.push({ group, frontMaterial, sideMaterial, edgeMaterial, state })
   }
 
   return fragments
@@ -224,8 +302,8 @@ export function runShatterPhase(
 
     // Build fragments
     const fragments = buildFragments(cells, texture, width, height, config)
-    for (const { mesh } of fragments) {
-      scene.add(mesh)
+    for (const { group } of fragments) {
+      scene.add(group)
     }
 
     // Render initial frame (fragments in original positions)
@@ -245,11 +323,12 @@ export function runShatterPhase(
 
     function animate() {
       const now = performance.now()
-      const elapsed = (now - startTime) / 1000 // seconds
+      const elapsed = (now - startTime) / 1000
       let allDone = true
 
-      for (const { mesh, state } of fragments) {
-        if (!mesh.visible) continue
+      for (const frag of fragments) {
+        const { group, frontMaterial, sideMaterial, edgeMaterial, state } = frag
+        if (!group.visible) continue
 
         const t = elapsed - state.delay
         if (t < 0) {
@@ -257,41 +336,46 @@ export function runShatterPhase(
           continue
         }
 
-        const dt = 1 / 60 // Fixed timestep for consistency
+        const dt = 1 / 60
 
-        // Apply gravity (positive Y is up in Three.js, but screen Y is down)
+        // Apply gravity
         state.velocity[1] -= config.gravity * dt
 
         // Update position
-        mesh.position.x += state.velocity[0] * dt
-        mesh.position.y += state.velocity[1] * dt
-        mesh.position.z += state.velocity[2] * dt
+        group.position.x += state.velocity[0] * dt
+        group.position.y += state.velocity[1] * dt
+        group.position.z += state.velocity[2] * dt
 
         // Update rotation
-        mesh.rotation.x += state.angularVelocity[0] * dt
-        mesh.rotation.y += state.angularVelocity[1] * dt
-        mesh.rotation.z += state.angularVelocity[2] * dt
+        group.rotation.x += state.angularVelocity[0] * dt
+        group.rotation.y += state.angularVelocity[1] * dt
+        group.rotation.z += state.angularVelocity[2] * dt
+
+        // Glass glint — brief brightness boost when fragment faces camera
+        const facingFactor = Math.abs(Math.cos(group.rotation.x) * Math.cos(group.rotation.y))
+        const glint = Math.pow(facingFactor, 6)
+        edgeMaterial.opacity = 0.3 + glint * 0.5
+        sideMaterial.opacity = 0.4 + glint * 0.35
 
         // Fade out: start after 50% of fall duration
         const fadeStart = config.fallDuration * 0.5 / 1000
         const fadeDuration = config.fallDuration * 0.5 / 1000
         if (t > fadeStart) {
           const opacity = Math.max(0, 1 - (t - fadeStart) / fadeDuration)
-          const materials = mesh.material as THREE.MeshBasicMaterial[]
-          for (const mat of materials) {
-            mat.opacity = opacity
-          }
+          frontMaterial.opacity = opacity
+          sideMaterial.opacity = (0.4 + glint * 0.35) * opacity
+          edgeMaterial.opacity = (0.3 + glint * 0.5) * opacity
 
           if (opacity <= 0) {
-            mesh.visible = false
+            group.visible = false
             completedCount++
             continue
           }
         }
 
-        // Also remove if way off screen
-        if (mesh.position.y < -(height + 500) || Math.abs(mesh.position.x) > width * 3) {
-          mesh.visible = false
+        // Remove if way off screen
+        if (group.position.y < -(height + 500) || Math.abs(group.position.x) > width * 3) {
+          group.visible = false
           completedCount++
           continue
         }
@@ -302,7 +386,6 @@ export function runShatterPhase(
       renderer.render(scene, camera)
 
       if (allDone || completedCount >= totalFragments) {
-        // Cleanup
         cancelAnimationFrame(animFrameId)
         cleanup(scene, renderer, texture, glCanvas)
         resolve()
@@ -311,7 +394,6 @@ export function runShatterPhase(
       }
     }
 
-    // Small delay to ensure the initial frame is visible before animation starts
     requestAnimationFrame(() => {
       animFrameId = requestAnimationFrame(animate)
     })
@@ -328,9 +410,11 @@ function cleanup(
     if (obj instanceof THREE.Mesh) {
       obj.geometry.dispose()
       const materials = Array.isArray(obj.material) ? obj.material : [obj.material]
-      for (const mat of materials) {
-        mat.dispose()
-      }
+      for (const mat of materials) mat.dispose()
+    }
+    if (obj instanceof THREE.LineSegments) {
+      obj.geometry.dispose()
+      ;(obj.material as THREE.Material).dispose()
     }
   })
 

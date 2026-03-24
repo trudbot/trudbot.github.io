@@ -53,5 +53,13 @@ tools.push(defineTool({
     }
 }));
 
-tools.push()
+tools.push(defineTool({
+    name: "shatter",
+    description: "触发页面玻璃碎裂特效",
+    input: z.object({}),
+    async execute() {
+        const { triggerShatter } = await import("@/lib/glass-shatter");
+        await triggerShatter();
+    }
+}))
 

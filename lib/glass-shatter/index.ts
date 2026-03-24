@@ -23,6 +23,7 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
     const height = window.innerHeight
     const origin = options?.origin ?? { x: width / 2, y: height / 2 }
     const fragmentCount = options?.fragmentCount ?? 100
+    const scale = Math.min(window.devicePixelRatio, 2)
 
     // Dynamic imports — all loaded in parallel
     const [snapdomModule, voronoiModule, engineModule] = await Promise.all([
@@ -32,13 +33,38 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
     ])
 
     // Capture page screenshot using snapdom
-    const screenshot = await snapdomModule.snapdom.toCanvas(document.body, {
-      scale: Math.min(window.devicePixelRatio, 2),
+    const fullScreenshot = await snapdomModule.snapdom.toCanvas(document.body, {
+      scale,
       fast: true,
       placeholders: true,
       filter: (el: Element) =>
         el.id !== "shatter-overlay" && el.id !== "shatter-crack-overlay",
     })
+
+    // Crop to viewport only — snapdom captures the full body which may be
+    // taller than the viewport, causing UV mapping to sample blank areas.
+    const croppedCanvas = document.createElement("canvas")
+    croppedCanvas.width = width * scale
+    croppedCanvas.height = height * scale
+    const cropCtx = croppedCanvas.getContext("2d")!
+    cropCtx.drawImage(
+      fullScreenshot,
+      0, window.scrollY * scale,
+      width * scale, height * scale,
+      0, 0,
+      width * scale, height * scale,
+    )
+
+    // Freeze the page: overlay the static screenshot so that ongoing CSS
+    // animations (e.g. FloatingShapes) don't cause a visual jump when
+    // transitioning from the crack phase to the shatter phase.
+    const freezeLayer = document.createElement("canvas")
+    freezeLayer.id = "shatter-freeze-layer"
+    freezeLayer.width = croppedCanvas.width
+    freezeLayer.height = croppedCanvas.height
+    freezeLayer.style.cssText = "position:fixed;inset:0;z-index:99997;width:100vw;height:100vh;"
+    freezeLayer.getContext("2d")!.drawImage(croppedCanvas, 0, 0)
+    document.body.appendChild(freezeLayer)
 
     // Generate Voronoi tessellation
     const { cells, edges } = voronoiModule.generateVoronoiCells(
@@ -54,11 +80,12 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
       width,
       height,
       options?.crackDuration ?? 300,
+      origin,
     )
 
     // Create Three.js canvas overlay
     const { CanvasTexture, LinearFilter } = await import("three")
-    const texture = new CanvasTexture(screenshot)
+    const texture = new CanvasTexture(croppedCanvas)
     texture.minFilter = LinearFilter
     texture.magFilter = LinearFilter
 
@@ -69,6 +96,7 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
 
     // Phase 2: Shatter animation (removes crack canvas internally)
     crackCanvas.remove()
+    freezeLayer.remove()
     await engineModule.runShatterPhase(glCanvas, texture, cells, {
       ...options,
       origin,
