@@ -31,7 +31,7 @@ export const tools = [
 
 tools.push(defineTool({
     name: "navigate",
-    description: "用于跳转到trudbot的其他社媒主页",
+    description: "Navigate to trudbot's other social media pages",
     input: z.object({
         type: z.enum(["blog", "zhihu", "github", "steam"]),
     }),
@@ -55,7 +55,7 @@ tools.push(defineTool({
 
 tools.push(defineTool({
     name: "shatter",
-    description: "触发页面玻璃碎裂特效",
+    description: "Trigger a glass shatter effect on the page",
     input: z.object({}),
     async execute() {
         const { triggerShatter } = await import("@/lib/glass-shatter");
