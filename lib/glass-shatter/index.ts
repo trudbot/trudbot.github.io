@@ -43,16 +43,23 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
 
     // Crop to viewport only — snapdom captures the full body which may be
     // taller than the viewport, causing UV mapping to sample blank areas.
+    // Use the actual canvas size vs body size to derive the real scale,
+    // because snapdom may use a different internal DPI than our `scale`.
+    const bodyW = document.body.scrollWidth
+    const bodyH = document.body.scrollHeight
+    const realScaleX = fullScreenshot.width / bodyW
+    const realScaleY = fullScreenshot.height / bodyH
+
     const croppedCanvas = document.createElement("canvas")
-    croppedCanvas.width = width * scale
-    croppedCanvas.height = height * scale
+    croppedCanvas.width = Math.round(width * realScaleX)
+    croppedCanvas.height = Math.round(height * realScaleY)
     const cropCtx = croppedCanvas.getContext("2d")!
     cropCtx.drawImage(
       fullScreenshot,
-      0, window.scrollY * scale,
-      width * scale, height * scale,
+      0, Math.round(window.scrollY * realScaleY),
+      Math.round(width * realScaleX), Math.round(height * realScaleY),
       0, 0,
-      width * scale, height * scale,
+      croppedCanvas.width, croppedCanvas.height,
     )
 
     // Freeze the page: overlay the static screenshot so that ongoing CSS
