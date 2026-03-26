@@ -1,6 +1,5 @@
 "use client"
 import { useEffect } from 'react'
-import {registerWebMcp} from '@/web-mcp'
 
 let initialized = false
 
@@ -8,7 +7,9 @@ export default function GlobalScripts() {
   useEffect(() => {
     if (initialized) return
     initialized = true
-    registerWebMcp()
+    if (navigator.modelContext) {
+      import('@/web-mcp').then(({ registerWebMcp }) => registerWebMcp())
+    }
   }, []);
 
   return null
