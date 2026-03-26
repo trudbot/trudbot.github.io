@@ -17,6 +17,9 @@ const MOUSE_SETTLE_MS = 150
 const MOUSE_SETTLE_THRESHOLD_SQ = 400 // 20px²
 const ENTRY_ANIMATION_MS = 2100
 
+const SHATTER_TAP_COUNT = 3
+const SHATTER_TAP_WINDOW_MS = 10_000
+
 const EFFECT_COLORS = [
   "var(--effect-cyan)",
   "var(--effect-magenta)",
@@ -207,6 +210,7 @@ export function AvatarInteractive() {
   const settledPos = useRef({ x: 0, y: 0 })
   const particleControls = useAnimation()
   const avatarRef = useRef<HTMLDivElement>(null)
+  const tapTimestamps = useRef<number[]>([])
 
   const isActive = isAvatarHovered || isBursting
   const isParticleActive = (isAvatarHovered && isMouseSettled) || isBursting
@@ -230,6 +234,18 @@ export function AvatarInteractive() {
     burstTimeoutRef.current = setTimeout(() => {
       setIsBursting(false)
     }, BURST_TIMEOUT_MS)
+
+    // Track taps for shatter trigger: 3 taps within 10 seconds
+    const now = Date.now()
+    tapTimestamps.current.push(now)
+    // Keep only taps within the time window
+    tapTimestamps.current = tapTimestamps.current.filter(
+      (t) => now - t < SHATTER_TAP_WINDOW_MS,
+    )
+    if (tapTimestamps.current.length >= SHATTER_TAP_COUNT) {
+      tapTimestamps.current = []
+      import("@/lib/glass-shatter").then((mod) => mod.triggerShatter())
+    }
   }, [])
 
   useEffect(() => {

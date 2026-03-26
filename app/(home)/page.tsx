@@ -8,9 +8,6 @@ const GamesSection = dynamic(
 const BottomDecoration = dynamic(
   () => import("@/components/bottom-decoration").then((mod) => mod.BottomDecoration),
 )
-const ShatterButton = dynamic(
-  () => import("@/components/shatter-button").then((mod) => mod.ShatterButton),
-)
 
 export default function Home() {
   return (
@@ -21,7 +18,6 @@ export default function Home() {
         <GamesSection />
         <BottomDecoration />
       </div>
-      <ShatterButton />
     </main>
   )
 }
