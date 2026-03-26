@@ -44,3 +44,14 @@ export interface VoronoiResult {
   cells: VoronoiCell[]
   edges: VoronoiEdge[]
 }
+
+export interface CrackSegment {
+  /** Start point in pixel coordinates */
+  from: [number, number]
+  /** End point in pixel coordinates */
+  to: [number, number]
+  /** Branch depth: 0 = main radial branch, higher = sub-branches */
+  depth: number
+  /** Distance of segment midpoint from impact origin */
+  distanceFromOrigin: number
+}

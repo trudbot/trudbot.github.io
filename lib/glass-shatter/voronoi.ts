@@ -1,5 +1,5 @@
 import Delaunator from "delaunator"
-import type { VoronoiCell, VoronoiEdge, VoronoiResult } from "./types"
+import type { VoronoiCell, VoronoiEdge, VoronoiResult, CrackSegment } from "./types"
 
 /**
  * Generate Voronoi tessellation for glass shatter effect.
@@ -14,8 +14,8 @@ export function generateVoronoiCells(
   const ox = origin?.x ?? width / 2
   const oy = origin?.y ?? height / 2
 
-  // Generate seed points using jittered grid for even distribution
-  const seeds = generateSeeds(count, width, height)
+  // Generate seed points with radial density falloff around impact
+  const seeds = generateSeeds(count, width, height, ox, oy)
 
   // Add boundary points to ensure full coverage
   addBoundaryPoints(seeds, width, height)
@@ -32,10 +32,23 @@ export function generateVoronoiCells(
   // Extract Voronoi cells and edges
   const circumcenters = computeCircumcenters(delaunay, coords)
   const cells = extractCells(delaunay, coords, circumcenters, seeds.length, width, height)
+
+  // Secondary fracture: split some cells into triangles for angular look
+  const fracturedCells = applySecondaryFracture(cells, ox, oy, width, height)
+
   const edges = extractEdges(circumcenters, delaunay, width, height, ox, oy)
 
+  // Add edges from secondary fracture splits
+  for (const cell of fracturedCells) {
+    if (cell._splitEdge) {
+      edges.push(cell._splitEdge)
+    }
+  }
+
   // Filter out cells that are too small or degenerate
-  const validCells = cells.filter((c) => c.vertices.length >= 3 && polygonArea(c.vertices) > 100)
+  const validCells = fracturedCells.filter(
+    (c) => c.vertices.length >= 3 && polygonArea(c.vertices) > 50,
+  )
 
   // Sort edges by distance from origin for crack animation
   edges.sort((a, b) => a.distanceFromOrigin - b.distanceFromOrigin)
@@ -43,19 +56,32 @@ export function generateVoronoiCells(
   return { cells: validCells, edges }
 }
 
-function generateSeeds(count: number, width: number, height: number): [number, number][] {
+function generateSeeds(
+  count: number,
+  width: number,
+  height: number,
+  ox?: number,
+  oy?: number,
+): [number, number][] {
   const seeds: [number, number][] = []
-  const cols = Math.ceil(Math.sqrt(count * (width / height)))
-  const rows = Math.ceil(count / cols)
-  const cellW = width / cols
-  const cellH = height / rows
+  const cx = ox ?? width / 2
+  const cy = oy ?? height / 2
+  const maxDist = Math.hypot(width, height)
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (seeds.length >= count) break
-      const x = (c + 0.1 + Math.random() * 0.8) * cellW
-      const y = (r + 0.1 + Math.random() * 0.8) * cellH
-      seeds.push([x, y])
+  // Radial density falloff: more seeds near impact, fewer far away.
+  // Use rejection sampling with density ∝ 1/(1 + k*r)^2
+  const k = 3 / maxDist
+  for (let i = 0; i < count; i++) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const x = Math.random() * width
+      const y = Math.random() * height
+      const r = Math.hypot(x - cx, y - cy)
+      const density = 1 / (1 + k * r) ** 2
+      if (Math.random() < density) {
+        seeds.push([x, y])
+        break
+      }
     }
   }
 
@@ -282,4 +308,200 @@ function nextHalfedge(e: number): number {
 
 function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, v))
+}
+
+interface FracturedCell extends VoronoiCell {
+  _splitEdge?: VoronoiEdge
+}
+
+/**
+ * Split some Voronoi cells along a diagonal to create triangular fragments.
+ * Cells closer to the impact origin have a higher chance of being split,
+ * producing the dense, angular fracture pattern seen in real glass.
+ */
+function applySecondaryFracture(
+  cells: VoronoiCell[],
+  ox: number,
+  oy: number,
+  width: number,
+  height: number,
+): FracturedCell[] {
+  const maxDist = Math.hypot(width, height)
+  const result: FracturedCell[] = []
+
+  for (const cell of cells) {
+    const dist = Math.hypot(cell.centroid[0] - ox, cell.centroid[1] - oy)
+    const normalizedDist = dist / maxDist
+
+    // Split probability: ~60% near impact, ~10% at edges
+    const splitChance = 0.6 - normalizedDist * 0.5
+    const shouldSplit =
+      Math.random() < splitChance && cell.vertices.length >= 4
+
+    if (!shouldSplit) {
+      result.push(cell)
+      continue
+    }
+
+    const verts = cell.vertices
+    const n = verts.length
+
+    // Pick two non-adjacent vertices to form the split diagonal
+    const i = Math.floor(Math.random() * n)
+    // Offset by 2 so we skip adjacent vertices (which would produce degenerate splits)
+    const j = (i + 2 + Math.floor(Math.random() * (n - 3))) % n
+
+    // Build two sub-polygons from the split
+    const poly1: [number, number][] = []
+    const poly2: [number, number][] = []
+
+    // Walk from i to j (inclusive) → poly1
+    for (let k = i; ; k = (k + 1) % n) {
+      poly1.push(verts[k])
+      if (k === j) break
+    }
+    // Walk from j to i (inclusive) → poly2
+    for (let k = j; ; k = (k + 1) % n) {
+      poly2.push(verts[k])
+      if (k === i) break
+    }
+
+    if (poly1.length >= 3 && poly2.length >= 3) {
+      const c1 = computeCentroid(poly1)
+      const c2 = computeCentroid(poly2)
+
+      const splitFrom = verts[i]
+      const splitTo = verts[j]
+      const midX = (splitFrom[0] + splitTo[0]) / 2
+      const midY = (splitFrom[1] + splitTo[1]) / 2
+      const edgeDist = Math.hypot(midX - ox, midY - oy)
+
+      result.push(
+        { seed: cell.seed, vertices: poly1, centroid: c1 },
+        {
+          seed: cell.seed,
+          vertices: poly2,
+          centroid: c2,
+          _splitEdge: {
+            from: splitFrom,
+            to: splitTo,
+            distanceFromOrigin: edgeDist,
+          },
+        },
+      )
+    } else {
+      result.push(cell)
+    }
+  }
+
+  return result
+}
+
+/**
+ * Generate a tree-like branching crack pattern from the impact origin.
+ * Produces radial main branches that fork into sub-branches,
+ * with micro-cracks clustered at the impact point.
+ */
+export function generateCrackTree(
+  width: number,
+  height: number,
+  ox: number,
+  oy: number,
+): CrackSegment[] {
+  const segments: CrackSegment[] = []
+
+  // maxRadius must reach the farthest corner so cracks cover entire viewport
+  const maxRadius =
+    Math.max(
+      Math.hypot(ox, oy),
+      Math.hypot(width - ox, oy),
+      Math.hypot(ox, height - oy),
+      Math.hypot(width - ox, height - oy),
+    ) * 1.15
+
+  // --- Micro-cracks at impact point (the "nail hit" cluster) ---
+  const microCount = 15 + Math.floor(Math.random() * 10)
+  for (let i = 0; i < microCount; i++) {
+    const angle = Math.random() * Math.PI * 2
+    const startR = 2 + Math.random() * 8
+    const len = 4 + Math.random() * 18
+    const sx = ox + Math.cos(angle) * startR
+    const sy = oy + Math.sin(angle) * startR
+    const ea = angle + (Math.random() - 0.5) * 0.6
+    const ex = sx + Math.cos(ea) * len
+    const ey = sy + Math.sin(ea) * len
+    segments.push({
+      from: [sx, sy],
+      to: [ex, ey],
+      depth: 3,
+      distanceFromOrigin: Math.hypot((sx + ex) / 2 - ox, (sy + ey) / 2 - oy),
+    })
+  }
+
+  // --- Main radial branches ---
+  const numBranches = 7 + Math.floor(Math.random() * 4)
+  const baseAngle = Math.random() * Math.PI * 2
+
+  for (let i = 0; i < numBranches; i++) {
+    const sectorSize = (Math.PI * 2) / numBranches
+    const angle = baseAngle + i * sectorSize + (Math.random() - 0.5) * sectorSize * 0.5
+    growBranch(ox, oy, angle, 0, maxRadius, segments, ox, oy, width, height)
+  }
+
+  segments.sort((a, b) => a.distanceFromOrigin - b.distanceFromOrigin)
+  return segments
+}
+
+function growBranch(
+  x: number,
+  y: number,
+  angle: number,
+  depth: number,
+  remainingLen: number,
+  segments: CrackSegment[],
+  ox: number,
+  oy: number,
+  width: number,
+  height: number,
+) {
+  if (depth > 5 || remainingLen < 8) return
+
+  const distFromCenter = Math.hypot(x - ox, y - oy)
+  const maxDist = Math.hypot(width, height)
+
+  // Segment length: shorter near center (fine detail), longer far out
+  const nearFactor = 0.6 + (distFromCenter / maxDist) * 0.8
+  const baseSeg = depth === 0 ? 20 + Math.random() * 25 : 12 + Math.random() * 18
+  const segLen = baseSeg * nearFactor
+
+  // Curvature: main branches are straighter, sub-branches wobble more
+  const curvature = depth === 0 ? 0.15 : 0.2 + depth * 0.08
+  const newAngle = angle + (Math.random() - 0.5) * curvature
+
+  const ex = x + Math.cos(newAngle) * segLen
+  const ey = y + Math.sin(newAngle) * segLen
+
+  if (ex < -50 || ex > width + 50 || ey < -50 || ey > height + 50) return
+
+  const midDist = Math.hypot((x + ex) / 2 - ox, (y + ey) / 2 - oy)
+  segments.push({ from: [x, y], to: [ex, ey], depth, distanceFromOrigin: midDist })
+
+  // Continue the branch
+  growBranch(ex, ey, newAngle, depth, remainingLen - segLen, segments, ox, oy, width, height)
+
+  // Fork probability: high for main branches, decreasing with depth
+  const forkChance =
+    depth === 0 ? 0.38 : depth === 1 ? 0.28 : depth === 2 ? 0.18 : 0.08
+  if (Math.random() < forkChance) {
+    const dir = Math.random() > 0.5 ? 1 : -1
+    const forkAngle = newAngle + dir * (0.35 + Math.random() * 0.7)
+    growBranch(ex, ey, forkAngle, depth + 1, remainingLen * 0.55, segments, ox, oy, width, height)
+  }
+
+  // Rare double-fork on main branches for dramatic Y-splits
+  if (depth === 0 && Math.random() < 0.08) {
+    const dir = Math.random() > 0.5 ? 1 : -1
+    const forkAngle = newAngle + dir * (0.5 + Math.random() * 0.5)
+    growBranch(ex, ey, forkAngle, depth + 1, remainingLen * 0.4, segments, ox, oy, width, height)
+  }
 }

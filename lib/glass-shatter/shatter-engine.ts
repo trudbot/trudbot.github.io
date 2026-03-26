@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import type { VoronoiCell, VoronoiEdge, FragmentState, ShatterOptions } from "./types"
+import type { VoronoiCell, FragmentState, ShatterOptions, CrackSegment } from "./types"
 
 interface ShatterConfig {
   crackDuration: number
@@ -17,21 +17,36 @@ const DEFAULT_CONFIG: ShatterConfig = {
   origin: { x: 0, y: 0 },
 }
 
+export interface CrackPhaseOptions {
+  origin: { x: number; y: number }
+  /** Duration of initial impact crack near center (ms) */
+  impactDuration: number
+  /** Duration of the dramatic pause after impact (ms) */
+  pauseDuration: number
+  /** Duration of the rapid crack spread outward (ms) */
+  spreadDuration: number
+  /** Radius of the initial impact crack zone (px) */
+  impactRadius: number
+}
+
 /**
- * Run the crack animation phase using Canvas2D overlay.
- * Progressively draws Voronoi edges from center outward with a glass-like effect.
+ * Run the crack animation in three dramatic phases:
+ *   1. Impact — small cracks appear at center (like a nail hit)
+ *   2. Pause  — tension builds, cracks hold still with subtle pulse
+ *   3. Spread — cracks explode outward in a branching tree pattern
  */
 export function runCrackPhase(
-  edges: VoronoiEdge[],
+  segments: CrackSegment[],
   width: number,
   height: number,
-  duration: number,
-  origin?: { x: number; y: number },
+  options: CrackPhaseOptions,
 ): Promise<HTMLCanvasElement> {
   return new Promise((resolve) => {
     const dpr = Math.min(window.devicePixelRatio, 2)
     const canvas = document.createElement("canvas")
-    canvas.style.cssText = "position:fixed;inset:0;z-index:99998;pointer-events:none;"
+    canvas.id = "shatter-crack-overlay"
+    canvas.style.cssText =
+      "position:fixed;inset:0;z-index:99998;pointer-events:none;"
     canvas.width = width * dpr
     canvas.height = height * dpr
     canvas.style.width = width + "px"
@@ -41,106 +56,140 @@ export function runCrackPhase(
     const ctx = canvas.getContext("2d")!
     ctx.scale(dpr, dpr)
 
-    const ox = origin?.x ?? width / 2
-    const oy = origin?.y ?? height / 2
-    const maxDist = edges.length > 0 ? edges[edges.length - 1].distanceFromOrigin : 1
+    const { origin, impactDuration, pauseDuration, spreadDuration, impactRadius } = options
+    const ox = origin.x
+    const oy = origin.y
+    const totalDuration = impactDuration + pauseDuration + spreadDuration
+
+    // Partition segments
+    const impactSegs = segments.filter((s) => s.distanceFromOrigin <= impactRadius)
+    const spreadSegs = segments.filter((s) => s.distanceFromOrigin > impactRadius)
+    const maxSpreadDist =
+      spreadSegs.length > 0
+        ? spreadSegs[spreadSegs.length - 1].distanceFromOrigin
+        : 1
+
+    // Pre-compute stable jitter per segment for mid-point wobble
+    const jitter = new Map<CrackSegment, { mx: number; my: number }>()
+    for (const seg of segments) {
+      jitter.set(seg, {
+        mx: (Math.random() - 0.5) * 3,
+        my: (Math.random() - 0.5) * 3,
+      })
+    }
+
     const startTime = performance.now()
 
-    // Pre-compute stable jitter per edge so cracks don't flicker
-    const edgeJitter = edges.map(() => ({
-      mx: (Math.random() - 0.5) * 3,
-      my: (Math.random() - 0.5) * 3,
-    }))
+    /** Draw a set of crack segments with the three-layer glass-crack look. */
+    function drawSegs(segs: CrackSegment[], alpha: number = 1) {
+      if (segs.length === 0) return
+
+      // Layer 1 — wide outer glow (soft cyan)
+      ctx.save()
+      ctx.strokeStyle = `rgba(120,190,255,${0.12 * alpha})`
+      ctx.shadowColor = `rgba(80,160,255,${0.5 * alpha})`
+      ctx.shadowBlur = 16
+      for (const seg of segs) {
+        ctx.lineWidth = seg.depth === 0 ? 6 : seg.depth === 1 ? 4 : 3
+        ctx.beginPath()
+        ctx.moveTo(seg.from[0], seg.from[1])
+        ctx.lineTo(seg.to[0], seg.to[1])
+        ctx.stroke()
+      }
+      ctx.restore()
+
+      // Layer 2 — blue-white mid glow with jitter
+      ctx.save()
+      ctx.strokeStyle = `rgba(200,230,255,${0.55 * alpha})`
+      ctx.shadowColor = `rgba(160,210,255,${0.7 * alpha})`
+      ctx.shadowBlur = 6
+      for (const seg of segs) {
+        ctx.lineWidth = seg.depth === 0 ? 2.5 : seg.depth === 1 ? 1.8 : 1.2
+        const j = jitter.get(seg)!
+        const midX = (seg.from[0] + seg.to[0]) / 2 + j.mx
+        const midY = (seg.from[1] + seg.to[1]) / 2 + j.my
+        ctx.beginPath()
+        ctx.moveTo(seg.from[0], seg.from[1])
+        ctx.lineTo(midX, midY)
+        ctx.lineTo(seg.to[0], seg.to[1])
+        ctx.stroke()
+      }
+      ctx.restore()
+
+      // Layer 3 — bright white core
+      ctx.save()
+      ctx.strokeStyle = `rgba(255,255,255,${0.95 * alpha})`
+      ctx.shadowColor = `rgba(255,255,255,${0.6 * alpha})`
+      ctx.shadowBlur = 2
+      for (const seg of segs) {
+        ctx.lineWidth = seg.depth === 0 ? 1.0 : seg.depth === 1 ? 0.7 : 0.5
+        ctx.beginPath()
+        ctx.moveTo(seg.from[0], seg.from[1])
+        ctx.lineTo(seg.to[0], seg.to[1])
+        ctx.stroke()
+      }
+      ctx.restore()
+    }
 
     function drawFrame() {
       const elapsed = performance.now() - startTime
-      const progress = Math.min(elapsed / duration, 1)
-
       ctx.clearRect(0, 0, width, height)
 
-      const targetDist = progress * maxDist
+      if (elapsed <= impactDuration) {
+        // ── Phase 1: Impact ──
+        const p = Math.min(elapsed / impactDuration, 1)
+        const currentR = p * impactRadius
+        const visible = impactSegs.filter((s) => s.distanceFromOrigin <= currentR)
 
-      // Impact flash — radial burst at origin, fades quickly
-      const flashIntensity = Math.max(0, 1 - progress * 3)
-      if (flashIntensity > 0) {
-        const gradient = ctx.createRadialGradient(ox, oy, 0, ox, oy, maxDist * 0.35)
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${0.7 * flashIntensity})`)
-        gradient.addColorStop(0.25, `rgba(210, 235, 255, ${0.35 * flashIntensity})`)
-        gradient.addColorStop(1, "rgba(180, 220, 255, 0)")
-        ctx.fillStyle = gradient
-        ctx.fillRect(0, 0, width, height)
-      }
-
-      // Layer 1: Wide outer glow (soft cyan)
-      ctx.save()
-      ctx.strokeStyle = "rgba(120, 190, 255, 0.12)"
-      ctx.shadowColor = "rgba(80, 160, 255, 0.5)"
-      ctx.shadowBlur = 16
-      ctx.lineWidth = 5
-      for (const edge of edges) {
-        if (edge.distanceFromOrigin > targetDist) break
-        ctx.beginPath()
-        ctx.moveTo(edge.from[0], edge.from[1])
-        ctx.lineTo(edge.to[0], edge.to[1])
-        ctx.stroke()
-      }
-      ctx.restore()
-
-      // Layer 2: Blue-white mid glow
-      ctx.save()
-      ctx.strokeStyle = "rgba(200, 230, 255, 0.55)"
-      ctx.shadowColor = "rgba(160, 210, 255, 0.7)"
-      ctx.shadowBlur = 6
-      ctx.lineWidth = 2
-      for (let i = 0; i < edges.length; i++) {
-        const edge = edges[i]
-        if (edge.distanceFromOrigin > targetDist) break
-        const j = edgeJitter[i]
-        const midX = (edge.from[0] + edge.to[0]) / 2 + j.mx
-        const midY = (edge.from[1] + edge.to[1]) / 2 + j.my
-        ctx.beginPath()
-        ctx.moveTo(edge.from[0], edge.from[1])
-        ctx.lineTo(midX, midY)
-        ctx.lineTo(edge.to[0], edge.to[1])
-        ctx.stroke()
-      }
-      ctx.restore()
-
-      // Layer 3: Bright white core (thin, sharp)
-      ctx.save()
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.95)"
-      ctx.shadowColor = "rgba(255, 255, 255, 0.6)"
-      ctx.shadowBlur = 2
-      ctx.lineWidth = 0.8
-      for (const edge of edges) {
-        if (edge.distanceFromOrigin > targetDist) break
-        ctx.beginPath()
-        ctx.moveTo(edge.from[0], edge.from[1])
-        ctx.lineTo(edge.to[0], edge.to[1])
-        ctx.stroke()
-      }
-      ctx.restore()
-
-      // Sparkle points at crack vertices
-      ctx.save()
-      for (let i = 0; i < edges.length; i++) {
-        const edge = edges[i]
-        if (edge.distanceFromOrigin > targetDist) break
-        // Only sparkle near the crack front for a spreading-light feel
-        if (edge.distanceFromOrigin > targetDist * 0.85) {
-          const sx = edge.to[0]
-          const sy = edge.to[1]
-          const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 4)
-          sg.addColorStop(0, "rgba(255, 255, 255, 0.9)")
-          sg.addColorStop(0.5, "rgba(200, 230, 255, 0.4)")
-          sg.addColorStop(1, "rgba(160, 210, 255, 0)")
-          ctx.fillStyle = sg
-          ctx.fillRect(sx - 4, sy - 4, 8, 8)
+        // Impact flash — radial burst
+        const flash = Math.max(0, 1 - p * 2)
+        if (flash > 0) {
+          const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, impactRadius * 0.6)
+          g.addColorStop(0, `rgba(255,255,255,${0.85 * flash})`)
+          g.addColorStop(0.3, `rgba(210,235,255,${0.4 * flash})`)
+          g.addColorStop(1, "rgba(180,220,255,0)")
+          ctx.fillStyle = g
+          ctx.fillRect(0, 0, width, height)
         }
-      }
-      ctx.restore()
 
-      if (progress < 1) {
+        drawSegs(visible)
+      } else if (elapsed <= impactDuration + pauseDuration) {
+        // ── Phase 2: Tension pause — cracks hold completely still ──
+        drawSegs(impactSegs)
+      } else {
+        // ── Phase 3: Rapid spread ──
+        const spreadT = (elapsed - impactDuration - pauseDuration) / spreadDuration
+        const p = Math.min(spreadT, 1)
+        // Ease-out: fast start, slight deceleration
+        const eased = 1 - (1 - p) * (1 - p)
+
+        const currentDist = eased * maxSpreadDist
+        const visibleSpread = spreadSegs.filter(
+          (s) => s.distanceFromOrigin <= currentDist,
+        )
+
+        // Draw impact + revealed spread
+        drawSegs(impactSegs)
+        drawSegs(visibleSpread)
+
+        // Sparkles at the crack front
+        ctx.save()
+        for (const seg of visibleSpread) {
+          if (seg.distanceFromOrigin > currentDist * 0.88) {
+            const sx = seg.to[0]
+            const sy = seg.to[1]
+            const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 5)
+            sg.addColorStop(0, "rgba(255,255,255,0.9)")
+            sg.addColorStop(0.4, "rgba(200,230,255,0.4)")
+            sg.addColorStop(1, "rgba(160,210,255,0)")
+            ctx.fillStyle = sg
+            ctx.fillRect(sx - 5, sy - 5, 10, 10)
+          }
+        }
+        ctx.restore()
+      }
+
+      if (elapsed < totalDuration) {
         requestAnimationFrame(drawFrame)
       } else {
         resolve(canvas)

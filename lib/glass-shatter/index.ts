@@ -21,7 +21,8 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
   try {
     const width = window.innerWidth
     const height = window.innerHeight
-    const origin = options?.origin ?? { x: width / 2, y: height / 2 }
+    // Always shatter from screen center for the most dramatic effect
+    const origin = { x: width / 2, y: height / 2 }
     const fragmentCount = options?.fragmentCount ?? 100
     const scale = Math.min(window.devicePixelRatio, 2)
 
@@ -38,7 +39,9 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
       fast: true,
       placeholders: true,
       filter: (el: Element) =>
-        el.id !== "shatter-overlay" && el.id !== "shatter-crack-overlay",
+        el.id !== "shatter-overlay" &&
+        el.id !== "shatter-crack-overlay" &&
+        el.id !== "shatter-freeze-layer",
     })
 
     // Crop to viewport only — snapdom captures the full body which may be
@@ -73,21 +76,29 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
     freezeLayer.getContext("2d")!.drawImage(croppedCanvas, 0, 0)
     document.body.appendChild(freezeLayer)
 
-    // Generate Voronoi tessellation
-    const { cells, edges } = voronoiModule.generateVoronoiCells(
+    // Generate Voronoi tessellation (for fragment shapes)
+    const { cells } = voronoiModule.generateVoronoiCells(
       fragmentCount,
       width,
       height,
       origin,
     )
 
-    // Phase 1: Crack animation
+    // Generate branching crack tree (for crack animation)
+    const crackTree = voronoiModule.generateCrackTree(width, height, origin.x, origin.y)
+
+    // Crack animation: impact → pause → spread
     const crackCanvas = await engineModule.runCrackPhase(
-      edges,
+      crackTree,
       width,
       height,
-      options?.crackDuration ?? 300,
-      origin,
+      {
+        origin,
+        impactDuration: options?.crackDuration ?? 200,
+        pauseDuration: 1800,
+        spreadDuration: 500,
+        impactRadius: 80,
+      },
     )
 
     // Create Three.js canvas overlay
@@ -101,7 +112,7 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
     glCanvas.style.cssText = "position:fixed;inset:0;z-index:99999;pointer-events:none;"
     document.body.appendChild(glCanvas)
 
-    // Phase 2: Shatter animation (removes crack canvas internally)
+    // Shatter animation — fragments fly apart
     crackCanvas.remove()
     freezeLayer.remove()
     await engineModule.runShatterPhase(glCanvas, texture, cells, {
