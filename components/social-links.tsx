@@ -1,6 +1,3 @@
-"use client"
-
-import { motion } from "framer-motion"
 import Image from "next/image"
 
 const socialLinks = [
@@ -30,58 +27,42 @@ const socialLinks = [
   },
 ]
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 20, rotate: -5 },
-  show: { opacity: 1, y: 0, rotate: 0 },
-}
+const shapes = [
+  "clip-none",     // 正方形
+  "clip-triangle", // 三角形
+  "clip-diamond",  // 菱形
+  "clip-none",     // 正方形
+]
 
 export function SocialLinks() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      {socialLinks.map((link, index) => {
-        // 为每个链接创建不同的形状
-        const shapes = [
-          "clip-none", // 正方形
-          "clip-triangle", // 三角形
-          "clip-diamond", // 菱形
-          "clip-none", // 正方形
-        ]
-
-        return (
-          <motion.a
-            key={link.name}
-            variants={item}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`group relative flex h-20 w-20 items-center justify-center transition-all duration-300 focus-visible:outline-none ${link.bgColor} ${shapes[index]}`}
-            whileHover={{ scale: 1.15, rotate: index % 2 === 0 ? 5 : -5 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <div className="relative z-10 h-8 w-8 transition-transform duration-300 group-hover:scale-110">
-              <Image
-                src={link.icon || "/placeholder.svg"}
-                alt={link.name}
-                fill
-                className="object-contain"
-                unoptimized
-                crossOrigin="anonymous"
-              />
-            </div>
-            <span className="sr-only">{link.name}</span>
-          </motion.a>
-        )
-      })}
-    </motion.div>
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4 animate-[sl-fade-in_0.4s_ease-out_both]">
+      {socialLinks.map((link, index) => (
+        <a
+          key={link.name}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`group relative flex h-20 w-20 items-center justify-center focus-visible:outline-none ${link.bgColor} ${shapes[index]} sl-item`}
+          style={{
+            animation: `sl-enter 0.4s ease-out ${index * 0.08}s both`,
+            // even items rotate +5 on hover, odd items rotate -5
+            '--sl-hover-rotate': index % 2 === 0 ? '5deg' : '-5deg',
+          } as React.CSSProperties}
+        >
+          <div className="relative z-10 h-8 w-8 transition-transform duration-300 group-hover:scale-110">
+            <Image
+              src={link.icon || "/placeholder.svg"}
+              alt={link.name}
+              fill
+              className="object-contain"
+              unoptimized
+              crossOrigin="anonymous"
+            />
+          </div>
+          <span className="sr-only">{link.name}</span>
+        </a>
+      ))}
+    </div>
   )
 }

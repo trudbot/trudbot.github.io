@@ -1,5 +1,26 @@
 import { SocialLinks } from "@/components/social-links"
-import { AvatarInteractive } from "@/components/avatar-interactive"
+import dynamic from "next/dynamic"
+import Image from "next/image"
+
+const AVATAR_IMAGE_URL =
+  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg"
+
+const AvatarInteractive = dynamic(
+  () => import("@/components/avatar-interactive").then((mod) => mod.AvatarInteractive),
+  {
+    loading: () => (
+      <div className="relative inline-block">
+        <div className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond" />
+        <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle" />
+        <div className="relative rounded-full">
+          <div className="relative h-48 w-48 overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64">
+            <Image src={AVATAR_IMAGE_URL} alt="trudbot" fill className="object-cover" unoptimized priority />
+          </div>
+        </div>
+      </div>
+    ),
+  }
+)
 
 // ─── ProfileInfo ─────────────────────────────────────────────────────────────
 function ProfileInfo() {

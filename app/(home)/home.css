@@ -34,8 +34,28 @@
   66% { transform: translateY(-15px) translateX(20px) scale(1.1); }
 }
 
+/* ─── SocialLinks 入场 + 交互动画 (CSS 替代 framer-motion) ─── */
+@keyframes sl-fade-in {
+  from { opacity: 0; }
+}
+@keyframes sl-enter {
+  from { opacity: 0; transform: translateY(20px) rotate(-5deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+.sl-item {
+  transition: transform 0.2s ease-out;
+}
+.sl-item:hover {
+  transform: scale(1.15) rotate(var(--sl-hover-rotate, 0deg));
+}
+.sl-item:active {
+  transform: scale(0.9);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pc-entry {
+  .pc-entry,
+  .sl-item {
     animation: none !important;
   }
 }
