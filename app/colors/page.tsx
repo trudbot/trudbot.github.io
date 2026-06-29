@@ -1,9 +1,4 @@
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "收藏的颜色 - trudbot",
-  description: "我收藏的那些清新、童趣、梦境般的颜色",
-}
+import './colors.css'
 
 // ─── 颜色数据 ────────────────────────────────────────────────────────────────
 interface ColorEntry {

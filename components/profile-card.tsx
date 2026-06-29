@@ -1,26 +1,24 @@
+import { lazy, Suspense } from "react"
 import { SocialLinks } from "@/components/social-links"
-import dynamic from "next/dynamic"
-import Image from "next/image"
 
 const AVATAR_IMAGE_URL =
   "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg"
 
-const AvatarInteractive = dynamic(
-  () => import("@/components/avatar-interactive").then((mod) => mod.AvatarInteractive),
-  {
-    loading: () => (
-      <div className="relative inline-block">
-        <div className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond" />
-        <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle" />
-        <div className="relative rounded-full">
-          <div className="relative h-48 w-48 overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64">
-            <Image src={AVATAR_IMAGE_URL} alt="trudbot" fill className="object-cover" unoptimized priority />
-          </div>
+const AvatarInteractive = lazy(() => import("@/components/avatar-interactive").then((mod) => ({ default: mod.AvatarInteractive })))
+
+function AvatarFallbackPreview() {
+  return (
+    <div className="relative inline-block">
+      <div className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond" />
+      <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle" />
+      <div className="relative rounded-full">
+        <div className="relative h-48 w-48 overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64">
+          <img src={AVATAR_IMAGE_URL} alt="trudbot" className="h-full w-full object-cover" />
         </div>
       </div>
-    ),
-  }
-)
+    </div>
+  )
+}
 
 // ─── ProfileInfo ─────────────────────────────────────────────────────────────
 function ProfileInfo() {
@@ -110,7 +108,9 @@ export function ProfileCard() {
         className="md:col-span-5 md:col-start-1 md:row-start-1 pc-entry"
         style={{ animation: 'pc-slide-left 0.8s ease-out both' }}
       >
-        <AvatarInteractive />
+        <Suspense fallback={<AvatarFallbackPreview />}>
+          <AvatarInteractive />
+        </Suspense>
       </div>
 
       <ProfileInfo />

@@ -1,13 +1,10 @@
+import './home.css'
+import { lazy, Suspense } from "react"
 import { ProfileCard } from "@/components/profile-card"
 import { FloatingShapes } from "@/components/floating-shapes"
-import dynamic from "next/dynamic"
 
-const GamesSection = dynamic(
-  () => import("@/components/games-section").then((mod) => mod.GamesSection),
-)
-const BottomDecoration = dynamic(
-  () => import("@/components/bottom-decoration").then((mod) => mod.BottomDecoration),
-)
+const GamesSection = lazy(() => import("@/components/games-section").then((mod) => ({ default: mod.GamesSection })))
+const BottomDecoration = lazy(() => import("@/components/bottom-decoration").then((mod) => ({ default: mod.BottomDecoration })))
 
 export default function Home() {
   return (
@@ -15,8 +12,10 @@ export default function Home() {
       <FloatingShapes />
       <div className="relative z-10 flex min-h-screen flex-col p-8 md:p-16 pb-32">
         <ProfileCard />
-        <GamesSection />
-        <BottomDecoration />
+        <Suspense fallback={null}>
+          <GamesSection />
+          <BottomDecoration />
+        </Suspense>
       </div>
     </main>
   )

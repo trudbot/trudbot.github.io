@@ -1,3 +1,4 @@
+import '../styles.css'
 import { Suspense } from 'react'
 import ReceiveClient from './receive-client'
 

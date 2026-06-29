@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${caveat.variable}`}>
         <Suspense fallback={null}>{children}</Suspense>
         <GlobalScripts />

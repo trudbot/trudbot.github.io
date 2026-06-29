@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import LZString from 'lz-string'
 
 // Custom hook for clipboard
 function useClipboard() {
@@ -36,34 +36,31 @@ function useClipboard() {
 }
 
 export default function ReceiveClient() {
-  const searchParams = useSearchParams()
   const [receivedContent, setReceivedContent] = useState('')
   const [isUrl, setIsUrl] = useState(false)
   const [currentOrigin, setCurrentOrigin] = useState('')
   const { copy, copied } = useClipboard()
 
-  // Parse content from URL params immediately
   const content = useMemo(() => {
+    if (typeof window === 'undefined') return ''
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const compressed = searchParams.get('compressed')
+    if (compressed) return LZString.decompressFromEncodedURIComponent(compressed) || ''
     return searchParams.get('content') || ''
-  }, [searchParams])
+  }, [])
 
   useEffect(() => {
     setCurrentOrigin(window.location.origin + window.location.pathname.replace('/r', ''))
 
     if (content) {
-      try {
-        const decoded = decodeURIComponent(content)
-        setReceivedContent(decoded)
+      setReceivedContent(content)
 
-        // Check if it's a URL
-        try {
-          new URL(decoded)
-          setIsUrl(true)
-        } catch {
-          setIsUrl(false)
-        }
-      } catch (e) {
-        console.error('Failed to decode content', e)
+      try {
+        new URL(content)
+        setIsUrl(true)
+      } catch {
+        setIsUrl(false)
       }
     }
   }, [content])

@@ -4,6 +4,67 @@ export type { ShatterOptions }
 
 let isRunning = false
 
+async function waitForVisualsReady(): Promise<void> {
+  await document.fonts?.ready
+
+  const images = Array.from(document.images).filter((img) => !img.complete)
+  if (images.length > 0) {
+    await Promise.allSettled(
+      images.map(
+        (img) =>
+          new Promise<void>((resolve) => {
+            img.addEventListener("load", () => resolve(), { once: true })
+            img.addEventListener("error", () => resolve(), { once: true })
+          }),
+      ),
+    )
+  }
+
+  await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+}
+
+function createFreezeLayer(source: HTMLCanvasElement): HTMLCanvasElement {
+  const freezeLayer = document.createElement("canvas")
+  freezeLayer.id = "shatter-freeze-layer"
+  freezeLayer.width = source.width
+  freezeLayer.height = source.height
+  freezeLayer.style.cssText = "position:fixed;inset:0;z-index:99997;width:100vw;height:100vh;pointer-events:none;"
+  freezeLayer.getContext("2d")!.drawImage(source, 0, 0)
+  return freezeLayer
+}
+
+async function captureViewport(snapdom: typeof import("@zumer/snapdom").snapdom, width: number, height: number, scale: number): Promise<HTMLCanvasElement> {
+  const fullScreenshot = await snapdom.toCanvas(document.body, {
+    scale,
+    fast: false,
+    placeholders: false,
+    embedFonts: true,
+    backgroundColor: getComputedStyle(document.body).backgroundColor,
+    filter: (el: Element) =>
+      el.id !== "shatter-overlay" &&
+      el.id !== "shatter-crack-overlay" &&
+      el.id !== "shatter-freeze-layer",
+  })
+
+  const bodyW = document.body.scrollWidth
+  const bodyH = document.body.scrollHeight
+  const realScaleX = fullScreenshot.width / bodyW
+  const realScaleY = fullScreenshot.height / bodyH
+
+  const croppedCanvas = document.createElement("canvas")
+  croppedCanvas.width = Math.round(width * realScaleX)
+  croppedCanvas.height = Math.round(height * realScaleY)
+  croppedCanvas.getContext("2d")!.drawImage(
+    fullScreenshot,
+    0, Math.round(window.scrollY * realScaleY),
+    Math.round(width * realScaleX), Math.round(height * realScaleY),
+    0, 0,
+    croppedCanvas.width, croppedCanvas.height,
+  )
+
+  return croppedCanvas
+}
+
 /**
  * Trigger the glass shatter effect on the current page.
  * All heavy dependencies (Three.js, html2canvas) are dynamically imported on first call.
@@ -26,6 +87,8 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
     const fragmentCount = options?.fragmentCount ?? 100
     const scale = Math.min(window.devicePixelRatio, 2)
 
+    await waitForVisualsReady()
+
     // Dynamic imports — all loaded in parallel
     const [snapdomModule, voronoiModule, engineModule] = await Promise.all([
       import("@zumer/snapdom"),
@@ -33,47 +96,8 @@ export async function triggerShatter(options?: ShatterOptions): Promise<void> {
       import("./shatter-engine"),
     ])
 
-    // Capture page screenshot using snapdom
-    const fullScreenshot = await snapdomModule.snapdom.toCanvas(document.body, {
-      scale,
-      fast: true,
-      placeholders: true,
-      filter: (el: Element) =>
-        el.id !== "shatter-overlay" &&
-        el.id !== "shatter-crack-overlay" &&
-        el.id !== "shatter-freeze-layer",
-    })
-
-    // Crop to viewport only — snapdom captures the full body which may be
-    // taller than the viewport, causing UV mapping to sample blank areas.
-    // Use the actual canvas size vs body size to derive the real scale,
-    // because snapdom may use a different internal DPI than our `scale`.
-    const bodyW = document.body.scrollWidth
-    const bodyH = document.body.scrollHeight
-    const realScaleX = fullScreenshot.width / bodyW
-    const realScaleY = fullScreenshot.height / bodyH
-
-    const croppedCanvas = document.createElement("canvas")
-    croppedCanvas.width = Math.round(width * realScaleX)
-    croppedCanvas.height = Math.round(height * realScaleY)
-    const cropCtx = croppedCanvas.getContext("2d")!
-    cropCtx.drawImage(
-      fullScreenshot,
-      0, Math.round(window.scrollY * realScaleY),
-      Math.round(width * realScaleX), Math.round(height * realScaleY),
-      0, 0,
-      croppedCanvas.width, croppedCanvas.height,
-    )
-
-    // Freeze the page: overlay the static screenshot so that ongoing CSS
-    // animations (e.g. FloatingShapes) don't cause a visual jump when
-    // transitioning from the crack phase to the shatter phase.
-    const freezeLayer = document.createElement("canvas")
-    freezeLayer.id = "shatter-freeze-layer"
-    freezeLayer.width = croppedCanvas.width
-    freezeLayer.height = croppedCanvas.height
-    freezeLayer.style.cssText = "position:fixed;inset:0;z-index:99997;width:100vw;height:100vh;"
-    freezeLayer.getContext("2d")!.drawImage(croppedCanvas, 0, 0)
+    const croppedCanvas = await captureViewport(snapdomModule.snapdom, width, height, scale)
+    const freezeLayer = createFreezeLayer(croppedCanvas)
     document.body.appendChild(freezeLayer)
 
     // Generate Voronoi tessellation (for fragment shapes)

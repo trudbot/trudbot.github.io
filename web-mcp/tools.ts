@@ -1,26 +1,45 @@
-import { z, type ZodType } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
+type JsonSchema = {
+    type: "object" | "string";
+    properties?: Record<string, JsonSchema>;
+    required?: string[];
+    additionalProperties?: boolean;
+    enum?: string[];
+}
 
 interface Tool<T = unknown> {
     name: string;
     description: string;
-    inputSchema: ReturnType<typeof zodToJsonSchema>;
+    inputSchema: JsonSchema;
     execute: (input: T) => unknown;
-    // _parse: (raw: unknown) => T;
 }
 
-export function defineTool<T extends ZodType>(options: {
+function objectSchema(properties: Record<string, JsonSchema>): JsonSchema {
+    return {
+        type: "object",
+        properties,
+        required: Object.keys(properties),
+        additionalProperties: false,
+    };
+}
+
+function enumSchema<T extends string>(values: T[]): JsonSchema {
+    return {
+        type: "string",
+        enum: values,
+    };
+}
+
+export function defineTool<T>(options: {
     name: string;
     description: string;
-    input: T;
-    execute: (input: z.infer<T>) => unknown;
-}): Tool<z.infer<T>> {
+    inputSchema: JsonSchema;
+    execute: (input: T) => unknown;
+}): Tool<T> {
     return {
         name: options.name,
         description: options.description,
-        inputSchema: zodToJsonSchema(options.input),
+        inputSchema: options.inputSchema,
         execute: options.execute,
-        // _parse: (raw) => options.input.parse(raw),
     };
 }
 
@@ -28,35 +47,38 @@ export const tools = [
 
 ] as Tool<any>[];
 
+type NavigateInput = {
+    type: "blog" | "zhihu" | "github" | "steam";
+}
 
-tools.push(defineTool({
+tools.push(defineTool<NavigateInput>({
     name: "navigate",
     description: "Navigate to trudbot's other social media pages",
-    input: z.object({
-        type: z.enum(["blog", "zhihu", "github", "steam"]),
+    inputSchema: objectSchema({
+        type: enumSchema(["blog", "zhihu", "github", "steam"]),
     }),
     execute({type}) {
         switch (type) {
-            case "blog": 
+            case "blog":
                 window.open("https://trudbot.cn/blog");
                 return;
             case "zhihu":
                 window.open("https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30");
                 return;
-            case "github": 
+            case "github":
                 window.open("https://github.com/trudbot");
                 return;
-            case "steam": 
+            case "steam":
                 window.open("https://steamcommunity.com/id/trudboot/");
                 return;
         }
     }
 }));
 
-tools.push(defineTool({
+tools.push(defineTool<Record<string, never>>({
     name: "shatter",
     description: "Trigger a glass shatter effect on the page",
-    input: z.object({}),
+    inputSchema: objectSchema({}),
     async execute() {
         const { triggerShatter } = await import("@/lib/glass-shatter");
         await triggerShatter();

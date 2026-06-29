@@ -7,7 +7,8 @@ export default function GlobalScripts() {
   useEffect(() => {
     if (initialized) return
     initialized = true
-    if (navigator.modelContext) {
+    const modelContext = (navigator as Navigator & { modelContext?: unknown }).modelContext
+    if (modelContext) {
       import('@/web-mcp').then(({ registerWebMcp }) => registerWebMcp())
     }
   }, []);

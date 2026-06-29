@@ -208,6 +208,11 @@ interface FragmentData {
   state: FragmentState
 }
 
+interface HiddenElementState {
+  element: HTMLElement
+  visibility: string
+}
+
 /**
  * Build Three.js fragment meshes from Voronoi cells with glass-like materials.
  */
@@ -358,11 +363,7 @@ export function runShatterPhase(
     // Render initial frame (fragments in original positions)
     renderer.render(scene, camera)
 
-    // Hide original page content
-    const pageContent = document.querySelector("main") as HTMLElement | null
-    if (pageContent) {
-      pageContent.style.visibility = "hidden"
-    }
+    const hiddenElements = hidePageContent(glCanvas)
 
     // Animation loop
     const startTime = performance.now()
@@ -436,7 +437,7 @@ export function runShatterPhase(
 
       if (allDone || completedCount >= totalFragments) {
         cancelAnimationFrame(animFrameId)
-        cleanup(scene, renderer, texture, glCanvas)
+        cleanup(scene, renderer, texture, glCanvas, hiddenElements)
         resolve()
       } else {
         animFrameId = requestAnimationFrame(animate)
@@ -449,11 +450,23 @@ export function runShatterPhase(
   })
 }
 
+function hidePageContent(overlayCanvas: HTMLCanvasElement): HiddenElementState[] {
+  return Array.from(document.body.children).flatMap((child) => {
+    if (!(child instanceof HTMLElement) || child === overlayCanvas) return []
+    if (child.id === "shatter-crack-overlay") return []
+
+    const visibility = child.style.visibility
+    child.style.visibility = "hidden"
+    return [{ element: child, visibility }]
+  })
+}
+
 function cleanup(
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
   texture: THREE.Texture,
   canvas: HTMLCanvasElement,
+  hiddenElements: HiddenElementState[],
 ) {
   scene.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
@@ -471,4 +484,8 @@ function cleanup(
   renderer.dispose()
   renderer.forceContextLoss()
   canvas.remove()
+
+  for (const { element, visibility } of hiddenElements) {
+    element.style.visibility = visibility
+  }
 }

@@ -1,17 +1,19 @@
+import './styles.css'
+
 "use client"
 
-import { useState, useMemo, useEffect } from 'react'
-import dynamic from 'next/dynamic'
+import { lazy, Suspense, useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Trash2, FileJson, Columns, PanelLeft, PanelRight, Pencil, Wrench, FileCode2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { ClientOnly } from '@/components/client-only'
 import { jsonrepair } from 'jsonrepair'
 import JSON5 from 'json5'
 
-const ReactJson = dynamic(() => import('react-json-view'), { ssr: false })
+const ReactJson = lazy(() => import('react-json-view'))
 
 export default function JsonFormatPage() {
   const [iv, setIv] = useState('{"text":"hello world","features":["json","format","modern"]}')
@@ -181,7 +183,7 @@ export default function JsonFormatPage() {
                                     onChange={(e) => setIv(e.target.value)}
                                     placeholder="在此输入或粘贴 JSON..."
                                     spellCheck={false}
-                                    className="w-full h-full p-6 bg-transparent resize-none focus:outline-none font-mono text-base leading-relaxed text-slate-700 dark:text-slate-300"
+                                    className="w-full h-full p-6 bg-transparent resize-none focus:outline-none font-[ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace] text-base leading-relaxed text-slate-700 dark:text-slate-300"
                                 />
                                 <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-400 pointer-events-none px-2 py-1 rounded opacity-50">
                                     Input
@@ -202,19 +204,23 @@ export default function JsonFormatPage() {
                         >
                             <div className="flex-1 relative overflow-auto p-6 scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-zinc-700">
                                 {mounted && jsonObj ? (
-                                    <ReactJson 
-                                        src={jsonObj} 
-                                        name={false} 
-                                        displayDataTypes={false}
-                                        enableClipboard={true}
-                                        displayObjectSize={true}
-                                        collapsed={false}
-                                        theme={jsonTheme as any}
-                                        style={{ backgroundColor: 'transparent', fontSize: '15px', fontFamily: 'monospace' }}
-                                        onEdit={isEditable ? handleJsonUpdate : undefined}
-                                        onAdd={isEditable ? handleJsonUpdate : undefined}
-                                        onDelete={isEditable ? handleJsonUpdate : undefined}
-                                    />
+                                    <ClientOnly fallback={null}>
+                                        <Suspense fallback={null}>
+                                            <ReactJson
+                                                src={jsonObj}
+                                                name={false}
+                                                displayDataTypes={false}
+                                                enableClipboard={true}
+                                                displayObjectSize={true}
+                                                collapsed={false}
+                                                theme={jsonTheme as any}
+                                                style={{ backgroundColor: 'transparent', fontSize: '15px', fontFamily: 'monospace' }}
+                                                onEdit={isEditable ? handleJsonUpdate : undefined}
+                                                onAdd={isEditable ? handleJsonUpdate : undefined}
+                                                onDelete={isEditable ? handleJsonUpdate : undefined}
+                                            />
+                                        </Suspense>
+                                    </ClientOnly>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-slate-400">
                                         <div className="p-4 rounded-full bg-stone-100 dark:bg-zinc-800 mb-4 opacity-50">

@@ -1,0 +1,71 @@
+/* react-json-view 自定义样式覆盖 */
+
+/* === 1. 复制按钮：仅在最深层 hover 的当前行显示 === */
+
+/* 默认强制隐藏所有复制按钮（覆盖 react-json-view 的 inline display） */
+.react-json-view .copy-to-clipboard-container {
+  display: none !important;
+}
+
+/* 叶子值行 hover 时显示该行的复制按钮 */
+.react-json-view .variable-row:hover > .copy-to-clipboard-container {
+  display: inline-flex !important;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* 嵌套对象/数组：仅当 hover 在该对象上但内部没有更深的 hover 子级时显示 */
+.react-json-view
+  .object-key-val:hover:not(:has(.variable-row:hover, .object-key-val:hover))
+  > .brace-row
+  .object-meta-data
+  > .copy-to-clipboard-container {
+  display: inline-flex !important;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* === 2. 修复复制按钮和 ✔ 勾的对齐（避免换行/错位） === */
+
+.react-json-view .copy-to-clipboard-container,
+.react-json-view .copy-to-clipboard-container > span,
+.react-json-view .copy-to-clipboard-container > span > span {
+  white-space: nowrap;
+}
+
+/* 让 copy-icon 与 ✔ 在同一基线对齐 */
+.react-json-view .copy-icon {
+  vertical-align: middle !important;
+  display: inline-block;
+}
+
+.react-json-view .copy-icon-copied {
+  vertical-align: middle !important;
+  display: inline-block;
+  line-height: 1;
+  font-size: 13px;
+}
+
+/* === 3. hover 当前对象左侧标线高亮 ===
+ *
+ * react-json-view 的"对象左标线"是 .object-key-val 元素自身的 border-left
+ * （inline style 应用，不在子项上）。所以"高亮 hover 行所在对象的标线"等价于
+ * 高亮"包裹 hover 行的最近 .object-key-val 的 border-left"。
+ *
+ * CSS :hover 会应用到被悬停元素的所有祖先；最近的包裹对象就是
+ * "处于 :hover 但内部没有更深 .object-key-val 处于 :hover" 的那个。
+ */
+
+.react-json-view .object-key-val {
+  transition: border-left-color 0.15s ease;
+}
+
+.react-json-view .object-key-val:hover:not(:has(.object-key-val:hover)) {
+  border-left-color: rgb(59, 130, 246) !important;
+}
+
+.dark
+  .react-json-view
+  .object-key-val:hover:not(:has(.object-key-val:hover)) {
+  border-left-color: rgb(96, 165, 250) !important;
+}

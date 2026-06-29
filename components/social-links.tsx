@@ -1,5 +1,3 @@
-import Image from "next/image"
-
 const socialLinks = [
   {
     href: "https://github.com/trudbot",
@@ -51,12 +49,10 @@ export function SocialLinks() {
           } as React.CSSProperties}
         >
           <div className="relative z-10 h-8 w-8 transition-transform duration-300 group-hover:scale-110">
-            <Image
+            <img
               src={link.icon || "/placeholder.svg"}
               alt={link.name}
-              fill
-              className="object-contain"
-              unoptimized
+              className="h-full w-full object-contain"
               crossOrigin="anonymous"
             />
           </div>

@@ -1,8 +1,9 @@
-"use client"
+import './styles.css'
 import { useState, useMemo, useEffect } from 'react'
+import LZString from 'lz-string'
+import qrcode from 'qrcode-generator'
 
-// Lightweight QR Code using external API - zero bundle size for QR generation
-// Using quickchart.io - free, reliable, returns PNG
+const COMPRESSION_MIN_LENGTH = 200
 
 // Custom hook for window size
 function useWindowSize() {
@@ -53,44 +54,31 @@ function useClipboard() {
 
 // Lightweight QR Image component
 function QRCodeImg({ value, size }: { value: string; size: number }) {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-  // Generate QR code URL - using quickchart.io free API
-  const qrUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      text: value,
-      size: size.toString(),
-      format: 'png',
-      margin: '1',
-      errorCorrectionLevel: 'L',
-    })
-    return `https://quickchart.io/qr?${params.toString()}`
-  }, [value, size])
+  const qrSvg = useMemo(() => {
+    try {
+      const qr = qrcode(0, 'L')
+      qr.addData(value)
+      qr.make()
+      return qr.createSvgTag({ cellSize: 6, margin: 2 })
+    } catch {
+      return ''
+    }
+  }, [value])
 
   return (
     <div className="text-share-qr-card">
-      {loading && !error && (
-        <div className="text-share-qr-loading">生成二维码中...</div>
-      )}
-      {error ? (
-        <div className="text-share-qr-error">生成失败</div>
-      ) : (
+      {qrSvg ? (
         <img
-          src={qrUrl}
+          src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrSvg)}`}
           alt="QR Code"
-          crossOrigin="anonymous"
           width={size}
           height={size}
           className="text-share-qrcode"
-          onLoad={() => setLoading(false)}
-          onError={() => {
-            setLoading(false)
-            setError(true)
-          }}
         />
+      ) : (
+        <div className="text-share-qr-error">生成失败</div>
       )}
-      {!error && <p className="text-share-hint">手机扫码查看</p>}
+      {qrSvg && <p className="text-share-hint">手机扫码查看</p>}
     </div>
   )
 }
@@ -117,8 +105,17 @@ export default function SharePage() {
 
   const shareUrl = useMemo(() => {
     if (!inputText) return ''
+
     const encoded = encodeURIComponent(inputText)
-    return `${currentOrigin}/r?content=${encoded}`
+    if (inputText.length < COMPRESSION_MIN_LENGTH) {
+      return `${currentOrigin}/r?content=${encoded}`
+    }
+
+    const compressed = LZString.compressToEncodedURIComponent(inputText)
+    if (compressed.length >= encoded.length) {
+      return `${currentOrigin}/r?content=${encoded}`
+    }
+    return `${currentOrigin}/r?compressed=${compressed}`
   }, [inputText, currentOrigin])
 
   useEffect(() => {
