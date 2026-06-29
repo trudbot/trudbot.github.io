@@ -118,7 +118,7 @@ export default function JsonFormatPage() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] w-full bg-stone-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20">
+    <main className="relative min-h-[calc(100vh-64px)] w-full bg-stone-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20">
         <Toaster />
         
         <div className="relative z-10 flex flex-col h-[calc(100vh-64px)] p-4 md:p-6 gap-6">
@@ -240,7 +240,7 @@ export default function JsonFormatPage() {
                                     spellCheck={false}
                                     className="w-full h-full p-6 bg-transparent resize-none focus:outline-none font-[ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace] text-base leading-relaxed text-slate-700 dark:text-slate-300"
                                 />
-                                <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-400 pointer-events-none px-2 py-1 rounded opacity-50">
+                                <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-300 pointer-events-none px-2 py-1 rounded opacity-50">
                                     Input
                                 </div>
                             </div>
@@ -293,7 +293,7 @@ export default function JsonFormatPage() {
                                         <p className="text-sm font-medium">{iv.trim() ? 'JSON 格式错误' : '等待输入...'}</p>
                                     </div>
                                 )}
-                                <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-400 pointer-events-none px-2 py-1 rounded z-10 opacity-50">
+                                <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-300 pointer-events-none px-2 py-1 rounded z-10 opacity-50">
                                     Preview
                                 </div>
                             </div>
@@ -302,6 +302,6 @@ export default function JsonFormatPage() {
                 </AnimatePresence>
             </div>
         </div>
-    </div>
+    </main>
   )
 }

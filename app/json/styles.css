@@ -69,3 +69,19 @@
   .object-key-val:hover:not(:has(.object-key-val:hover)) {
   border-left-color: rgb(96, 165, 250) !important;
 }
+
+.react-json-view .object-size {
+  color: rgb(71, 85, 105) !important;
+}
+
+.react-json-view .string-value {
+  color: rgb(22, 101, 52) !important;
+}
+
+.dark .react-json-view .object-size {
+  color: rgb(203, 213, 225) !important;
+}
+
+.dark .react-json-view .string-value {
+  color: rgb(134, 239, 172) !important;
+}
