@@ -1,64 +1,42 @@
-# 快速开始 - 文件式路由
+# 快速开始
 
-## 🎯 核心概念
+本项目是 Vite Plus + React 的多页面静态应用。路由自动从 `app/**/page.tsx` 发现，构建时由 `scripts/ssg.mjs` 预渲染成静态 HTML。
 
-本项目已配置为**文件式路由系统**，每个页面互不干扰，只加载必要的资源。
+## 当前页面
 
-## 📂 当前页面
+- `/` - 首页
+- `/json` - JSON 编辑器
+- `/share` - 文本/链接分享
+- `/share/r` - 分享接收页
+- `/colors` - 颜色收藏
+- `/bluelink` - 蓝链生成工具
 
-- `/` - 首页（来自 `app/(home)`）
-- `/demo` - 示例页面
-- `/json-format` - JSON 格式化实验室
-- `/text-share` - 文本分享工具
+## 开发
 
-## ⚡ 快速创建新页面
+```bash
+pnpm dev
+```
 
-### 方式一：使用脚本（推荐）
+`pnpm dev` 会先生成 `src/generated/` 路由入口，再启动开发服务器。
+
+## 构建与预览
+
+```bash
+pnpm build
+pnpm preview
+```
+
+构建产物输出到 `out/`，可以部署到任意静态托管服务。
+
+## 新增页面
 
 ```bash
 pnpm create-page your-page-name
 ```
 
-### 方式二：手动创建
+脚本会生成：
 
-```bash
-mkdir -p app/your-page
-cd app/your-page
+- `app/your-page-name/page.tsx`
+- `app/your-page-name/styles.css`
 
-# 创建三个文件：
-# - page.tsx （页面内容）
-# - layout.tsx （页面布局）
-# - styles.css （页面样式）
-```
-
-## 🔍 查看详细文档
-
-完整的页面开发指南请查看 [PAGES.md](./PAGES.md)
-
-## 🎨 样式隔离
-
-- ✅ 全局样式：`app/globals.css` （所有页面共享）
-- ✅ 页面样式：`app/[page]/styles.css` （仅该页面加载）
-- ✅ 自动代码分割：每个页面的 JS 独立打包
-
-## 🚀 开发
-
-```bash
-# 启动开发服务器
-pnpm dev
-
-# 访问页面
-# http://localhost:3000/        -> 首页
-# http://localhost:3000/demo    -> Demo页面
-# http://localhost:3000/新页面  -> 你创建的新页面
-```
-
-## 📦 构建部署
-
-```bash
-# 构建静态站点
-pnpm build
-
-# 输出目录：out/
-# 可直接部署到 GitHub Pages, Vercel, Netlify 等
-```
+无需手动注册路由；下一次 `pnpm dev` 或 `pnpm build` 会自动发现页面。

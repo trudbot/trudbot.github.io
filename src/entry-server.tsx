@@ -1,23 +1,8 @@
-import { StrictMode, Suspense, type ComponentType } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { renderToString } from 'react-dom/server'
-import HomePage from '@/app/(home)/page'
-import JsonPage from '@/app/json/page'
-import SharePage from '@/app/share/page'
-import ReceivePage from '@/app/share/r/page'
-import ColorsPage from '@/app/colors/page'
-import BlueLinkPage from '@/app/bluelink/page'
-import { routesToPrerender } from './route-list'
+import { pages, routesToPrerender } from './generated/pages'
 
 export { routesToPrerender }
-
-const pages: Record<string, ComponentType> = {
-  '/': HomePage,
-  '/json': JsonPage,
-  '/share': SharePage,
-  '/share/r': ReceivePage,
-  '/colors': ColorsPage,
-  '/bluelink': BlueLinkPage,
-}
 
 export function render(url: string): string {
   const Page = pages[url]

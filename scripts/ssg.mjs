@@ -2,18 +2,13 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { build } from 'vite'
+import { generateRoutes } from './generate-routes.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = path.join(root, 'out')
 const ssrOutDir = path.join(root, '.vite-ssg')
-const routeEntries = {
-  '/': 'src/entries/home.tsx',
-  '/json': 'src/entries/json.tsx',
-  '/share': 'src/entries/share.tsx',
-  '/share/r': 'src/entries/share-r.tsx',
-  '/colors': 'src/entries/colors.tsx',
-  '/bluelink': 'src/entries/bluelink.tsx',
-}
+
+await generateRoutes()
 
 await fs.rm(outDir, { recursive: true, force: true })
 await fs.rm(ssrOutDir, { recursive: true, force: true })
@@ -35,6 +30,8 @@ await build({
 
 const template = await fs.readFile(path.join(root, 'index.html'), 'utf-8')
 const manifest = JSON.parse(await fs.readFile(path.join(outDir, '.vite', 'manifest.json'), 'utf-8'))
+const routeManifest = JSON.parse(await fs.readFile(path.join(root, 'src/generated/route-manifest.json'), 'utf-8'))
+const routeEntries = Object.fromEntries(routeManifest.map((page) => [page.route, page.entryFile]))
 const serverEntry = await import(pathToFileURL(path.join(ssrOutDir, 'entry-server.mjs')).href)
 
 function collectAssets(entryKey, seen = new Set()) {

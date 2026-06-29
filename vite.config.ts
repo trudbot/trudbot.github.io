@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { discoverPages } from './scripts/discover-pages.mjs'
 
 function chunkName(id: string) {
   if (id.includes('/node_modules/react-json-view/')) return 'react-json-view'
@@ -16,6 +17,9 @@ function chunkName(id: string) {
   if (id.includes('/node_modules/lz-string/') || id.includes('/node_modules/qrcode-generator/') || id.includes('/app/share/styles.css')) return 'share-common'
 }
 
+const pages = discoverPages({ root: __dirname })
+const input = Object.fromEntries(pages.map((page) => [page.entryName, path.resolve(__dirname, page.entryFile)]))
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -28,14 +32,7 @@ export default defineConfig({
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
-      input: {
-        home: path.resolve(__dirname, 'src/entries/home.tsx'),
-        json: path.resolve(__dirname, 'src/entries/json.tsx'),
-        share: path.resolve(__dirname, 'src/entries/share.tsx'),
-        'share-r': path.resolve(__dirname, 'src/entries/share-r.tsx'),
-        colors: path.resolve(__dirname, 'src/entries/colors.tsx'),
-        bluelink: path.resolve(__dirname, 'src/entries/bluelink.tsx'),
-      },
+      input,
       output: {
         manualChunks: chunkName,
       },
