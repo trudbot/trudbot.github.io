@@ -10,10 +10,32 @@ import { Toaster } from '@/components/ui/sonner'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ClientOnly } from '@/components/client-only'
-import { jsonrepair } from 'jsonrepair'
-import JSON5 from 'json5'
 
 const ReactJson = lazy(() => import('react-json-view'))
+
+let json5ModulePromise: Promise<typeof import('json5')> | undefined
+let jsonRepairModulePromise: Promise<typeof import('jsonrepair')> | undefined
+
+function loadJson5() {
+  json5ModulePromise ??= import('json5')
+  return json5ModulePromise
+}
+
+function loadJsonRepair() {
+  jsonRepairModulePromise ??= import('jsonrepair')
+  return jsonRepairModulePromise
+}
+
+function scheduleIdleWork(callback: () => void) {
+  if (typeof window === 'undefined') return
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(callback, { timeout: 3000 })
+    return
+  }
+
+  globalThis.setTimeout(callback, 1200)
+}
 
 export default function JsonFormatPage() {
   const [iv, setIv] = useState('{"text":"hello world","features":["json","format","modern"]}')
@@ -22,6 +44,7 @@ export default function JsonFormatPage() {
   const [isJson5Mode, setIsJson5Mode] = useState(false)
   const [jsonTheme, setJsonTheme] = useState('rjv-default')
   const [isEditable, setIsEditable] = useState(false)
+  const [json5Parser, setJson5Parser] = useState<Pick<typeof import('json5'), 'parse'> | null>(null)
 
   const handleJsonUpdate = (update: any) => {
     setIv(JSON.stringify(update.updated_src, null, 2))
@@ -29,24 +52,49 @@ export default function JsonFormatPage() {
 
   useEffect(() => {
     setMounted(true)
-    // Simple check for dark mode to set theme
     const isDark = document.documentElement.classList.contains('dark')
     setJsonTheme(isDark ? 'monokai' : 'rjv-default')
+    scheduleIdleWork(() => {
+      void loadJson5().then(setJson5Parser)
+      void loadJsonRepair()
+    })
   }, [])
+
+  useEffect(() => {
+    if (!isJson5Mode || json5Parser) return
+
+    let cancelled = false
+    loadJson5().then((module) => {
+      if (!cancelled) setJson5Parser(module)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isJson5Mode, json5Parser])
+
+  const preloadJson5 = () => {
+    void loadJson5().then(setJson5Parser)
+  }
+
+  const preloadJsonRepair = () => {
+    void loadJsonRepair()
+  }
 
   const jsonObj = useMemo(() => {
     try {
       if (isJson5Mode) {
-        return JSON5.parse(iv)
+        return json5Parser ? json5Parser.parse(iv) : null
       }
       return JSON.parse(iv)
     } catch (e) {
       return null
     }
-  }, [iv, isJson5Mode])
+  }, [iv, isJson5Mode, json5Parser])
 
-  const handleRepair = () => {
+  const handleRepair = async () => {
     try {
+        const { jsonrepair } = await loadJsonRepair()
         const repaired = jsonrepair(iv)
         setIv(JSON.stringify(JSON.parse(repaired), null, 2))
         toast.success('JSON 已修复')
@@ -118,7 +166,12 @@ export default function JsonFormatPage() {
                             <Switch
                                 id="json5-mode"
                                 checked={isJson5Mode}
-                                onCheckedChange={setIsJson5Mode}
+                                onMouseEnter={preloadJson5}
+                                onFocus={preloadJson5}
+                                onCheckedChange={(checked) => {
+                                    setIsJson5Mode(checked)
+                                    if (checked) preloadJson5()
+                                }}
                             />
                             <Label htmlFor="json5-mode" className="text-sm font-medium cursor-pointer text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                                 <FileCode2 className="w-3.5 h-3.5" />
@@ -139,7 +192,9 @@ export default function JsonFormatPage() {
                         </div>
                     </div>
 
-                    <button 
+                    <button
+                        onMouseEnter={preloadJsonRepair}
+                        onFocus={preloadJsonRepair}
                         onClick={handleRepair}
                         className="p-2.5 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-slate-500 hover:text-amber-500 transition-colors"
                         title="尝试修复 JSON"
