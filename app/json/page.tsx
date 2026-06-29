@@ -258,24 +258,33 @@ export default function JsonFormatPage() {
                             className={`flex flex-col h-full overflow-hidden ${layout === 'split' ? 'w-full md:w-1/2' : 'w-full'}`}
                         >
                             <div className="flex-1 relative overflow-auto p-6 scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-zinc-700">
-                                {mounted && jsonObj ? (
-                                    <ClientOnly fallback={null}>
-                                        <Suspense fallback={null}>
-                                            <ReactJson
-                                                src={jsonObj}
-                                                name={false}
-                                                displayDataTypes={false}
-                                                enableClipboard={true}
-                                                displayObjectSize={true}
-                                                collapsed={false}
-                                                theme={jsonTheme as any}
-                                                style={{ backgroundColor: 'transparent', fontSize: '15px', fontFamily: 'monospace' }}
-                                                onEdit={isEditable ? handleJsonUpdate : undefined}
-                                                onAdd={isEditable ? handleJsonUpdate : undefined}
-                                                onDelete={isEditable ? handleJsonUpdate : undefined}
-                                            />
-                                        </Suspense>
-                                    </ClientOnly>
+                                {jsonObj ? (
+                                    mounted ? (
+                                        <ClientOnly fallback={null}>
+                                            <Suspense fallback={null}>
+                                                <ReactJson
+                                                    src={jsonObj}
+                                                    name={false}
+                                                    displayDataTypes={false}
+                                                    enableClipboard={true}
+                                                    displayObjectSize={true}
+                                                    collapsed={false}
+                                                    theme={jsonTheme as any}
+                                                    style={{ backgroundColor: 'transparent', fontSize: '15px', fontFamily: 'monospace' }}
+                                                    onEdit={isEditable ? handleJsonUpdate : undefined}
+                                                    onAdd={isEditable ? handleJsonUpdate : undefined}
+                                                    onDelete={isEditable ? handleJsonUpdate : undefined}
+                                                />
+                                            </Suspense>
+                                        </ClientOnly>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                                            <div className="p-4 rounded-full bg-stone-100 dark:bg-zinc-800 mb-4 opacity-50">
+                                                <FileJson className="w-8 h-8" />
+                                            </div>
+                                            <p className="text-sm font-medium">正在加载预览...</p>
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-slate-400">
                                         <div className="p-4 rounded-full bg-stone-100 dark:bg-zinc-800 mb-4 opacity-50">
