@@ -114,6 +114,12 @@
   align-items: center;
 }
 
+.text-share-qrcode {
+  display: block;
+  max-width: min(320px, calc(100vw - 88px));
+  max-height: min(320px, calc(100vw - 88px));
+}
+
 .text-share-hint {
   margin: 12px 0 0;
   font-size: 0.9rem;

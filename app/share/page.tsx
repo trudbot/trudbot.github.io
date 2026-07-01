@@ -1,23 +1,9 @@
 import './styles.css'
 import { useState, useMemo, useEffect } from 'react'
 import LZString from 'lz-string'
-import qrcode from 'qrcode-generator'
+import { QRCodeImg } from './qr-code-img'
 
 const COMPRESSION_MIN_LENGTH = 200
-
-// Custom hook for window size
-function useWindowSize() {
-  const [size, setSize] = useState({ width: 0, height: 0 })
-  useEffect(() => {
-    function updateSize() {
-      setSize({ width: window.innerWidth, height: window.innerHeight })
-    }
-    window.addEventListener('resize', updateSize)
-    updateSize()
-    return () => window.removeEventListener('resize', updateSize)
-  }, [])
-  return size
-}
 
 // Custom hook for clipboard
 function useClipboard() {
@@ -52,56 +38,11 @@ function useClipboard() {
   return { copy, copied }
 }
 
-// Lightweight QR Image component
-function QRCodeImg({ value, size }: { value: string; size: number }) {
-  const qrSvg = useMemo(() => {
-    try {
-      const qr = qrcode(0, 'L')
-      qr.addData(value)
-      qr.make()
-      return qr.createSvgTag({ cellSize: 6, margin: 2 })
-    } catch {
-      return ''
-    }
-  }, [value])
-
-  return (
-    <div className="text-share-qr-card">
-      {qrSvg ? (
-        <img
-          src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrSvg)}`}
-          alt="QR Code"
-          width={size}
-          height={size}
-          className="text-share-qrcode"
-        />
-      ) : (
-        <div className="text-share-qr-error">生成失败</div>
-      )}
-      {qrSvg && <p className="text-share-hint">手机扫码查看</p>}
-    </div>
-  )
-}
-
 export default function SharePage() {
   const [inputText, setInputText] = useState('')
   const [currentOrigin, setCurrentOrigin] = useState('')
 
-  const { width } = useWindowSize()
   const { copy, copied } = useClipboard()
-
-  const qrSize = useMemo(() => {
-    const len = inputText.length
-    let size = 200
-    if (len > 800) size = 320
-    else if (len > 400) size = 280
-    else if (len > 150) size = 240
-
-    if (width === 0) return size
-
-    const maxScreenSize = Math.min(width - 60, 400)
-    return Math.min(size, maxScreenSize)
-  }, [inputText.length, width])
 
   const shareUrl = useMemo(() => {
     if (!inputText) return ''
@@ -145,7 +86,7 @@ export default function SharePage() {
 
           {inputText ? (
             <div className="text-share-preview">
-              <QRCodeImg value={shareUrl} size={qrSize} />
+              <QRCodeImg value={shareUrl} />
 
               <div className="text-share-actions">
                 <button
