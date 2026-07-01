@@ -46,7 +46,7 @@ function collectAssets(entryKey, seen = new Set()) {
   }
 }
 
-function pageAssets(route) {
+function pageClientAssets(route) {
   const entryKey = routeEntries[route]
   const entry = manifest[entryKey]
   if (!entry) throw new Error(`Missing client entry in manifest: ${entryKey}`)
@@ -55,18 +55,29 @@ function pageAssets(route) {
   const css = [...new Set(assets.css)]
   const imports = [...new Set(assets.imports.map((key) => manifest[key]?.file).filter(Boolean))]
 
+  return { css, imports, entryFile: entry.file }
+}
+
+function pageHeadAssets(route) {
+  const assets = pageClientAssets(route)
+
   return [
-    ...imports.map((file) => `    <link rel="modulepreload" crossorigin href="/${file}">`),
-    ...css.map((file) => `    <link rel="stylesheet" crossorigin href="/${file}">`),
-    `    <script type="module" crossorigin src="/${entry.file}"></script>`,
+    ...assets.css.map((file) => `    <link rel="stylesheet" crossorigin href="/${file}">`),
+    ...assets.imports.map((file) => `    <link rel="modulepreload" crossorigin href="/${file}">`),
   ].join('\n')
+}
+
+function pageBodyAssets(route) {
+  const assets = pageClientAssets(route)
+
+  return `    <script type="module" crossorigin src="/${assets.entryFile}"></script>`
 }
 
 for (const route of serverEntry.routesToPrerender) {
   const appHtml = serverEntry.render(route)
   const html = template
-    .replace('<!--page-assets-->', pageAssets(route))
-    .replace('<!--app-html-->', appHtml)
+    .replace('<!--page-assets-->', pageHeadAssets(route))
+    .replace('<!--app-html-->', `${appHtml}\n${pageBodyAssets(route)}`)
   const filePaths = route === '/'
     ? [path.join(outDir, 'index.html')]
     : [
