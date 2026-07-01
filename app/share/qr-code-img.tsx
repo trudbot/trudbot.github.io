@@ -10,8 +10,7 @@ import {
 
 const MODULE_COLOR = '#000000'
 const BACKGROUND_COLOR = '#ffffff'
-const QR_IMAGE_SIZE_PX = 240
-const QR_DISPLAY_SIZE_PX = 320
+const QR_MAX_DISPLAY_SIZE_PX = 320
 const MODULE_SIZE_PIXELS = 10
 const DINO_TILE_SIZE_PIXELS = 4
 const LOCATOR_SIZE_MODULES = 7
@@ -162,21 +161,20 @@ function renderQRCodeChromiumStyle(
   size: number,
   originalSize: number,
 ) {
-  const devicePixelRatio = window.devicePixelRatio || 1
-  const canvasSize = QR_IMAGE_SIZE_PX * devicePixelRatio
+  const modulePixelSize = Math.floor(QR_MAX_DISPLAY_SIZE_PX / originalSize)
+  const canvasSize = originalSize * modulePixelSize
 
   context.canvas.width = canvasSize
   context.canvas.height = canvasSize
-  context.canvas.style.width = `${QR_DISPLAY_SIZE_PX}px`
-  context.canvas.style.height = `${QR_DISPLAY_SIZE_PX}px`
-  context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+  context.canvas.style.width = `${canvasSize}px`
+  context.canvas.style.height = `${canvasSize}px`
+  context.setTransform(1, 0, 0, 1, 0, 0)
   context.fillStyle = BACKGROUND_COLOR
-  context.fillRect(0, 0, QR_IMAGE_SIZE_PX, QR_IMAGE_SIZE_PX)
+  context.fillRect(0, 0, canvasSize, canvasSize)
   context.imageSmoothingEnabled = true
   context.imageSmoothingQuality = 'high'
 
-  const modulePixelSize = Math.floor(QR_IMAGE_SIZE_PX / originalSize)
-  const margin = Math.floor((QR_IMAGE_SIZE_PX - originalSize * modulePixelSize) / 2)
+  const margin = 0
   const hasQuietZone = size > originalSize
   const quietZoneModules = hasQuietZone ? (size - originalSize) / 2 : 0
 
@@ -202,7 +200,7 @@ function renderQRCodeChromiumStyle(
   }
 
   drawLocators(context, originalSize, margin, modulePixelSize)
-  drawCenterImage(context, QR_IMAGE_SIZE_PX, modulePixelSize)
+  drawCenterImage(context, canvasSize, modulePixelSize)
 }
 
 export function QRCodeImg({ value }: { value: string }) {
