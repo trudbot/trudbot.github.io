@@ -2,7 +2,7 @@ import './styles.css'
 
 "use client"
 
-import { lazy, Suspense, useState, useMemo, useEffect } from 'react'
+import { lazy, Suspense, useState, useMemo, useEffect, type ComponentType } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Trash2, FileJson, Columns, PanelLeft, PanelRight, Pencil, Wrench, FileCode2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -11,7 +11,20 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { ClientOnly } from '@/components/client-only'
 
-const ReactJson = lazy(() => import('react-json-view'))
+type ReactJsonComponent = ComponentType<import('react-json-view').ReactJsonViewProps>
+
+type ReactJsonModule = {
+  default: ReactJsonComponent | { default: ReactJsonComponent }
+}
+
+const ReactJson = lazy(() => import('react-json-view').then((mod) => {
+  const reactJsonModule = mod as ReactJsonModule
+  const component = 'default' in reactJsonModule.default
+    ? reactJsonModule.default.default
+    : reactJsonModule.default
+
+  return { default: component }
+}))
 
 let json5ModulePromise: Promise<typeof import('json5')> | undefined
 let jsonRepairModulePromise: Promise<typeof import('jsonrepair')> | undefined

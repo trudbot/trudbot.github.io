@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { discoverPages } from './scripts/discover-pages.mjs'
 
@@ -19,9 +19,28 @@ function chunkName(id: string) {
 
 const pages = discoverPages({ root: __dirname })
 const input = Object.fromEntries(pages.map((page) => [page.entryName, path.resolve(__dirname, page.entryFile)]))
+const routeEntries = Object.fromEntries(pages.map((page) => [page.route, page.entryFile]))
+
+function devPageEntries(): Plugin {
+  return {
+    name: 'dev-page-entries',
+    apply: 'serve',
+    transformIndexHtml(html, context) {
+      const requestPath = context.originalUrl ?? context.path
+      const pathname = requestPath.split('?')[0].replace(/\/$/, '') || '/'
+      const entryFile = routeEntries[pathname]
+      if (!entryFile) return html
+
+      return html.replace(
+        '<!--page-assets-->',
+        `<script type="module" src="/${entryFile}"></script>`,
+      )
+    },
+  }
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), devPageEntries()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
