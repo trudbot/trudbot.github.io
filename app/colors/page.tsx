@@ -1,11 +1,11 @@
-import './colors.css'
+import "./colors.css";
 
 // ─── 颜色数据 ────────────────────────────────────────────────────────────────
 interface ColorEntry {
-  hex: string
-  name: string
-  note: string
-  group: string
+  hex: string;
+  name: string;
+  note: string;
+  group: string;
 }
 
 const colors: ColorEntry[] = [
@@ -33,18 +33,25 @@ const colors: ColorEntry[] = [
   { hex: "#7DD3FC", name: "天空蓝", note: "晴天抬头看到的颜色", group: "天空收集" },
   { hex: "#67E8F9", name: "浅海", note: "海水最浅的地方", group: "天空收集" },
   { hex: "#A5F3FC", name: "冰川蓝", note: "格陵兰的冰", group: "天空收集" },
-]
+];
 
 // 按 group 分组
-const groups = Array.from(new Set(colors.map((c) => c.group)))
+const groups = Array.from(new Set(colors.map((c) => c.group)));
+const headerAccentBars = [
+  { color: "#5CE0D8", width: 42, delay: 0.3 },
+  { color: "#FF8FAB", width: 56, delay: 0.38 },
+  { color: "#FFD166", width: 34, delay: 0.46 },
+  { color: "#A78BFA", width: 48, delay: 0.54 },
+  { color: "#7DD3FC", width: 62, delay: 0.62 },
+];
 
 // 判断浅色用深色文字
 function textColor(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance > 0.6 ? "#1a1a2e" : "#fffffe"
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? "#1a1a2e" : "#fffffe";
 }
 
 // ─── 页面 ────────────────────────────────────────────────────────────────────
@@ -61,14 +68,14 @@ export default function ColorsPage() {
             那些让我心动的、清新的、像梦一样的颜色。
           </p>
           <div className="mt-6 flex gap-2">
-            {["#5CE0D8", "#FF8FAB", "#FFD166", "#A78BFA", "#7DD3FC"].map((c) => (
+            {headerAccentBars.map((bar) => (
               <div
-                key={c}
+                key={bar.color}
                 className="h-2 rounded-full colors-pop"
                 style={{
-                  background: c,
-                  width: `${Math.random() * 40 + 24}px`,
-                  animationDelay: `${0.3 + Math.random() * 0.3}s`,
+                  background: bar.color,
+                  width: `${bar.width}px`,
+                  animationDelay: `${bar.delay}s`,
                 }}
               />
             ))}
@@ -148,5 +155,5 @@ export default function ColorsPage() {
         </footer>
       </div>
     </main>
-  )
+  );
 }

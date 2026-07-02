@@ -189,7 +189,9 @@ export function ReceiveShell({
 
       <main className="text-share-main">
         <section className="text-share-hero" aria-labelledby="receive-title">
-          <Sparkle x={-8} y={8} color={hasContent ? "#4CAF50" : "#FF7043"} size={22} />
+          <span data-share-status-sparkle>
+            <Sparkle x={-8} y={8} color={hasContent ? "#4CAF50" : "#FF7043"} size={22} />
+          </span>
           <Sparkle x={300} y={0} color="#42A5F5" size={16} />
 
           <div className="text-share-kicker-row">
@@ -200,9 +202,7 @@ export function ReceiveShell({
               {hasContent ? "扫码成功" : "未找到内容"}
             </span>
             <span className="text-share-date" data-share-status-note>
-              {hasContent
-                ? new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric" })
-                : "分享链接里没有可展示的文本"}
+              {hasContent ? "分享内容已就绪" : "分享链接里没有可展示的文本"}
             </span>
           </div>
 

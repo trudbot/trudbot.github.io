@@ -1,10 +1,8 @@
-import './home.css'
-import { lazy, Suspense } from "react"
-import { ProfileCard } from "@/components/profile-card"
-import { FloatingShapes } from "@/components/floating-shapes"
-
-const GamesSection = lazy(() => import("@/components/games-section").then((mod) => ({ default: mod.GamesSection })))
-const BottomDecoration = lazy(() => import("@/components/bottom-decoration").then((mod) => ({ default: mod.BottomDecoration })))
+import "./home.css";
+import { BottomDecoration } from "@/components/bottom-decoration";
+import { FloatingShapes } from "@/components/floating-shapes";
+import { GamesSection } from "@/components/games-section";
+import { ProfileCard } from "@/components/profile-card";
 
 export default function Home() {
   return (
@@ -12,11 +10,9 @@ export default function Home() {
       <FloatingShapes />
       <div className="relative z-10 flex min-h-screen flex-col p-8 md:p-16 pb-32">
         <ProfileCard />
-        <Suspense fallback={null}>
-          <GamesSection />
-          <BottomDecoration />
-        </Suspense>
+        <GamesSection />
+        <BottomDecoration />
       </div>
     </main>
-  )
+  );
 }

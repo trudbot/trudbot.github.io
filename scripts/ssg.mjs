@@ -231,6 +231,7 @@ function shareReceiveBootstrap() {
   var badge = shell.querySelector("[data-share-status-badge]");
   var note = shell.querySelector("[data-share-status-note]");
   var title = shell.querySelector("[data-share-title]");
+  var sparkle = shell.querySelector("[data-share-status-sparkle] path");
   if (empty) empty.hidden = true;
   if (result) result.hidden = false;
   if (contentNode) contentNode.textContent = content;
@@ -239,8 +240,12 @@ function shareReceiveBootstrap() {
     badge.classList.add("text-share-badge-green");
     badge.textContent = "扫码成功";
   }
-  if (note) note.textContent = new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric" });
+  if (note) note.textContent = "分享内容已就绪";
   if (title) title.innerHTML = "收到<br>内容";
+  if (sparkle) {
+    sparkle.setAttribute("stroke", "#4CAF50");
+    sparkle.setAttribute("fill", "#4CAF50");
+  }
   try {
     var url = new URL(content);
     if (url.protocol !== "http:" && url.protocol !== "https:") return;
