@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useCallback } from "react"
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const AVATAR_IMAGE_URL =
-  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407082112768.jpg"
+  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/2026/07/02/1782996318044_202407082112768.jpg"
 
 const PARTICLE_COUNT = 8
 const PARTICLE_RADIUS = 150
