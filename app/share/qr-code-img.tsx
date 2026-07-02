@@ -318,11 +318,6 @@ export function QRCodeImg({ value }: { value: string }) {
           <canvas ref={canvasRef} aria-label="分享二维码" className="text-share-qrcode" />
         )}
       </div>
-      {renderStatus === "loading" ? (
-        <p className="text-share-hint">生成中...</p>
-      ) : renderStatus === "ready" ? (
-        <p className="text-share-hint">手机扫码查看</p>
-      ) : null}
     </div>
   );
 }
