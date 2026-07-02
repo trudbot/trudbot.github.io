@@ -30,7 +30,6 @@ function AvatarImage({
       data-slot="avatar-image"
       className={cn('aspect-square size-full', className)}
       fetchPriority='high'
-      crossOrigin='anonymous'
       {...props}
     />
   )
