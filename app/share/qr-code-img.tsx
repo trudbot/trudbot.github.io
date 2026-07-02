@@ -12,28 +12,9 @@ const MODULE_COLOR = "#000000";
 const BACKGROUND_COLOR = "#ffffff";
 const QR_MAX_DISPLAY_SIZE_PX = 320;
 const MODULE_SIZE_PIXELS = 10;
-const DINO_TILE_SIZE_PIXELS = 4;
 const LOCATOR_SIZE_MODULES = 7;
-const DINO_WIDTH = 20;
-const DINO_HEIGHT = 22;
-const DINO_HEAD_HEIGHT = 8;
-const DINO_BODY_HEIGHT = 14;
-const DINO_WIDTH_BYTES = 3;
-
-const DINO_HEAD_RIGHT = [
-  0b00000000, 0b00011111, 0b11100000, 0b00000000, 0b00111111, 0b11110000, 0b00000000, 0b00110111,
-  0b11110000, 0b00000000, 0b00111111, 0b11110000, 0b00000000, 0b00111111, 0b11110000, 0b00000000,
-  0b00111111, 0b11110000, 0b00000000, 0b00111110, 0b00000000, 0b00000000, 0b00111111, 0b11000000,
-];
-
-const DINO_BODY = [
-  0b10000000, 0b01111100, 0b00000000, 0b10000001, 0b11111100, 0b00000000, 0b11000011, 0b11111111,
-  0b00000000, 0b11100111, 0b11111101, 0b00000000, 0b11111111, 0b11111100, 0b00000000, 0b11111111,
-  0b11111100, 0b00000000, 0b01111111, 0b11111000, 0b00000000, 0b00111111, 0b11111000, 0b00000000,
-  0b00011111, 0b11110000, 0b00000000, 0b00001111, 0b11100000, 0b00000000, 0b00000111, 0b01100000,
-  0b00000000, 0b00000110, 0b00100000, 0b00000000, 0b00000100, 0b00100000, 0b00000000, 0b00000110,
-  0b00110000, 0b00000000,
-];
+const CENTER_LOGO_SRC = "/share-center-logo.png";
+const CENTER_LOGO_MODULES = 9;
 
 function isLocatorModule(x: number, y: number, originalSize: number) {
   return (
@@ -114,91 +95,19 @@ function drawLocators(
   drawOneLocator(0, originalSize - LOCATOR_SIZE_MODULES);
 }
 
-function drawDinoPixelData(
-  context: CanvasRenderingContext2D,
-  srcArray: number[],
-  srcNumRows: number,
-  startRow: number,
-  destX: number,
-  destY: number,
-  scaleX: number,
-  scaleY: number,
-) {
-  for (let row = 0; row < srcNumRows; row += 1) {
-    let whichByte = row * DINO_WIDTH_BYTES;
-    let mask = 0b10000000;
-
-    for (let col = 0; col < DINO_WIDTH; col += 1) {
-      if (srcArray[whichByte] & mask) {
-        const pixelX = destX + col * scaleX;
-        const pixelY = destY + (startRow + row) * scaleY;
-        context.fillRect(
-          Math.floor(pixelX),
-          Math.floor(pixelY),
-          Math.ceil(scaleX),
-          Math.ceil(scaleY),
-        );
-      }
-
-      mask >>= 1;
-      if (mask === 0) {
-        mask = 0b10000000;
-        whichByte += 1;
-      }
-    }
-  }
-}
-
 function drawCenterImage(
   context: CanvasRenderingContext2D,
-  canvasSize: number,
+  totalModules: number,
   modulePixelSize: number,
+  centerLogo: CanvasImageSource,
 ) {
-  const scaleFactor = modulePixelSize / MODULE_SIZE_PIXELS;
-  const pixelsPerDinoTile = Math.round(DINO_TILE_SIZE_PIXELS * scaleFactor);
-  const dinoWidthPx = pixelsPerDinoTile * DINO_WIDTH;
-  const dinoHeightPx = pixelsPerDinoTile * DINO_HEIGHT;
-  const dinoBorderPx = Math.round(2 * scaleFactor);
+  const logoModules = Math.min(CENTER_LOGO_MODULES, totalModules - 8);
+  const logoSize = logoModules * modulePixelSize;
+  const logoStartModule = Math.floor((totalModules - logoModules) / 2);
+  const logoX = logoStartModule * modulePixelSize;
+  const logoY = logoStartModule * modulePixelSize;
 
-  if (canvasSize / 2 < dinoWidthPx + dinoBorderPx || canvasSize / 2 < dinoHeightPx + dinoBorderPx)
-    return;
-
-  let destX = (canvasSize - dinoWidthPx) / 2;
-  let destY = (canvasSize - dinoHeightPx) / 2;
-  const backgroundLeft = Math.floor((destX - dinoBorderPx) / modulePixelSize) * modulePixelSize;
-  const backgroundTop = Math.floor((destY - dinoBorderPx) / modulePixelSize) * modulePixelSize;
-  const backgroundRight =
-    Math.floor((destX + dinoWidthPx + dinoBorderPx + modulePixelSize - 1) / modulePixelSize) *
-    modulePixelSize;
-  const backgroundBottom =
-    Math.floor((destY + dinoHeightPx + dinoBorderPx + modulePixelSize - 1) / modulePixelSize) *
-    modulePixelSize;
-
-  context.fillStyle = BACKGROUND_COLOR;
-  context.fillRect(
-    backgroundLeft,
-    backgroundTop,
-    backgroundRight - backgroundLeft,
-    backgroundBottom - backgroundTop,
-  );
-
-  destX += Math.round((backgroundLeft + backgroundRight) / 2 - (destX + dinoWidthPx / 2));
-  destY += Math.round((backgroundTop + backgroundBottom) / 2 - (destY + dinoHeightPx / 2));
-
-  context.fillStyle = MODULE_COLOR;
-  const scaleX = dinoWidthPx / DINO_WIDTH;
-  const scaleY = dinoHeightPx / DINO_HEIGHT;
-  drawDinoPixelData(context, DINO_HEAD_RIGHT, DINO_HEAD_HEIGHT, 0, destX, destY, scaleX, scaleY);
-  drawDinoPixelData(
-    context,
-    DINO_BODY,
-    DINO_BODY_HEIGHT,
-    DINO_HEAD_HEIGHT,
-    destX,
-    destY,
-    scaleX,
-    scaleY,
-  );
+  context.drawImage(centerLogo, logoX, logoY, logoSize, logoSize);
 }
 
 function renderQRCodeChromiumStyle(
@@ -206,6 +115,7 @@ function renderQRCodeChromiumStyle(
   pixelData: Uint8Array,
   size: number,
   originalSize: number,
+  centerLogo: CanvasImageSource,
 ) {
   const hasQuietZone = size > originalSize;
   const quietZoneModules = hasQuietZone ? (size - originalSize) / 2 : 4;
@@ -248,7 +158,7 @@ function renderQRCodeChromiumStyle(
   }
 
   drawLocators(context, originalSize, margin, modulePixelSize);
-  drawCenterImage(context, canvasSize, modulePixelSize);
+  drawCenterImage(context, totalModules, modulePixelSize, centerLogo);
 }
 
 export function QRCodeImg({ value }: { value: string }) {
@@ -272,41 +182,63 @@ export function QRCodeImg({ value }: { value: string }) {
   }, []);
 
   useEffect(() => {
-    if (moduleStatus === "loading") {
-      setRenderStatus("loading");
-      return;
-    }
+    let isMounted = true;
 
-    if (moduleStatus === "error") {
-      setRenderStatus("error");
-      return;
-    }
-
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!context) {
-      setRenderStatus("error");
-      return;
-    }
-
-    setRenderStatus("loading");
-
-    try {
-      const result = generateQRCode(value, {
-        moduleStyle: ModuleStyle.Circles,
-        locatorStyle: LocatorStyle.Rounded,
-        centerImage: CenterImage.Dino,
-        quietZone: QuietZone.WillBeAddedByClient,
-      });
-      try {
-        renderQRCodeChromiumStyle(context, result.data, result.size, result.original_size);
-        setRenderStatus("ready");
-      } finally {
-        result.free();
+    async function renderQRCode() {
+      if (moduleStatus === "loading") {
+        setRenderStatus("loading");
+        return;
       }
-    } catch {
-      setRenderStatus("error");
+
+      if (moduleStatus === "error") {
+        setRenderStatus("error");
+        return;
+      }
+
+      const canvas = canvasRef.current;
+      const context = canvas?.getContext("2d");
+      if (!context) {
+        setRenderStatus("error");
+        return;
+      }
+
+      setRenderStatus("loading");
+
+      try {
+        const centerLogo = new Image();
+        centerLogo.decoding = "async";
+        centerLogo.src = CENTER_LOGO_SRC;
+        await centerLogo.decode();
+        if (!isMounted) return;
+
+        const result = generateQRCode(value, {
+          moduleStyle: ModuleStyle.Circles,
+          locatorStyle: LocatorStyle.Rounded,
+          centerImage: CenterImage.Dino,
+          quietZone: QuietZone.WillBeAddedByClient,
+        });
+        try {
+          renderQRCodeChromiumStyle(
+            context,
+            result.data,
+            result.size,
+            result.original_size,
+            centerLogo,
+          );
+          setRenderStatus("ready");
+        } finally {
+          result.free();
+        }
+      } catch {
+        if (isMounted) setRenderStatus("error");
+      }
     }
+
+    renderQRCode();
+
+    return () => {
+      isMounted = false;
+    };
   }, [moduleStatus, value]);
 
   return (
