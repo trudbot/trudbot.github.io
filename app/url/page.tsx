@@ -142,7 +142,7 @@ export default function UrlPage() {
                 URL 解析器
               </h1>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                查看并解码查询参数，自动格式化其中的 JSON。
+                支持任意协议（http、自定义 scheme 等），解码查询参数，自动格式化 JSON。
               </p>
             </motion.header>
           )}
@@ -163,7 +163,7 @@ export default function UrlPage() {
               id="url-input"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="https://example.com/search?q=hello&payload=%7B%22page%22%3A1%7D"
+              placeholder="baiduboxapp://v1/browser/open?url=https%3A%2F%2Fm.baidu.com"
               spellCheck={false}
               autoCapitalize="off"
               autoCorrect="off"
@@ -209,24 +209,60 @@ export default function UrlPage() {
           {analysis.result && (
             <motion.section
               className="mt-10 space-y-6"
-              key={analysis.result.origin}
+              key={`${analysis.result.scheme}://${analysis.result.host}`}
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 18 }}
               transition={{ duration: 0.42, delay: 0.08 }}
               aria-live="polite"
             >
-              {/* Origin */}
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5">
+              {/* URL structure */}
+              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                    Origin
+                    URL 结构
                   </span>
-                  <CopyButton value={analysis.result.origin} label="复制 origin" />
+                  <CopyButton
+                    value={`${analysis.result.scheme}://${analysis.result.host}${analysis.result.path}`}
+                    label="复制基础 URL"
+                  />
                 </div>
-                <code className="block font-mono text-base font-semibold break-all text-zinc-800 dark:text-zinc-200">
-                  {analysis.result.origin}
-                </code>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                      Scheme
+                    </span>
+                    <code className="block font-mono text-sm mt-1 text-zinc-800 dark:text-zinc-200">
+                      {analysis.result.scheme}
+                    </code>
+                  </div>
+                  <div>
+                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                      Host
+                    </span>
+                    <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                      {analysis.result.host || <span className="text-zinc-400 italic">无</span>}
+                    </code>
+                  </div>
+                  <div>
+                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                      Path
+                    </span>
+                    <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                      {analysis.result.path || <span className="text-zinc-400 italic">无</span>}
+                    </code>
+                  </div>
+                  {analysis.result.hash && (
+                    <div>
+                      <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                        Hash
+                      </span>
+                      <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                        {analysis.result.hash}
+                      </code>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Parameters heading */}

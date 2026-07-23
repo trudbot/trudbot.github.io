@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import { parseUrl } from "./url-parser";
 
 describe("parseUrl", () => {
-  it("returns the origin and an empty parameter list", () => {
-    expect(parseUrl("https://example.com:8080/path#section")).toEqual({
-      origin: "https://example.com:8080",
+  it("returns scheme, host, path, hash and an empty parameter list", () => {
+    const result = parseUrl("https://example.com:8080/path#section");
+    expect(result).toEqual({
+      scheme: "https",
+      host: "example.com:8080",
+      path: "/path",
+      hash: "section",
       parameters: [],
     });
   });
@@ -70,5 +74,52 @@ describe("parseUrl", () => {
 
   it("rejects text that is not an absolute URL", () => {
     expect(() => parseUrl("example.com/path?value=1")).toThrow("请输入包含协议的完整 URL");
+  });
+
+  // --- Custom scheme tests ---
+
+  it("parses a custom scheme URL with query parameters", () => {
+    const result = parseUrl(
+      "baiduboxapp://v1/browser/openHudongTab?isContainer=1&url=https%3A%2F%2Fm.baidu.com",
+    );
+
+    expect(result.scheme).toBe("baiduboxapp");
+    expect(result.host).toBe("v1");
+    expect(result.path).toBe("/browser/openHudongTab");
+    expect(result.parameters.length).toBe(2);
+    expect(result.parameters[0]).toMatchObject({ key: "isContainer", value: "1" });
+    expect(result.parameters[1]).toMatchObject({
+      key: "url",
+      rawValue: "https%3A%2F%2Fm.baidu.com",
+      decodedValue: "https://m.baidu.com",
+    });
+  });
+
+  it("parses a custom scheme URL without query parameters", () => {
+    const result = parseUrl("myapp://settings/profile");
+
+    expect(result.scheme).toBe("myapp");
+    expect(result.host).toBe("settings");
+    expect(result.path).toBe("/profile");
+    expect(result.parameters).toEqual([]);
+  });
+
+  it("parses a custom scheme URL with hash", () => {
+    const result = parseUrl("myapp://page/view#section1");
+
+    expect(result.scheme).toBe("myapp");
+    expect(result.hash).toBe("section1");
+  });
+
+  it("parses deeply encoded parameters in custom scheme URLs", () => {
+    const result = parseUrl(
+      "baiduboxapp://v1/browser/openHudongTab?isContainer=1&url=https%3A%2F%2Fm.baidu.com%2Fs%3Fword%3D%E7%99%BE%E5%BA%A6AI%E5%8A%A9%E6%89%8B",
+    );
+
+    expect(result.scheme).toBe("baiduboxapp");
+    expect(result.parameters[1]).toMatchObject({
+      key: "url",
+      decodedValue: "https://m.baidu.com/s?word=百度AI助手",
+    });
   });
 });
