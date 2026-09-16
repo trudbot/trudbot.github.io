@@ -100,3 +100,19 @@
 .dark .react-json-view .string-value {
   color: rgb(134, 239, 172) !important;
 }
+
+/* === 4. 超长内容自动换行，避免预览区出现横向滚动 ===
+ *
+ * react-json-view 把值渲染在 display:inline-block 的 .variable-value 里，默认按内容
+ * 撑宽且不换行，遇到超长字符串（URL / token / base64 等）就会把行撑破，导致右侧预览区
+ * 出现横向滚动。overflow-wrap / white-space 是可继承属性，设在 .variable-value 上即可
+ * 覆盖其内部的 .string-value 等文本节点。 */
+.react-json-view .variable-value {
+  white-space: pre-wrap; /* 允许换行，并保留字符串内部的空白与换行 */
+  overflow-wrap: anywhere; /* 无空格长串也能在任意位置断行 */
+}
+
+/* 超长键名同样允许断行 */
+.react-json-view .object-key {
+  overflow-wrap: anywhere;
+}
