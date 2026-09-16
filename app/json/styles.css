@@ -48,25 +48,40 @@
 
 /* === 3. hover 当前对象左侧标线高亮 ===
  *
- * react-json-view 的"对象左标线"是 .object-key-val 元素自身的 border-left
- * （inline style 应用，不在子项上）。所以"高亮 hover 行所在对象的标线"等价于
- * 高亮"包裹 hover 行的最近 .object-key-val 的 border-left"。
+ * 真实 DOM（inline style）：每一行（.variable-row 和 .object-key-val）都带有
+ * `border-left: 1px solid`，同一层级的行左边框上下堆叠，拼成一条竖直缩进标线。
  *
- * CSS :hover 会应用到被悬停元素的所有祖先；最近的包裹对象就是
- * "处于 :hover 但内部没有更深 .object-key-val 处于 :hover" 的那个。
- */
+ * 关键：某个容器（对象/数组）的"标线"是它【子行】的左边框拼成的，而不是容器自身
+ * .object-key-val 的左边框——后者位于父层，和父层其它行同列。所以给容器自己的
+ * .object-key-val 上色，染的是【父层】那条线（如 hover recInfo 内容却高亮到
+ * searchInfo 层的线），这正是之前高亮错位的原因。
+ *
+ * 正确做法：高亮"离鼠标最近的 .object-content 的直接子行的左边框"。最近的容器 =
+ * 处于 :hover 但内部没有更深的 .object-content 处于 :hover 的那个。
+ * 注：react-json-view 自带的 :hover 样式因被写进 inline style 而失效，无需处理其加粗。 */
 
+.react-json-view .variable-row,
 .react-json-view .object-key-val {
   transition: border-left-color 0.15s ease;
 }
 
-.react-json-view .object-key-val:hover:not(:has(.object-key-val:hover)) {
+.react-json-view
+  .object-content:hover:not(:has(.object-content:hover))
+  > .variable-row,
+.react-json-view
+  .object-content:hover:not(:has(.object-content:hover))
+  > .object-key-val {
   border-left-color: rgb(59, 130, 246) !important;
 }
 
 .dark
   .react-json-view
-  .object-key-val:hover:not(:has(.object-key-val:hover)) {
+  .object-content:hover:not(:has(.object-content:hover))
+  > .variable-row,
+.dark
+  .react-json-view
+  .object-content:hover:not(:has(.object-content:hover))
+  > .object-key-val {
   border-left-color: rgb(96, 165, 250) !important;
 }
 
