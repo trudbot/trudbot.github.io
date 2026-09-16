@@ -135,10 +135,10 @@ export default function JsonFormatPage() {
   const singleColumnClass = isSingle ? 'mx-auto w-full max-w-5xl' : ''
 
   return (
-    <main className="relative min-h-[calc(100vh-64px)] w-full bg-stone-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20">
+    <main className="relative min-h-screen w-full bg-stone-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20">
         <Toaster />
         
-        <div className="relative z-10 flex flex-col h-[calc(100vh-64px)] p-4 md:p-6 gap-6">
+        <div className="relative z-10 flex flex-col h-screen p-4 md:p-6 gap-6">
             
             {/* Header / Toolbar */}
             <div className="flex items-center justify-between px-2 py-4">
