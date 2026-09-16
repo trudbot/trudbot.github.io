@@ -130,6 +130,10 @@ export default function JsonFormatPage() {
       toast('内容已清空')
   }
 
+  // 单屏模式（仅输入 / 仅输出）下把内容收拢成居中列，避免视觉重心堆在屏幕左侧
+  const isSingle = layout !== 'split'
+  const singleColumnClass = isSingle ? 'mx-auto w-full max-w-5xl' : ''
+
   return (
     <main className="relative min-h-[calc(100vh-64px)] w-full bg-stone-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20">
         <Toaster />
@@ -245,8 +249,8 @@ export default function JsonFormatPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className={`flex flex-col h-full overflow-hidden ${layout === 'split' ? 'w-full md:w-1/2' : 'w-full'}`}
                         >
-                            <div className="flex-1 relative">
-                                <textarea 
+                            <div className={`flex-1 relative ${singleColumnClass}`}>
+                                <textarea
                                     value={iv} 
                                     onChange={(e) => setIv(e.target.value)}
                                     placeholder="在此输入或粘贴 JSON..."
@@ -270,7 +274,7 @@ export default function JsonFormatPage() {
                             exit={{ opacity: 0, x: 20 }}
                             className={`flex flex-col h-full overflow-hidden ${layout === 'split' ? 'w-full md:w-1/2' : 'w-full'}`}
                         >
-                            <div className="flex-1 relative overflow-auto p-6 scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-zinc-700">
+                            <div className={`flex-1 relative overflow-auto p-6 scrollbar-thin scrollbar-thumb-stone-200 dark:scrollbar-thumb-zinc-700 ${singleColumnClass}`}>
                                 {jsonObj ? (
                                     mounted ? (
                                         <ClientOnly fallback={null}>
