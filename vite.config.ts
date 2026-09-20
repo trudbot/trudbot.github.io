@@ -75,9 +75,8 @@ export default defineConfig({
     jsx: {
       runtime: "automatic",
       importSource: "react",
-      refresh: true,
+      refresh: false,
     },
-    jsxRefreshInclude: /\.[jt]sx$/,
   },
   resolve: {
     alias: {
