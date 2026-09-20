@@ -1,0 +1,48 @@
+/*
+ * 设计 token 到 Tailwind 主题的映射（@theme）以及自定义 variant。
+ * 这些必须存在于「生成 utility 的上下文」里，因此由每个页面的
+ * src/generated/page-css/<page>.css 通过 @import 引入；实际的 CSS 变量值
+ * 在 app/globals.css 的 :root/.dark 中定义并全局输出一次。
+ * @theme inline 只做映射、不输出变量，避免逐页面重复。
+ */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-effect-cyan: var(--effect-cyan);
+  --color-effect-magenta: var(--effect-magenta);
+  --color-effect-yellow: var(--effect-yellow);
+  --color-effect-green: var(--effect-green);
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+  /* 添加手写体字体配置 */
+  --font-handwriting: var(--font-caveat);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}

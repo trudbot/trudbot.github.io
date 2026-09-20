@@ -1,7 +1,12 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
+/*
+ * 全局基座（每个页面都会加载）：只输出设计 token（CSS 变量）、base 层和自定义
+ * utilities，本身不生成任何 Tailwind utility，也不含 preflight。
+ * 每个页面所需的 Tailwind（含 preflight 与用到的 utility）由
+ * src/generated/page-css/<page>.css 按页面 @source 范围单独生成，
+ * 避免所有页面共享一份包含全站 class 的巨型 CSS。
+ * @theme 映射与 @custom-variant 见 app/theme-tokens.css（由各页面 CSS 引入）。
+ */
+@layer theme, base, components, utilities;
 
 :root {
   /* 清新的米白色背景 */
@@ -39,6 +44,8 @@
   --effect-green: #00ff00;
 
   --radius: 1.5rem;
+  /* 手写体字体栈：Caveat 由页面按需动态加载，未加载完成时回退到默认字体 */
+  --font-caveat: "Caveat", ui-sans-serif, system-ui, sans-serif;
   --sidebar: rgb(255 255 255);
   --sidebar-foreground: rgb(10 10 10);
   --sidebar-primary: rgb(23 23 23);
@@ -91,52 +98,14 @@
   --sidebar-ring: rgb(82 82 82);
 }
 
-@theme inline {
-  --color-effect-cyan: var(--effect-cyan);
-  --color-effect-magenta: var(--effect-magenta);
-  --color-effect-yellow: var(--effect-yellow);
-  --color-effect-green: var(--effect-green);
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, monospace;
-  /* 添加手写体字体配置 */
-  --font-handwriting: var(--font-caveat);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-highlight: var(--highlight);
-  --color-highlight-foreground: var(--highlight-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-}
-
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 

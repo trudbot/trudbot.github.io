@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 提前与图片 CDN（阿里云 OSS）建连，缩短头像/图标/游戏封面等图片的握手耗时。
+         图片以 crossorigin 方式加载，故 preconnect 也需带 crossorigin 才能复用连接；
+         dns-prefetch 作为不支持 preconnect 的浏览器的回退。 -->
+    <link rel="preconnect" href="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com" crossorigin />
+    <link rel="preconnect" href="https://trudbot-pic.oss-cn-hangzhou.aliyuncs.com" crossorigin />
+    <link rel="dns-prefetch" href="https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com" />
+    <link rel="dns-prefetch" href="https://trudbot-pic.oss-cn-hangzhou.aliyuncs.com" />
     <meta
       name="description"
       content="trdubot的网络索引. zhihu: https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30, blog: https://blog.trudbot.cn, github: https://github.com/trudbot"

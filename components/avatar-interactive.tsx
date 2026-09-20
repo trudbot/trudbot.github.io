@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, useAnimation, useReducedMotion } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
 
@@ -122,12 +121,7 @@ function GlowEffects({ isActive }: { isActive: boolean }) {
             boxShadow: `0 0 60px ${EFFECT_COLORS[0]}99, 0 0 100px ${EFFECT_COLORS[1]}66`,
           }}
         />
-        <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
-          <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
-          <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
-            <AvatarFallbackSvg />
-          </AvatarFallback>
-        </Avatar>
+        <AvatarPhoto />
       </div>
     </>
   );
@@ -167,6 +161,25 @@ function AvatarFallbackSvg() {
       <circle cx="78" cy="62" r="4" className="fill-secondary/50 animate-[pulse_2s_infinite]" />
       <circle cx="22" cy="22" r="2.5" className="fill-accent/60 animate-[ping_4s_infinite]" />
     </svg>
+  );
+}
+
+// ─── AvatarPhoto (SSR 渲染的原生 <img>，保证首屏 HTML 中即存在头像) ──────────────
+function AvatarPhoto() {
+  return (
+    <div className="relative flex h-48 w-48 shrink-0 items-center justify-center overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64">
+      {/* 加载中 / 加载失败时的占位，位于图片下方 */}
+      <div className="absolute inset-0 flex items-center justify-center bg-background/5 backdrop-blur-xl">
+        <AvatarFallbackSvg />
+      </div>
+      <img
+        src={AVATAR_IMAGE_URL}
+        alt="trudbot"
+        fetchPriority="high"
+        decoding="async"
+        className="relative z-10 h-full w-full object-cover"
+      />
+    </div>
   );
 }
 
@@ -383,12 +396,7 @@ export function AvatarInteractive() {
         <div className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond" />
         <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle" />
         <div className="relative rounded-full">
-          <Avatar className="relative h-48 w-48 border-8 border-background shadow-2xl md:h-64 md:w-64">
-            <AvatarImage src={AVATAR_IMAGE_URL} alt="trudbot" />
-            <AvatarFallback className="flex h-full w-full items-center justify-center bg-background/5 backdrop-blur-xl">
-              <AvatarFallbackSvg />
-            </AvatarFallback>
-          </Avatar>
+          <AvatarPhoto />
         </div>
       </div>
     );
