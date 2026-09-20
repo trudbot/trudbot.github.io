@@ -65,23 +65,13 @@
   transition: border-left-color 0.15s ease;
 }
 
-.react-json-view
-  .object-content:hover:not(:has(.object-content:hover))
-  > .variable-row,
-.react-json-view
-  .object-content:hover:not(:has(.object-content:hover))
-  > .object-key-val {
+.react-json-view .object-content:hover:not(:has(.object-content:hover)) > .variable-row,
+.react-json-view .object-content:hover:not(:has(.object-content:hover)) > .object-key-val {
   border-left-color: rgb(59, 130, 246) !important;
 }
 
-.dark
-  .react-json-view
-  .object-content:hover:not(:has(.object-content:hover))
-  > .variable-row,
-.dark
-  .react-json-view
-  .object-content:hover:not(:has(.object-content:hover))
-  > .object-key-val {
+.dark .react-json-view .object-content:hover:not(:has(.object-content:hover)) > .variable-row,
+.dark .react-json-view .object-content:hover:not(:has(.object-content:hover)) > .object-key-val {
   border-left-color: rgb(96, 165, 250) !important;
 }
 

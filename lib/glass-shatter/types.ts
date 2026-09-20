@@ -1,57 +1,57 @@
 export interface ShatterOptions {
   /** Number of Voronoi seed points (default: 100) */
-  fragmentCount?: number
+  fragmentCount?: number;
   /** Duration of crack spread phase in ms (default: 300) */
-  crackDuration?: number
+  crackDuration?: number;
   /** Duration of fragment fall phase in ms (default: 2000) */
-  fallDuration?: number
+  fallDuration?: number;
   /** Fragment extrusion depth in pixels (default: 3) */
-  thickness?: number
+  thickness?: number;
   /** Gravity acceleration in px/s^2 (default: 2500) */
-  gravity?: number
+  gravity?: number;
   /** Impact origin in viewport-relative coords (default: center) */
-  origin?: { x: number; y: number }
+  origin?: { x: number; y: number };
 }
 
 export interface VoronoiCell {
   /** Seed point in pixel coordinates */
-  seed: [number, number]
+  seed: [number, number];
   /** Polygon vertices in pixel coordinates, clockwise order */
-  vertices: [number, number][]
+  vertices: [number, number][];
   /** Centroid of the polygon in pixel coordinates */
-  centroid: [number, number]
+  centroid: [number, number];
 }
 
 export interface VoronoiEdge {
   /** Start point in pixel coordinates */
-  from: [number, number]
+  from: [number, number];
   /** End point in pixel coordinates */
-  to: [number, number]
+  to: [number, number];
   /** Distance from impact origin */
-  distanceFromOrigin: number
+  distanceFromOrigin: number;
 }
 
 export interface FragmentState {
   /** Velocity vector [vx, vy, vz] in px/s */
-  velocity: [number, number, number]
+  velocity: [number, number, number];
   /** Angular velocity [rx, ry, rz] in rad/s */
-  angularVelocity: [number, number, number]
+  angularVelocity: [number, number, number];
   /** Delay before this fragment starts moving (seconds) */
-  delay: number
+  delay: number;
 }
 
 export interface VoronoiResult {
-  cells: VoronoiCell[]
-  edges: VoronoiEdge[]
+  cells: VoronoiCell[];
+  edges: VoronoiEdge[];
 }
 
 export interface CrackSegment {
   /** Start point in pixel coordinates */
-  from: [number, number]
+  from: [number, number];
   /** End point in pixel coordinates */
-  to: [number, number]
+  to: [number, number];
   /** Branch depth: 0 = main radial branch, higher = sub-branches */
-  depth: number
+  depth: number;
   /** Distance of segment midpoint from impact origin */
-  distanceFromOrigin: number
+  distanceFromOrigin: number;
 }

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { favoriteGames } from "@/config/games"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Gamepad2, ExternalLink } from "lucide-react"
+import { motion } from "framer-motion";
+import { favoriteGames } from "@/config/games";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Gamepad2, ExternalLink } from "lucide-react";
 
 export function GamesSection() {
   return (
@@ -18,7 +18,10 @@ export function GamesSection() {
       >
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center justify-center md:justify-start gap-4">
-            <Badge variant="outline" className="text-primary border-primary/50 text-sm md:text-base px-4 py-1">
+            <Badge
+              variant="outline"
+              className="text-primary border-primary/50 text-sm md:text-base px-4 py-1"
+            >
               Interests
             </Badge>
             <div className="inline-block relative">
@@ -28,10 +31,18 @@ export function GamesSection() {
               <div className="absolute -bottom-2 -right-4 h-4 w-12 bg-accent/30 -rotate-6 rounded-full blur-[2px]" />
             </div>
           </div>
-          
+
           <div className="flex justify-center md:justify-end">
-            <Button asChild variant="outline" className="rounded-full border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all text-sm font-sans gap-2">
-              <a href="https://steamcommunity.com/id/trudboot/" target="_blank" rel="noopener noreferrer">
+            <Button
+              asChild
+              variant="outline"
+              className="rounded-full border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all text-sm font-sans gap-2"
+            >
+              <a
+                href="https://steamcommunity.com/id/trudboot/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Gamepad2 className="h-4 w-4 text-primary" />
                 我的 Steam
                 <ExternalLink className="h-3 w-3 opacity-50" />
@@ -64,7 +75,7 @@ export function GamesSection() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="mt-5 flex flex-col flex-grow">
                   <h3 className="text-lg font-bold font-sans line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                     {game.name}
@@ -79,5 +90,5 @@ export function GamesSection() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }

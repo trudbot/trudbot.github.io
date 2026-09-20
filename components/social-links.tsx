@@ -23,14 +23,14 @@ const socialLinks = [
     icon: "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/202407191651233.png",
     bgColor: "bg-red-100", // 红色图标配淡红背景
   },
-]
+];
 
 const shapes = [
-  "clip-none",     // 正方形
+  "clip-none", // 正方形
   "clip-triangle", // 三角形
-  "clip-diamond",  // 菱形
-  "clip-none",     // 正方形
-]
+  "clip-diamond", // 菱形
+  "clip-none", // 正方形
+];
 
 export function SocialLinks() {
   return (
@@ -42,11 +42,13 @@ export function SocialLinks() {
           target="_blank"
           rel="noopener noreferrer"
           className={`group relative flex h-20 w-20 items-center justify-center focus-visible:outline-none ${link.bgColor} ${shapes[index]} sl-item`}
-          style={{
-            animation: `sl-enter 0.4s ease-out ${index * 0.08}s both`,
-            // even items rotate +5 on hover, odd items rotate -5
-            '--sl-hover-rotate': index % 2 === 0 ? '5deg' : '-5deg',
-          } as React.CSSProperties}
+          style={
+            {
+              animation: `sl-enter 0.4s ease-out ${index * 0.08}s both`,
+              // even items rotate +5 on hover, odd items rotate -5
+              "--sl-hover-rotate": index % 2 === 0 ? "5deg" : "-5deg",
+            } as React.CSSProperties
+          }
         >
           <div className="relative z-10 h-8 w-8 transition-transform duration-300 group-hover:scale-110">
             <img
@@ -60,5 +62,5 @@ export function SocialLinks() {
         </a>
       ))}
     </div>
-  )
+  );
 }

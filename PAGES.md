@@ -42,7 +42,7 @@ scripts/
 页面 CSS 由页面组件直接导入：
 
 ```tsx
-import './styles.css'
+import "./styles.css";
 ```
 
 页面 CSS 不放在全局入口中，避免所有页面加载所有样式。

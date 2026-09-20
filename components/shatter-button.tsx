@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export function ShatterButton() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
-    if (loading) return
-    setLoading(true)
+    if (loading) return;
+    setLoading(true);
     try {
-      const { triggerShatter } = await import("@/lib/glass-shatter")
-      await triggerShatter()
+      const { triggerShatter } = await import("@/lib/glass-shatter");
+      await triggerShatter();
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Button
@@ -27,5 +27,5 @@ export function ShatterButton() {
     >
       {loading ? "Shattering..." : "Shatter!"}
     </Button>
-  )
+  );
 }

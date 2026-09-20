@@ -3,44 +3,80 @@
 
 /* ─── 入场动画 (CSS 驱动，SSG 静态 HTML 立即可见) ─── */
 @keyframes pc-slide-left {
-  from { opacity: 0; transform: translateX(-50px) rotate(-5deg); }
+  from {
+    opacity: 0;
+    transform: translateX(-50px) rotate(-5deg);
+  }
 }
 @keyframes pc-fade-up {
-  from { opacity: 0; transform: translateY(30px); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 }
 @keyframes pc-scale-x {
-  from { transform: scaleX(0); }
+  from {
+    transform: scaleX(0);
+  }
 }
 @keyframes pc-text-left {
-  from { opacity: 0; transform: translateX(-20px); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
 }
 @keyframes pc-pop {
-  from { transform: scale(0); }
+  from {
+    transform: scale(0);
+  }
 }
 @keyframes pc-tilt-in {
-  from { opacity: 0; transform: rotate(-2deg); }
+  from {
+    opacity: 0;
+    transform: rotate(-2deg);
+  }
 }
 @keyframes pc-fade-up-sm {
-  from { opacity: 0; transform: translateY(20px); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 @keyframes pc-fade-in {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 /* 浮动背景形状 */
 @keyframes float-shape {
-  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
-  33% { transform: translateY(-30px) translateX(10px) scale(1.05); }
-  66% { transform: translateY(-15px) translateX(20px) scale(1.1); }
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  33% {
+    transform: translateY(-30px) translateX(10px) scale(1.05);
+  }
+  66% {
+    transform: translateY(-15px) translateX(20px) scale(1.1);
+  }
 }
 
 /* ─── SocialLinks 入场 + 交互动画 (CSS 替代 framer-motion) ─── */
 @keyframes sl-fade-in {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 @keyframes sl-enter {
-  from { opacity: 0; transform: translateY(20px) rotate(-5deg); }
-  to   { opacity: 1; transform: translateY(0) rotate(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
 }
 
 .sl-item {

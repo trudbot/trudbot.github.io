@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export function BottomDecoration() {
   return (
@@ -62,7 +62,9 @@ export function BottomDecoration() {
         >
           <div className="flex items-center gap-4">
             <div className="h-2 w-2 animate-pulse bg-primary" />
-            <p className="font-mono text-sm text-muted-foreground">Available for creative projects</p>
+            <p className="font-mono text-sm text-muted-foreground">
+              Available for creative projects
+            </p>
           </div>
 
           <div className="flex items-center gap-6">
@@ -81,5 +83,5 @@ export function BottomDecoration() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
