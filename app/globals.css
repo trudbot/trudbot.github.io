@@ -96,8 +96,8 @@
   --color-effect-magenta: var(--effect-magenta);
   --color-effect-yellow: var(--effect-yellow);
   --color-effect-green: var(--effect-green);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
   /* 添加手写体字体配置 */
   --font-handwriting: var(--font-caveat);
   --color-background: var(--background);

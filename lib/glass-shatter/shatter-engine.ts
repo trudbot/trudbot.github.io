@@ -1,4 +1,19 @@
-import * as THREE from "three";
+import {
+  DoubleSide,
+  EdgesGeometry,
+  ExtrudeGeometry,
+  Group,
+  LineBasicMaterial,
+  LineSegments,
+  Material,
+  Mesh,
+  MeshBasicMaterial,
+  OrthographicCamera,
+  Scene,
+  Shape,
+  WebGLRenderer,
+  type Texture,
+} from "three";
 import type { VoronoiCell, FragmentState, ShatterOptions, CrackSegment } from "./types";
 
 interface ShatterConfig {
@@ -196,10 +211,10 @@ export function runCrackPhase(
 }
 
 interface FragmentData {
-  group: THREE.Group;
-  frontMaterial: THREE.MeshBasicMaterial;
-  sideMaterial: THREE.MeshBasicMaterial;
-  edgeMaterial: THREE.LineBasicMaterial;
+  group: Group;
+  frontMaterial: MeshBasicMaterial;
+  sideMaterial: MeshBasicMaterial;
+  edgeMaterial: LineBasicMaterial;
   state: FragmentState;
 }
 
@@ -213,7 +228,7 @@ interface HiddenElementState {
  */
 function buildFragments(
   cells: VoronoiCell[],
-  texture: THREE.Texture,
+  texture: Texture,
   width: number,
   height: number,
   config: ShatterConfig,
@@ -224,7 +239,7 @@ function buildFragments(
     const { vertices, centroid } = cell;
 
     // Create shape from polygon vertices, relative to centroid
-    const shape = new THREE.Shape();
+    const shape = new Shape();
     const relVerts = vertices.map(
       ([x, y]) => [x - centroid[0], y - centroid[1]] as [number, number],
     );
@@ -236,7 +251,7 @@ function buildFragments(
     shape.closePath();
 
     // Create extruded geometry for 3D thickness
-    const geometry = new THREE.ExtrudeGeometry(shape, {
+    const geometry = new ExtrudeGeometry(shape, {
       depth: config.thickness,
       bevelEnabled: false,
     });
@@ -253,34 +268,34 @@ function buildFragments(
     uvAttr.needsUpdate = true;
 
     // Glass-like materials
-    const frontMaterial = new THREE.MeshBasicMaterial({
+    const frontMaterial = new MeshBasicMaterial({
       map: texture,
       transparent: true,
-      side: THREE.DoubleSide,
+      side: DoubleSide,
       depthWrite: false,
     });
 
-    const sideMaterial = new THREE.MeshBasicMaterial({
+    const sideMaterial = new MeshBasicMaterial({
       color: 0x9ecfff,
       transparent: true,
       opacity: 0.55,
       depthWrite: false,
     });
 
-    const mesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
+    const mesh = new Mesh(geometry, [frontMaterial, sideMaterial]);
 
     // Glass edge highlight — bright lines along fragment edges
-    const edgeGeometry = new THREE.EdgesGeometry(geometry);
-    const edgeMaterial = new THREE.LineBasicMaterial({
+    const edgeGeometry = new EdgesGeometry(geometry);
+    const edgeMaterial = new LineBasicMaterial({
       color: 0xddeeff,
       transparent: true,
       opacity: 0.5,
       linewidth: 1,
     });
-    const edgeLines = new THREE.LineSegments(edgeGeometry, edgeMaterial);
+    const edgeLines = new LineSegments(edgeGeometry, edgeMaterial);
 
     // Group mesh + edge lines so they transform together
-    const group = new THREE.Group();
+    const group = new Group();
     group.add(mesh);
     group.add(edgeLines);
     group.position.set(centroid[0], -centroid[1], 0);
@@ -318,7 +333,7 @@ function buildFragments(
  */
 export function runShatterPhase(
   glCanvas: HTMLCanvasElement,
-  texture: THREE.Texture,
+  texture: Texture,
   cells: VoronoiCell[],
   options: ShatterOptions,
 ): Promise<void> {
@@ -334,7 +349,7 @@ export function runShatterPhase(
     };
 
     // Setup renderer
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       canvas: glCanvas,
       alpha: true,
       antialias: true,
@@ -344,10 +359,10 @@ export function runShatterPhase(
     renderer.setClearColor(0x000000, 0);
 
     // Orthographic camera matching viewport
-    const camera = new THREE.OrthographicCamera(0, width, 0, -height, 0.1, 1000);
+    const camera = new OrthographicCamera(0, width, 0, -height, 0.1, 1000);
     camera.position.z = 500;
 
-    const scene = new THREE.Scene();
+    const scene = new Scene();
 
     // Build fragments
     const fragments = buildFragments(cells, texture, width, height, config);
@@ -457,21 +472,21 @@ function hidePageContent(overlayCanvas: HTMLCanvasElement): HiddenElementState[]
 }
 
 function cleanup(
-  scene: THREE.Scene,
-  renderer: THREE.WebGLRenderer,
-  texture: THREE.Texture,
+  scene: Scene,
+  renderer: WebGLRenderer,
+  texture: Texture,
   canvas: HTMLCanvasElement,
   hiddenElements: HiddenElementState[],
 ) {
   scene.traverse((obj) => {
-    if (obj instanceof THREE.Mesh) {
+    if (obj instanceof Mesh) {
       obj.geometry.dispose();
       const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
       for (const mat of materials) mat.dispose();
     }
-    if (obj instanceof THREE.LineSegments) {
+    if (obj instanceof LineSegments) {
       obj.geometry.dispose();
-      (obj.material as THREE.Material).dispose();
+      (obj.material as Material).dispose();
     }
   });
 

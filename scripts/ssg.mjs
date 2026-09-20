@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { build } from "vite";
+import { build } from "vite-plus";
 import { generateRoutes } from "./generate-routes.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -36,7 +36,7 @@ const routeManifest = JSON.parse(
   await fs.readFile(path.join(root, "src/generated/route-manifest.json"), "utf-8"),
 );
 const routeEntries = Object.fromEntries(routeManifest.map((page) => [page.route, page.entryFile]));
-const serverEntry = await import(pathToFileURL(path.join(ssrOutDir, "entry-server.mjs")).href);
+const serverEntry = await import(pathToFileURL(path.join(ssrOutDir, "entry-server.js")).href);
 
 function collectAssets(entryKey, seen = new Set()) {
   const entry = manifest[entryKey];

@@ -1,6 +1,6 @@
-import "./styles.css";
+"use client";
 
-("use client");
+import "./styles.css";
 
 import { lazy, Suspense, useState, useMemo, useEffect, type ComponentType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,14 +21,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ClientOnly } from "@/components/client-only";
 
-type ReactJsonComponent = ComponentType<import("react-json-view").ReactJsonViewProps>;
+type ReactJsonComponent = ComponentType<import("@microlink/react-json-view").ReactJsonViewProps>;
 
 type ReactJsonModule = {
   default: ReactJsonComponent | { default: ReactJsonComponent };
 };
 
 const ReactJson = lazy(() =>
-  import("react-json-view").then((mod) => {
+  import("@microlink/react-json-view").then((mod) => {
     const reactJsonModule = mod as ReactJsonModule;
     const component =
       "default" in reactJsonModule.default
@@ -115,7 +115,7 @@ export default function JsonFormatPage() {
         return json5Parser ? json5Parser.parse(iv) : null;
       }
       return JSON.parse(iv);
-    } catch (e) {
+    } catch {
       return null;
     }
   }, [iv, isJson5Mode, json5Parser]);
@@ -126,7 +126,7 @@ export default function JsonFormatPage() {
       const repaired = jsonrepair(iv);
       setIv(JSON.stringify(JSON.parse(repaired), null, 2));
       toast.success("JSON 已修复");
-    } catch (e) {
+    } catch {
       toast.error("无法修复此 JSON");
     }
   };

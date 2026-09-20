@@ -1,6 +1,5 @@
 import path from "node:path";
-import { defineConfig, type Plugin } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig, type Plugin } from "vite-plus";
 import { discoverPages } from "./scripts/discover-pages.mjs";
 
 function modulePackageName(id: string) {
@@ -40,9 +39,9 @@ function chunkName(id: string) {
     return "share-common";
 }
 
-const pages = discoverPages({ root: __dirname });
+const pages = discoverPages({ root: import.meta.dirname });
 const input = Object.fromEntries(
-  pages.map((page) => [page.entryName, path.resolve(__dirname, page.entryFile)]),
+  pages.map((page) => [page.entryName, path.resolve(import.meta.dirname, page.entryFile)]),
 );
 const routeEntries = Object.fromEntries(pages.map((page) => [page.route, page.entryFile]));
 
@@ -65,17 +64,37 @@ function devPageEntries(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), devPageEntries()],
+  fmt: {
+    ignorePatterns: ["out/**", ".vite-ssg/**"],
+  },
+  lint: {
+    ignorePatterns: ["out/**", ".vite-ssg/**"],
+  },
+  plugins: [devPageEntries()],
+  oxc: {
+    jsx: {
+      runtime: "automatic",
+      importSource: "react",
+      refresh: true,
+    },
+    jsxRefreshInclude: /\.[jt]sx$/,
+  },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "."),
+      "@": path.resolve(import.meta.dirname, "."),
     },
   },
   build: {
     outDir: "out",
     emptyOutDir: true,
     manifest: true,
+    // Three.js is isolated in a chunk loaded only when the glass-shatter effect is triggered.
+    chunkSizeWarningLimit: 550,
     rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") return;
+        defaultHandler(warning);
+      },
       input,
       output: {
         manualChunks: chunkName,
