@@ -13,36 +13,42 @@ function modulePackageName(id: string) {
   return first.startsWith("@") && second ? `${first}/${second}` : first;
 }
 
+// 三方包 → 稳定、可读的 chunk 名（便于产物分析）。key 为精确包名。
+const VENDOR_CHUNK: Record<string, string> = {
+  react: "react",
+  "react-dom": "react",
+  scheduler: "react",
+  "class-variance-authority": "ui-utils",
+  clsx: "ui-utils",
+  "tailwind-merge": "ui-utils",
+  sonner: "sonner",
+  three: "three",
+  "@zumer/snapdom": "snapdom",
+  "react-json-view": "react-json-view",
+  json5: "json5",
+  jsonrepair: "jsonrepair",
+  "lz-string": "share-common",
+  "qrcode-generator": "share-common",
+};
+
+// 本仓库源码 → chunk 名。用于：避免无谓的小 chunk（如 cn()）、以及给
+// 与三方包重名的本地模块单独命名（如 sonner 外壳 → toaster，区分 sonner 库）。
+const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
+  ["/lib/utils.ts", "ui-utils"], // cn()：只与 ui 组件同载，并入 ui-utils
+  ["/components/ui/sonner.tsx", "toaster"], // 懒加载 Toaster 外壳，与 sonner 库(sonner chunk)区分
+  ["/app/share/styles.css", "share-common"], // share 两页共享样式
+];
+
 function chunkName(id: string) {
   const normalized = id.split("?")[0].replaceAll("\\", "/");
+  const packageName = modulePackageName(normalized);
 
-  // 本地的 cn() 工具（依赖 clsx + tailwind-merge）单独成 chunk 毫无必要，且拉长加载链。
-  // 它总是与 ui 组件（radix/cva/clsx/tailwind-merge）一起使用，故并入 ui-utils。
-  if (normalized.endsWith("/lib/utils.ts")) return "ui-utils";
+  if (packageName) {
+    if (packageName.startsWith("@radix-ui/")) return "ui-utils";
+    return VENDOR_CHUNK[packageName];
+  }
 
-  const packageName = modulePackageName(id);
-
-  if (packageName === "react-json-view") return "react-json-view";
-  if (packageName === "json5") return "json5";
-  if (packageName === "jsonrepair") return "jsonrepair";
-  if (packageName === "react" || packageName === "react-dom" || packageName === "scheduler")
-    return "react";
-  if (packageName === "sonner") return "sonner";
-  if (
-    packageName?.startsWith("@radix-ui/") ||
-    packageName === "class-variance-authority" ||
-    packageName === "clsx" ||
-    packageName === "tailwind-merge"
-  )
-    return "ui-utils";
-  if (packageName === "@zumer/snapdom") return "snapdom";
-  if (packageName === "three") return "three";
-  if (
-    packageName === "lz-string" ||
-    packageName === "qrcode-generator" ||
-    id.includes("/app/share/styles.css")
-  )
-    return "share-common";
+  return APP_CHUNK.find(([suffix]) => normalized.endsWith(suffix))?.[1];
 }
 
 const pages = discoverPages({ root: import.meta.dirname });
