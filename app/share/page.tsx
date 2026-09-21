@@ -76,7 +76,7 @@ function WigglyLine() {
 
 function EmptyQRHint() {
   return (
-    <div className="text-share-empty-qr" aria-label="先输入内容">
+    <div className="text-share-empty-qr" role="img" aria-label="先输入内容">
       <svg viewBox="0 0 280 280" className="text-share-empty-qr-svg" aria-hidden="true">
         <rect
           x="8"

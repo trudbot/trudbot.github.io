@@ -45,13 +45,24 @@ const headerAccentBars = [
   { color: "#7DD3FC", width: 62, delay: 0.62 },
 ];
 
-// 判断浅色用深色文字
+// 依据 WCAG 相对亮度计算，选择与背景对比度更高的文字颜色（深或浅），
+// 保证色卡上的文字满足对比度要求。
+const DARK_TEXT = "#1a1a2e";
+const LIGHT_TEXT = "#fffffe";
+
+function relativeLuminance(hex: string): number {
+  const channel = (i: number) => {
+    const v = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+}
+
 function textColor(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.6 ? "#1a1a2e" : "#fffffe";
+  const bg = relativeLuminance(hex);
+  const contrastDark = (bg + 0.05) / (relativeLuminance(DARK_TEXT) + 0.05);
+  const contrastLight = (relativeLuminance(LIGHT_TEXT) + 0.05) / (bg + 0.05);
+  return contrastDark >= contrastLight ? DARK_TEXT : LIGHT_TEXT;
 }
 
 // ─── 页面 ────────────────────────────────────────────────────────────────────
@@ -117,16 +128,10 @@ export default function ColorsPage() {
                       >
                         {color.name}
                       </p>
-                      <p
-                        className="mt-1 text-sm opacity-70"
-                        style={{ color: textColor(color.hex) }}
-                      >
+                      <p className="mt-1 text-sm" style={{ color: textColor(color.hex) }}>
                         {color.note}
                       </p>
-                      <p
-                        className="mt-3 font-mono text-xs opacity-50"
-                        style={{ color: textColor(color.hex) }}
-                      >
+                      <p className="mt-3 font-mono text-xs" style={{ color: textColor(color.hex) }}>
                         {color.hex}
                       </p>
                     </div>

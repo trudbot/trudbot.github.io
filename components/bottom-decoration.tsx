@@ -1,23 +1,17 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 export function BottomDecoration() {
   return (
     <div className="mt-auto pt-24 md:pt-32">
       {/* 装饰性几何图案区域 */}
       <div className="relative mx-auto max-w-7xl">
         {/* 大型装饰文字 */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="mb-16 overflow-hidden"
+        <div
+          className="mb-16 overflow-hidden bd-entry bd-fade-up"
+          style={{ "--bd-delay": "1.5s" } as React.CSSProperties}
         >
           <h2 className="font-mono text-[8rem] font-bold leading-none tracking-tighter text-muted/5 md:text-[12rem] lg:text-[16rem]">
             CREATIVE
           </h2>
-        </motion.div>
+        </div>
 
         {/* 几何装饰网格 */}
         <div className="grid grid-cols-3 gap-4 md:grid-cols-6 md:gap-6">
@@ -29,12 +23,10 @@ export function BottomDecoration() {
             { delay: 2.0, color: "bg-primary/10", shape: "square" },
             { delay: 2.1, color: "bg-accent/10", shape: "circle" },
           ].map((item, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: item.delay, duration: 0.5 }}
-              className="relative aspect-square"
+              className="relative aspect-square bd-entry bd-pop"
+              style={{ "--bd-delay": `${item.delay}s` } as React.CSSProperties}
             >
               <div
                 className={`h-full w-full ${item.color}`}
@@ -49,16 +41,14 @@ export function BottomDecoration() {
                           : "none",
                 }}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* 底部信息栏 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.2, duration: 0.8 }}
-          className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-8 md:flex-row"
+        <div
+          className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-8 md:flex-row bd-entry bd-fade-in"
+          style={{ "--bd-delay": "2.2s" } as React.CSSProperties}
         >
           <div className="flex items-center gap-4">
             <div className="h-2 w-2 animate-pulse bg-primary" />
@@ -68,19 +58,13 @@ export function BottomDecoration() {
           </div>
 
           <div className="flex items-center gap-6">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{
-                duration: 20,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
-              }}
-              className="h-8 w-8 border-2 border-accent"
+            <div
+              className="h-8 w-8 border-2 border-accent bd-spin"
               style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
             />
             <p className="font-mono text-sm text-muted-foreground">© 2025 trudbot</p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

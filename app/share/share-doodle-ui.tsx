@@ -78,7 +78,7 @@ export function ShareTopBar({ activePage }: { activePage: "share" | "receive" })
           <a
             href="/share"
             className="text-share-nav-link"
-            style={{ opacity: activePage === "share" ? 1 : 0.45 }}
+            style={{ opacity: activePage === "share" ? 1 : 0.7 }}
           >
             生成
             {activePage === "share" && <WigglyUnderline color="#FF7043" />}
@@ -87,7 +87,7 @@ export function ShareTopBar({ activePage }: { activePage: "share" | "receive" })
           <a
             href="/share/r"
             className="text-share-nav-link"
-            style={{ opacity: activePage === "receive" ? 1 : 0.45 }}
+            style={{ opacity: activePage === "receive" ? 1 : 0.7 }}
           >
             展示
             {activePage === "receive" && <WigglyUnderline color="#4CAF50" />}

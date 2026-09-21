@@ -2,7 +2,7 @@
   --share-paper: #fff9ee;
   --share-card: #fffdf5;
   --share-ink: #1c1917;
-  --share-muted: #9c9178;
+  --share-muted: #6f6653;
   --share-muted-surface: #f5efe0;
   --share-grid: #e8dfc866;
   --share-grid-solid: #e8dfc8;
@@ -145,7 +145,7 @@
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--share-paper);
+  color: var(--share-ink);
 }
 
 .text-share-badge-orange {

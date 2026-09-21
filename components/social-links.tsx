@@ -53,7 +53,8 @@ export function SocialLinks() {
           <div className="relative z-10 h-8 w-8 transition-transform duration-300 group-hover:scale-110">
             <img
               src={link.icon || "/placeholder.svg"}
-              alt={link.name}
+              alt=""
+              aria-hidden="true"
               className="h-full w-full object-contain"
               crossOrigin="anonymous"
             />

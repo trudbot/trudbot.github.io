@@ -95,3 +95,82 @@
     animation: none !important;
   }
 }
+
+/* ─── GamesSection 入场 + 交互 (CSS 替代 framer-motion) ─── */
+@keyframes gs-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes gs-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+}
+.gs-section {
+  animation: gs-fade-up 0.6s ease-out both;
+}
+.gs-card {
+  animation: gs-card-in 0.5s ease-out both;
+  animation-delay: var(--gs-delay, 0s);
+  transition: transform 0.3s ease-out;
+  will-change: transform;
+}
+.gs-card:hover {
+  transform: translateY(-10px) rotate(var(--gs-rotate, 0deg));
+}
+
+/* ─── BottomDecoration 入场 + 旋转装饰 (CSS 替代 framer-motion) ─── */
+@keyframes bd-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+@keyframes bd-pop {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+@keyframes bd-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes bd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.bd-entry {
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+  animation-delay: var(--bd-delay, 0s);
+}
+.bd-fade-up {
+  animation-name: bd-fade-up;
+}
+.bd-pop {
+  animation-name: bd-pop;
+  animation-duration: 0.5s;
+}
+.bd-fade-in {
+  animation-name: bd-fade-in;
+  animation-duration: 0.8s;
+}
+.bd-spin {
+  animation: bd-spin 20s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-section,
+  .gs-card,
+  .bd-entry,
+  .bd-spin {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,363 @@
+"use client";
+
+import { motion, useAnimation, useReducedMotion } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { AvatarPhoto, AvatarStatic } from "@/components/avatar-shared";
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+const PARTICLE_COUNT = 8;
+const PARTICLE_RADIUS = 150;
+const PARTICLE_DURATION = 1.5;
+const PARTICLE_STAGGER = 0.1;
+const BURST_TIMEOUT_MS = 3000;
+const MOUSE_SETTLE_MS = 150;
+const MOUSE_SETTLE_THRESHOLD_SQ = 400; // 20px²
+const ENTRY_ANIMATION_MS = 2100;
+
+const SHATTER_TAP_COUNT = 3;
+const SHATTER_TAP_WINDOW_MS = 10_000;
+
+const EFFECT_COLORS = [
+  "var(--effect-cyan)",
+  "var(--effect-magenta)",
+  "var(--effect-yellow)",
+  "var(--effect-green)",
+];
+
+const GLOW_GRADIENT = `conic-gradient(from 0deg, ${EFFECT_COLORS.join(", ")}, ${EFFECT_COLORS[0]})`;
+const BORDER_GRADIENT = `conic-gradient(from 0deg, transparent 0deg, ${EFFECT_COLORS[0]} 90deg, transparent 180deg, ${EFFECT_COLORS[1]} 270deg, transparent 360deg)`;
+
+const PARTICLE_DIRECTIONS = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+  const angle = (i * Math.PI * 2) / PARTICLE_COUNT;
+  return { dx: Math.cos(angle) * PARTICLE_RADIUS, dy: Math.sin(angle) * PARTICLE_RADIUS };
+});
+
+// ─── DecorativeShapes ────────────────────────────────────────────────────────
+function DecorativeShapes({ isActive }: { isActive: boolean }) {
+  return (
+    <>
+      <motion.div
+        animate={
+          isActive
+            ? { rotate: [0, 180], scale: 1.2, x: -20, y: -20 }
+            : { rotate: 5, scale: 1.05, x: 0, y: 0 }
+        }
+        transition={
+          isActive
+            ? { duration: 0.6, ease: "easeInOut" }
+            : {
+                duration: 4,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "mirror",
+                ease: "easeInOut",
+              }
+        }
+        className="absolute -left-8 -top-8 h-32 w-32 border-4 border-primary/30 clip-diamond"
+      />
+      <motion.div
+        animate={
+          isActive
+            ? { rotate: [0, -180], scale: 1.3, x: 20, y: 20 }
+            : { rotate: [0, -5, 5, 0], scale: 1, x: 0, y: 0 }
+        }
+        transition={
+          isActive
+            ? { duration: 0.6, ease: "easeInOut" }
+            : { duration: 6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
+        }
+        className="absolute -bottom-6 -right-6 h-24 w-24 bg-accent/20 clip-triangle"
+      />
+    </>
+  );
+}
+
+// ─── GlowEffects ─────────────────────────────────────────────────────────────
+function GlowEffects({ isActive }: { isActive: boolean }) {
+  return (
+    <>
+      {isActive && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: [0, 0.6, 0],
+            scale: [0.8, 1.3, 1.5],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeOut",
+          }}
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: GLOW_GRADIENT,
+            filter: "blur(20px)",
+          }}
+        />
+      )}
+      <motion.div
+        animate={{
+          rotate: isActive ? [0, 360] : 0,
+          opacity: isActive ? 0.8 : 0,
+        }}
+        transition={{
+          rotate: {
+            duration: 2,
+            repeat: isActive ? Number.POSITIVE_INFINITY : 0,
+            ease: "linear",
+          },
+          opacity: { duration: 0.3, ease: "easeOut" },
+        }}
+        className="absolute -inset-2 rounded-full"
+        style={{ background: BORDER_GRADIENT }}
+      />
+      <div className="relative rounded-full">
+        <motion.div
+          animate={{ opacity: isActive ? 1 : 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="pointer-events-none absolute inset-0 rounded-full"
+          style={{
+            boxShadow: `0 0 60px ${EFFECT_COLORS[0]}99, 0 0 100px ${EFFECT_COLORS[1]}66`,
+          }}
+        />
+        <AvatarPhoto />
+      </div>
+    </>
+  );
+}
+
+// ─── Particles ───────────────────────────────────────────────────────────────
+function Particles({
+  isActive,
+  controls,
+}: {
+  isActive: boolean;
+  controls: ReturnType<typeof useAnimation>;
+}) {
+  if (!isActive) return null;
+
+  return (
+    <>
+      {Array.from({ length: PARTICLE_COUNT }, (_, i) => (
+        <motion.div
+          key={i}
+          custom={i}
+          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+          animate={controls}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{ background: EFFECT_COLORS[i % EFFECT_COLORS.length] }}
+        />
+      ))}
+    </>
+  );
+}
+
+// ─── ColorBars ───────────────────────────────────────────────────────────────
+function ColorBars({ isActive, hasEntered }: { isActive: boolean; hasEntered: boolean }) {
+  const bars = [
+    { active: "6rem", idle: "4rem", delay: 0.5, color: "bg-primary" },
+    { active: "8rem", idle: "6rem", delay: 0.7, color: "bg-accent" },
+    { active: "5rem", idle: "3rem", delay: 0.9, color: "bg-secondary" },
+  ];
+  return (
+    <div className="absolute -right-12 top-1/4 flex flex-col gap-2">
+      {bars.map((bar) => (
+        <motion.div
+          key={bar.color}
+          initial={{ width: 0 }}
+          animate={{ width: isActive ? bar.active : bar.idle }}
+          transition={{ delay: hasEntered ? 0 : bar.delay, duration: 0.6 }}
+          className={`h-1 ${bar.color}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── AvatarAnimated (framer-motion 交互增强，按需懒加载) ───────────────────────
+export default function AvatarAnimated() {
+  const reducedMotion = useReducedMotion() ?? false;
+  const [isAvatarHovered, setIsAvatarHovered] = useState(false);
+  const [isBursting, setIsBursting] = useState(false);
+  const [isMouseSettled, setIsMouseSettled] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
+  const burstTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mouseStopTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const mousePos = useRef({ x: 0, y: 0 });
+  const settledPos = useRef({ x: 0, y: 0 });
+  const particleControls = useAnimation();
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const tapTimestamps = useRef<number[]>([]);
+
+  const isActive = isAvatarHovered || isBursting;
+  const isParticleActive = (isAvatarHovered && isMouseSettled) || isBursting;
+
+  const handleTap = useCallback((_: unknown, info: { point: { x: number; y: number } }) => {
+    if (avatarRef.current) {
+      const rect = avatarRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      mousePos.current = {
+        x: info.point.x - centerX,
+        y: info.point.y - centerY,
+      };
+    }
+
+    setIsBursting(true);
+
+    if (burstTimeoutRef.current) {
+      clearTimeout(burstTimeoutRef.current);
+    }
+    burstTimeoutRef.current = setTimeout(() => {
+      setIsBursting(false);
+    }, BURST_TIMEOUT_MS);
+
+    // Track taps for shatter trigger: 3 taps within 10 seconds
+    const now = Date.now();
+    tapTimestamps.current.push(now);
+    // Keep only taps within the time window
+    tapTimestamps.current = tapTimestamps.current.filter((t) => now - t < SHATTER_TAP_WINDOW_MS);
+    if (tapTimestamps.current.length >= SHATTER_TAP_COUNT) {
+      tapTimestamps.current = [];
+      import("@/lib/glass-shatter").then((mod) => mod.triggerShatter());
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (burstTimeoutRef.current) clearTimeout(burstTimeoutRef.current);
+      if (mouseStopTimerRef.current) clearTimeout(mouseStopTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setHasEntered(true), ENTRY_ANIMATION_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    let isMounted = true;
+
+    const runParticles = async () => {
+      if (!isParticleActive) {
+        particleControls.stop();
+        particleControls.set({ opacity: 0, scale: 0, x: 0, y: 0 });
+        return;
+      }
+
+      while (isMounted && isParticleActive) {
+        if (document.hidden) {
+          await new Promise<void>((resolve) => {
+            const onVisible = () => {
+              document.removeEventListener("visibilitychange", onVisible);
+              resolve();
+            };
+            document.addEventListener("visibilitychange", onVisible);
+          });
+          if (!isMounted) break;
+        }
+
+        try {
+          const { x, y } = mousePos.current;
+          particleControls.set(() => ({ opacity: 0, scale: 0, x, y }));
+
+          await particleControls.start((i: number) => {
+            const { dx, dy } = PARTICLE_DIRECTIONS[i];
+            return {
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+              x: [x, x + dx],
+              y: [y, y + dy],
+              transition: {
+                duration: PARTICLE_DURATION,
+                delay: i * PARTICLE_STAGGER,
+                ease: "easeOut",
+              },
+            };
+          });
+        } catch {
+          break;
+        }
+      }
+    };
+
+    runParticles();
+    return () => {
+      isMounted = false;
+    };
+  }, [isParticleActive, particleControls, reducedMotion]);
+
+  const cachedRectRef = useRef<DOMRect | null>(null);
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
+
+    if (!cachedRectRef.current) {
+      cachedRectRef.current = e.currentTarget.getBoundingClientRect();
+    }
+    const rect = cachedRectRef.current;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mousePos.current = {
+      x: e.clientX - centerX,
+      y: e.clientY - centerY,
+    };
+
+    const dx = mousePos.current.x - settledPos.current.x;
+    const dy = mousePos.current.y - settledPos.current.y;
+    if (mouseStopTimerRef.current === null && dx * dx + dy * dy < MOUSE_SETTLE_THRESHOLD_SQ) {
+      return;
+    }
+
+    setIsMouseSettled(false);
+    if (mouseStopTimerRef.current) {
+      clearTimeout(mouseStopTimerRef.current);
+    }
+    mouseStopTimerRef.current = setTimeout(() => {
+      settledPos.current = { ...mousePos.current };
+      mouseStopTimerRef.current = null;
+      setIsMouseSettled(true);
+    }, MOUSE_SETTLE_MS);
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    setIsAvatarHovered(false);
+    setIsMouseSettled(false);
+    if (mouseStopTimerRef.current) {
+      clearTimeout(mouseStopTimerRef.current);
+      mouseStopTimerRef.current = null;
+    }
+    mousePos.current = { x: 0, y: 0 };
+    cachedRectRef.current = null;
+  }, []);
+
+  // reducedMotion: 回退到静态头像，无交互动画
+  if (reducedMotion) {
+    return <AvatarStatic />;
+  }
+
+  return (
+    <div className="relative inline-block">
+      <DecorativeShapes isActive={isActive} />
+
+      <motion.div
+        ref={avatarRef}
+        onHoverStart={() => setIsAvatarHovered(true)}
+        onHoverEnd={handleHoverEnd}
+        onPointerMove={handlePointerMove}
+        onTap={handleTap}
+        animate={{
+          rotate: isActive ? [0, -5, 5, -5, 0] : 0,
+          scale: isActive ? 1.1 : 1,
+        }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative cursor-pointer"
+      >
+        <GlowEffects isActive={isActive} />
+        <Particles isActive={isParticleActive} controls={particleControls} />
+      </motion.div>
+
+      <ColorBars isActive={isActive} hasEntered={hasEntered} />
+    </div>
+  );
+}

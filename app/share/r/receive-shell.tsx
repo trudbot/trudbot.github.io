@@ -87,7 +87,7 @@ function TopBar() {
           <span>TextDoodle</span>
         </a>
         <nav className="text-share-nav" aria-label="分享页面导航">
-          <a href="/share" className="text-share-nav-link" style={{ opacity: 0.45 }}>
+          <a href="/share" className="text-share-nav-link" style={{ opacity: 0.7 }}>
             生成
           </a>
           <span className="text-share-nav-separator">/</span>

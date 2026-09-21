@@ -245,6 +245,7 @@ export default function JsonFormatPage() {
             </button>
             <button
               onClick={handleCopy}
+              aria-label="复制结果"
               className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-slate-900/10"
             >
               <Copy className="w-4 h-4" />
@@ -274,7 +275,7 @@ export default function JsonFormatPage() {
                     spellCheck={false}
                     className="w-full h-full p-6 bg-transparent resize-none focus:outline-none font-[ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation_Mono','Courier_New',monospace] text-base leading-relaxed text-slate-700 dark:text-slate-300"
                   />
-                  <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-300 pointer-events-none px-2 py-1 rounded opacity-50">
+                  <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-400 pointer-events-none px-2 py-1 rounded">
                     Input
                   </div>
                 </div>
@@ -335,7 +336,7 @@ export default function JsonFormatPage() {
                       </p>
                     </div>
                   )}
-                  <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-300 pointer-events-none px-2 py-1 rounded z-10 opacity-50">
+                  <div className="absolute bottom-4 right-6 text-xs font-mono text-slate-600 dark:text-slate-400 pointer-events-none px-2 py-1 rounded z-10">
                     Preview
                   </div>
                 </div>
