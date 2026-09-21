@@ -14,6 +14,12 @@ function modulePackageName(id: string) {
 }
 
 function chunkName(id: string) {
+  const normalized = id.split("?")[0].replaceAll("\\", "/");
+
+  // 本地的 cn() 工具（依赖 clsx + tailwind-merge）单独成 chunk 毫无必要，且拉长加载链。
+  // 它总是与 ui 组件（radix/cva/clsx/tailwind-merge）一起使用，故并入 ui-utils。
+  if (normalized.endsWith("/lib/utils.ts")) return "ui-utils";
+
   const packageName = modulePackageName(id);
 
   if (packageName === "react-json-view") return "react-json-view";
