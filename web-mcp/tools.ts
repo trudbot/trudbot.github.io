@@ -6,11 +6,23 @@ type JsonSchema = {
   enum?: string[];
 };
 
+// WebMCP 工具注解（可选提示）。参见命令式 API 文档：
+// https://developer.chrome.com/docs/ai/webmcp/imperative-api
+type ToolAnnotations = {
+  readOnlyHint?: boolean;
+  untrustedContentHint?: boolean;
+  consequentialHint?: boolean;
+};
+
+// execute 第二个参数携带 AbortSignal，可用于取消长任务（本项目工具无需用到）。
+type ExecuteOptions = { signal?: AbortSignal };
+
 interface Tool<T = unknown> {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  execute: (input: T) => unknown;
+  annotations?: ToolAnnotations;
+  execute: (input: T, options?: ExecuteOptions) => unknown;
 }
 
 function objectSchema(properties: Record<string, JsonSchema>): JsonSchema {
@@ -33,12 +45,14 @@ export function defineTool<T>(options: {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  execute: (input: T) => unknown;
+  annotations?: ToolAnnotations;
+  execute: (input: T, options?: ExecuteOptions) => unknown;
 }): Tool<T> {
   return {
     name: options.name,
     description: options.description,
     inputSchema: options.inputSchema,
+    annotations: options.annotations,
     execute: options.execute,
   };
 }
@@ -56,21 +70,16 @@ tools.push(
     inputSchema: objectSchema({
       type: enumSchema(["blog", "zhihu", "github", "steam"]),
     }),
+    annotations: { readOnlyHint: false },
     execute({ type }) {
-      switch (type) {
-        case "blog":
-          window.open("https://trudbot.cn/blog");
-          return;
-        case "zhihu":
-          window.open("https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30");
-          return;
-        case "github":
-          window.open("https://github.com/trudbot");
-          return;
-        case "steam":
-          window.open("https://steamcommunity.com/id/trudboot/");
-          return;
-      }
+      const urls: Record<NavigateInput["type"], string> = {
+        blog: "https://trudbot.cn/blog",
+        zhihu: "https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30",
+        github: "https://github.com/trudbot",
+        steam: "https://steamcommunity.com/id/trudboot/",
+      };
+      window.open(urls[type]);
+      return `Opened trudbot's ${type} page`;
     },
   }),
 );
@@ -80,9 +89,11 @@ tools.push(
     name: "shatter",
     description: "Trigger a glass shatter effect on the page",
     inputSchema: objectSchema({}),
+    annotations: { readOnlyHint: false },
     async execute() {
       const { triggerShatter } = await import("@/lib/glass-shatter");
       await triggerShatter();
+      return "Triggered the glass shatter effect";
     },
   }),
 );
