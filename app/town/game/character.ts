@@ -88,7 +88,6 @@ export function createCharacter(): Character {
   const shirt = toon(C.shirt);
   const pants = toon(C.pants);
   const hairMat = toon("#ffffff", { vertexColors: true, side: THREE.DoubleSide });
-  const hairCapMat = toon(C.hair, { side: THREE.DoubleSide });
   const decal = (color: string, extra: { transparent?: boolean; opacity?: number } = {}) =>
     toon(color, { outline: false, ...extra });
 
@@ -231,122 +230,219 @@ export function createCharacter(): Character {
   onFace(mouth, 0, -0.43, 0.9, 0.002);
 
   // ── Hair ──
+  // One continuous shell covers the whole scalp and its lower edge is cut into
+  // points, so it already reads as a choppy fringe. The locks laid over it only
+  // add layering and silhouette; gaps between them land on hair, never skin.
   const hair = new THREE.Group();
   head.add(hair);
-  const HR = R * 1.08;
-  const opening = 2.0;
-  const capTop = mesh(geo.custom("hairTop", () => new THREE.SphereGeometry(HR, 36, 10, 0, Math.PI * 2, 0, Math.PI * 0.3)), hairCapMat, {
-    pos: [center.x, center.y, center.z],
-    scale: [headScale.x, headScale.y, headScale.z],
-  });
-  const capBand = mesh(
-    geo.custom("hairBand", () =>
-      new THREE.SphereGeometry(HR, 36, 12, Math.PI / 2 + opening / 2, Math.PI * 2 - opening, Math.PI * 0.28, Math.PI * 0.4),
-    ),
-    hairCapMat,
-    { pos: [center.x, center.y, center.z], scale: [headScale.x, headScale.y, headScale.z] },
-  );
-  hair.add(capTop, capBand);
+  const deg = THREE.MathUtils.degToRad;
+  const TAU = Math.PI * 2;
+  /** 0 over the face, 1 at the back of the head. */
+  const backness = (phi: number) => Math.abs(Math.atan2(Math.sin(phi), Math.cos(phi))) / Math.PI;
+  const hash = (i: number) => {
+    const s = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+    return s - Math.floor(s);
+  };
 
-  const up = new THREE.Vector3(0, 1, 0);
-  const addStrand = (
-    parent: THREE.Object3D,
-    anchor: [number, number, number],
-    len: number,
-    radius: number,
-    opts: { hang?: number; out?: number; sweep?: number; flat?: number; tip?: string; dir?: THREE.Vector3 } = {},
-  ) => {
-    const { p, n } = surface(anchor[0], anchor[1], anchor[2], 0.02);
-    let dir: THREE.Vector3;
-    if (opts.dir) {
-      dir = opts.dir.clone().normalize();
-    } else {
-      const down = new THREE.Vector3(0, -1, 0);
-      const tangent = down.clone().sub(n.clone().multiplyScalar(n.dot(down)));
-      if (tangent.lengthSq() < 1e-4) tangent.set(0, 0, 1);
-      tangent.normalize();
-      const side = new THREE.Vector3().crossVectors(n, tangent).normalize();
-      dir = tangent
-        .multiplyScalar(opts.hang ?? 1)
-        .add(n.clone().multiplyScalar(opts.out ?? 0.05))
-        .add(side.multiplyScalar(opts.sweep ?? 0))
-        .normalize();
+  // Angles are polar (from the crown) and azimuthal (0 = face, +π/2 = the character's left).
+  // The fringe ends just above the eyes and the edge drops to the nape at the back.
+  const edgeBase = (phi: number) => deg(74) + deg(48) * THREE.MathUtils.smoothstep(backness(phi), 0.1, 0.75);
+  const SPIKES = 28;
+  const hairEdge = (phi: number) => {
+    const f = backness(phi);
+    const amp = deg(7 + 9 * f);
+    const u = ((((phi % TAU) + TAU) % TAU) / TAU) * SPIKES;
+    const k = Math.floor(u);
+    const spike = (1 - Math.abs(2 * (u - k) - 1)) ** 1.5;
+    return edgeBase(phi) - amp * 0.45 + amp * spike * (0.75 + 0.5 * hash(k));
+  };
+  const HR = R * 1.05;
+  const hairRadius = (phi: number, theta: number) => {
+    const f = backness(phi);
+    const v = theta / edgeBase(phi);
+    const volume = (0.02 + 0.07 * f) * Math.sin(Math.min(v, 1) * Math.PI * 0.5) ** 2;
+    const flare = (THREE.MathUtils.clamp(v, 0.8, 1.2) - 0.8) ** 2 * (0.2 + 0.8 * f);
+    return HR * (1 + volume + flare);
+  };
+  const HANG = deg(108);
+  const hairPoint = (phi: number, theta: number, lift = 0, out = new THREE.Vector3()) => {
+    // The fringe drifts sideways as it falls, like the swept bangs in the photo.
+    const sweep = (1 - backness(phi)) ** 2 * 0.22 * Math.min(1, theta / deg(80)) ** 2;
+    const th = Math.min(theta, HANG);
+    const r = hairRadius(phi, th) + lift;
+    const p = phi + sweep;
+    out.set(Math.sin(th) * Math.sin(p) * r, Math.cos(th) * r, Math.sin(th) * Math.cos(p) * r).multiply(headScale).add(center);
+    if (theta > HANG) {
+      // Below the ears hair falls straight down instead of wrapping under the skull.
+      const extra = (theta - HANG) * R;
+      const ox = out.x - center.x;
+      const oz = out.z - center.z;
+      const len = Math.hypot(ox, oz) || 1;
+      out.x += (ox / len) * extra * 0.3;
+      out.z += (oz / len) * extra * 0.3;
+      out.y -= extra;
     }
-    const z = n.clone().sub(dir.clone().multiplyScalar(n.dot(dir)));
-    if (z.lengthSq() < 1e-4) z.copy(up);
-    z.normalize();
-    const x = new THREE.Vector3().crossVectors(dir, z);
-    const m = mesh(strandGeometry(len, radius, opts.tip ?? C.hair), hairMat, { cast: true });
-    m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, dir, z));
-    m.scale.set(1, 1, opts.flat ?? 0.55);
-    m.position.copy(p);
+    return out;
+  };
+
+  const cRoot = new THREE.Color(C.hairRoot);
+  const cMid = new THREE.Color(C.hair);
+  const cTip = new THREE.Color(C.hairTip);
+  const hairColor = (t: number, tip: number, out: THREE.Color) => {
+    if (t < 0.35) return out.copy(cRoot).lerp(cMid, t / 0.35);
+    return out.copy(cMid).lerp(cTip, ((t - 0.35) / 0.65) ** 1.4 * tip);
+  };
+
+  const shellGeo = geo.custom("hairShell", () => {
+    const cols = SPIKES * 8;
+    const rows = 20;
+    const row = rows + 1;
+    const pos: number[] = [];
+    const col: number[] = [];
+    const idx: number[] = [];
+    const p = new THREE.Vector3();
+    const c = new THREE.Color();
+    for (let i = 0; i <= cols; i++) {
+      const phi = (i / cols) * TAU;
+      const edge = hairEdge(phi);
+      const tip = 0.35 + 0.65 * backness(phi);
+      for (let j = 0; j <= rows; j++) {
+        const v = j / rows;
+        hairPoint(phi, v * edge, 0, p);
+        pos.push(p.x, p.y, p.z);
+        hairColor(v, tip, c);
+        col.push(c.r, c.g, c.b);
+      }
+    }
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        const a = i * row + j;
+        const b = a + row;
+        idx.push(a, a + 1, b, b, a + 1, b + 1);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    // The first and last columns meet down the middle of the fringe and every
+    // column meets at the crown; unify those normals so neither shows a crease.
+    const n = g.attributes.normal as THREE.BufferAttribute;
+    const na = new THREE.Vector3();
+    const nb = new THREE.Vector3();
+    for (let j = 1; j < row; j++) {
+      na.fromBufferAttribute(n, j).add(nb.fromBufferAttribute(n, cols * row + j)).normalize();
+      n.setXYZ(j, na.x, na.y, na.z);
+      n.setXYZ(cols * row + j, na.x, na.y, na.z);
+    }
+    for (let i = 0; i <= cols; i++) n.setXYZ(i * row, 0, 1, 0);
+    return g;
+  });
+  hair.add(mesh(shellGeo, hairMat));
+
+  /** Leaf-shaped clump lying along `points`, pointed at both ends so it needs no caps. */
+  const lockGeometry = (points: THREE.Vector3[], width: number, thick: number, tip: number) => {
+    const ring = 6;
+    const last = points.length - 1;
+    const pos: number[] = [];
+    const col: number[] = [];
+    const idx: number[] = [];
+    const T = new THREE.Vector3();
+    const N = new THREE.Vector3();
+    const S = new THREE.Vector3();
+    const q = new THREE.Vector3();
+    const c = new THREE.Color();
+    points.forEach((p, i) => {
+      const t = i / last;
+      T.subVectors(points[Math.min(i + 1, last)], points[Math.max(i - 1, 0)]).normalize();
+      N.subVectors(p, center).normalize();
+      S.crossVectors(T, N).normalize();
+      N.crossVectors(S, T).normalize();
+      const shape = Math.sin(Math.PI * t ** 0.6);
+      hairColor(t, tip, c);
+      for (let k = 0; k < ring; k++) {
+        const a = (k / ring) * TAU;
+        q.copy(p)
+          .addScaledVector(S, Math.cos(a) * width * shape)
+          .addScaledVector(N, (Math.sin(a) + 0.7) * thick * shape);
+        pos.push(q.x, q.y, q.z);
+        col.push(c.r, c.g, c.b);
+      }
+    });
+    for (let i = 0; i < last; i++) {
+      for (let k = 0; k < ring; k++) {
+        const a = i * ring + k;
+        const b = i * ring + ((k + 1) % ring);
+        idx.push(a, a + ring, b, b, a + ring, b + ring);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  };
+  const addLock = (
+    parent: THREE.Object3D,
+    from: [number, number],
+    to: [number, number],
+    width: number,
+    o: { lift?: number; thick?: number; tip?: number; flick?: number } = {},
+  ) => {
+    const segs = 12;
+    const pts: THREE.Vector3[] = [];
+    for (let s = 0; s <= segs; s++) {
+      const t = s / segs;
+      const phi = THREE.MathUtils.lerp(from[0], to[0], t);
+      const theta = deg(THREE.MathUtils.lerp(from[1], to[1], t));
+      pts.push(hairPoint(phi, theta, (o.lift ?? 0.004) + (o.flick ?? 0) * t ** 3));
+    }
+    const m = mesh(lockGeometry(pts, width, o.thick ?? 0.03, o.tip ?? 0.6), hairMat);
     parent.add(m);
     return m;
   };
+  const edgeDeg = (phi: number) => THREE.MathUtils.radToDeg(hairEdge(phi));
 
-  // Bangs sweep slightly towards the character's left, ending around the eyes.
-  const bangs = new THREE.Group();
-  hair.add(bangs);
-  const bangDefs: Array<[number, number, number]> = [
-    [-0.62, 0.3, 0.02],
-    [-0.44, 0.26, 0.05],
-    [-0.26, 0.22, 0.08],
-    [-0.1, 0.25, 0.12],
-    [0.06, 0.28, 0.1],
-    [0.22, 0.22, 0.1],
-    [0.38, 0.27, 0.08],
-    [0.54, 0.24, 0.06],
-    [0.7, 0.3, 0.02],
-  ];
-  for (const [x, len, sweep] of bangDefs) {
-    addStrand(bangs, [x, 0.62, 0.72], len, 0.1, { hang: 1, out: -0.18, sweep, flat: 0.45 });
+  // Crown layer radiating from the top: the choppy wolf-cut texture.
+  for (let k = 0; k < 14; k++) {
+    const phi = (k / 14) * TAU + 0.15;
+    addLock(hair, [phi, 3], [phi + 0.12, edgeDeg(phi) * (0.6 + hash(k + 40) * 0.22)], 0.15, { thick: 0.035, tip: 0.3 });
   }
+  // Fringe clumps end on or slightly past the shell's points, so the bangs have depth.
+  [-0.8, -0.55, -0.3, -0.06, 0.18, 0.42, 0.66, 0.9].forEach((phi, k) => {
+    addLock(hair, [phi * 0.5 + 0.2, 20], [phi, edgeDeg(phi) + 1 + hash(k + 7) * 2.5], 0.1 + hash(k) * 0.035, {
+      thick: 0.03,
+      tip: 0.25,
+      lift: 0.008,
+    });
+  });
+  // Long locks framing the face, as in the photo.
   for (const side of [1, -1]) {
-    addStrand(bangs, [0.86 * side, 0.3, 0.42], 0.4, 0.11, { out: 0.05, sweep: 0.05 * side, flat: 0.5 });
-    addStrand(bangs, [0.93 * side, 0.12, 0.2], 0.44, 0.1, { out: 0.08, flat: 0.5, tip: C.hairTip });
+    addLock(hair, [side * 1.0, 35], [side * 0.82, 128], 0.13, { thick: 0.035, tip: 0.9, flick: 0.02 });
+    addLock(hair, [side * 1.3, 40], [side * 1.18, 122], 0.14, { thick: 0.035, tip: 0.9, flick: 0.03 });
   }
-
-  // Wolf-cut layers at the back, ends fading to the lighter blue from the photo.
+  // Layers over the back of the shell.
+  for (let k = 0; k < 8; k++) {
+    const phi = Math.PI * (0.55 + (0.9 * k) / 7);
+    addLock(hair, [phi, 30], [phi + 0.05, 112 + hash(k + 20) * 10], 0.16, { thick: 0.04, tip: 0.8, flick: 0.03 });
+  }
+  // The mullet at the nape hangs from its own pivot so it can swing without sliding over the shell.
+  const napePivot = hairPoint(Math.PI, deg(100));
   const back = new THREE.Group();
-  back.position.copy(center);
+  back.position.copy(napePivot);
   hair.add(back);
   const backLocal = new THREE.Group();
-  backLocal.position.copy(center).multiplyScalar(-1);
+  backLocal.position.copy(napePivot).negate();
   back.add(backLocal);
-  const backCount = 11;
-  for (let i = 0; i < backCount; i++) {
-    const a = Math.PI * (0.16 + (0.68 * i) / (backCount - 1));
-    const x = Math.cos(a);
-    const z = -Math.sin(a);
-    addStrand(backLocal, [x * 0.9, -0.2, z * 0.9 - 0.05], 0.3 + Math.sin(i * 1.7) * 0.04, 0.12, {
-      out: 0.3,
-      flat: 0.5,
-      tip: C.hairTip,
-    });
-    if (i % 2 === 0) {
-      addStrand(backLocal, [x * 0.85, 0.2, z * 0.85], 0.4, 0.12, { out: 0.22, flat: 0.5, tip: C.hairTip });
-    }
+  for (let k = 0; k < 9; k++) {
+    const phi = Math.PI * (0.62 + (0.76 * k) / 8);
+    addLock(backLocal, [phi, 92], [phi + (hash(k) - 0.5) * 0.2, 132 + hash(k + 60) * 12], 0.15, { thick: 0.04, tip: 1, flick: 0.06 });
   }
 
-  // Messy crown plus a single ahoge on top.
-  const crownDirs: Array<[number, number, number]> = [
-    [0.4, 0.8, -0.3],
-    [-0.45, 0.78, -0.2],
-    [0.1, 0.85, -0.5],
-    [-0.2, 0.7, -0.68],
-    [0.5, 0.55, -0.62],
-    [-0.62, 0.5, -0.55],
-    [0.7, 0.62, 0.1],
-    [-0.72, 0.6, 0.12],
-  ];
-  for (const [x, y, z] of crownDirs) {
-    const { n } = surface(x, y, z);
-    const dir = n.clone().add(new THREE.Vector3(0, -0.25, -0.35)).normalize();
-    addStrand(hair, [x, y, z], 0.2, 0.1, { dir, flat: 0.5 });
-  }
   const ahoge = new THREE.Group();
-  const ahogeBase = surface(0.05, 1, 0.1, 0.01).p;
-  ahoge.position.copy(ahogeBase);
+  ahoge.position.copy(hairPoint(0.1, deg(8), -0.01));
   hair.add(ahoge);
   const ahogeGeo = strandGeometry(0.2, 0.035, C.hair);
   const a1 = mesh(ahogeGeo, hairMat, { rot: [0.5, 0, 0.2] });
@@ -432,7 +528,6 @@ export function createCharacter(): Character {
     hairVel += ((targetSwing - hairSwing) * 90 - hairVel * 9) * dt;
     hairSwing += hairVel * dt;
     back.rotation.x = -hairSwing * 0.6;
-    bangs.rotation.x = hairSwing * 0.08;
     ahoge.rotation.x = hairSwing * 0.9 + Math.sin(t * 3) * 0.05;
     ahoge.rotation.z = Math.sin(walkPhase) * 0.15 * amp;
 
