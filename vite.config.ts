@@ -23,6 +23,7 @@ const VENDOR_CHUNK: Record<string, string> = {
   "tailwind-merge": "ui-utils",
   sonner: "sonner",
   three: "three",
+  recharts: "recharts",
   "@zumer/snapdom": "snapdom",
   "react-json-view": "react-json-view",
   json5: "json5",
