@@ -40,6 +40,12 @@ function StatCard({
     );
 }
 
+function formatUv(point: QueryResponse["points"][number] | undefined): string {
+    if (!point) return "0";
+    // An older query deployment omits uv; a dash avoids passing that off as zero visitors.
+    return point.uv === undefined ? "—" : point.uv.toLocaleString();
+}
+
 export default function AnalyticsPage() {
     const [days, setDays] = useState<number>(30);
     const [data, setData] = useState<QueryResponse | null>(null);
@@ -137,7 +143,8 @@ export default function AnalyticsPage() {
                                     <th className="text-left font-medium px-4 py-2.5 hidden lg:table-cell">
                                         参数
                                     </th>
-                                    <th className="text-right font-medium px-4 py-2.5">总量</th>
+                                    <th className="text-right font-medium px-4 py-2.5">PV</th>
+                                    <th className="text-right font-medium px-4 py-2.5">UV</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -172,6 +179,9 @@ export default function AnalyticsPage() {
                                         </td>
                                         <td className="px-4 py-3 text-right tabular-nums font-medium">
                                             {(liveTotals.get(point.key)?.total ?? 0).toLocaleString()}
+                                        </td>
+                                        <td className="px-4 py-3 text-right tabular-nums text-zinc-500">
+                                            {formatUv(liveTotals.get(point.key))}
                                         </td>
                                     </tr>
                                 ))}

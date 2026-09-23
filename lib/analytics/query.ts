@@ -10,6 +10,8 @@ export interface QueryPoint {
     type: TrackEventType;
     name: string;
     total: number;
+    /** Distinct visitors (uid, else sid); absent from backends that predate it. */
+    uv?: number;
     firstAt: string | null;
     lastAt: string | null;
     series: QuerySeriesBucket[];
