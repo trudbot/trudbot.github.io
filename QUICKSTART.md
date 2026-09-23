@@ -10,6 +10,7 @@
 - `/share/r` - 分享接收页
 - `/colors` - 颜色收藏
 - `/bluelink` - 蓝链生成工具
+- `/town` - trudbot 的 3D 卡通小镇（含「云端跳跳乐」跑酷）
 
 ## 开发
 

@@ -74,3 +74,4 @@ pnpm create-page your-page-name
 - `/share/r` → `app/share/r/page.tsx`
 - `/colors` → `app/colors/page.tsx`
 - `/bluelink` → `app/bluelink/page.tsx`
+- `/town` → `app/town/page.tsx`

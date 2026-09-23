@@ -1,0 +1,589 @@
+.town-root {
+  --town-ink: #1c1729;
+  --town-paper: #fbf8f1;
+  --town-mint: #5ce0d8;
+  --town-pink: #ff8fab;
+  --town-sun: #ffd166;
+  --town-lav: #a78bfa;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #bfe9ff;
+  color: var(--town-ink);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.town-root.is-night {
+  background: #141a4a;
+}
+
+.town-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  outline: none;
+  cursor: grab;
+}
+
+.town-canvas:active {
+  cursor: grabbing;
+}
+
+.town-root kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.9em;
+  padding: 0.1em 0.5em;
+  border: 2px solid var(--town-ink);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 0 var(--town-ink);
+  font: 700 0.8rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+}
+
+/* ── Panels ── */
+
+.town-chip,
+.town-icon-btn,
+.town-prompt,
+.town-toast,
+.town-dialog,
+.town-help,
+.town-intro-card,
+.town-minimap,
+.town-btn,
+.town-round-btn {
+  border: 2.5px solid var(--town-ink);
+  box-shadow: 3px 3px 0 var(--town-ink);
+}
+
+.town-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.town-hud.is-visible {
+  opacity: 1;
+}
+
+.town-hud.is-visible > * {
+  pointer-events: auto;
+}
+
+.town-hud.is-visible > .town-toasts,
+.town-hud.is-visible > .town-prompt,
+.town-hud.is-visible > .town-status {
+  pointer-events: none;
+}
+
+.town-status {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: calc(100% - 220px);
+}
+
+.town-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--town-paper);
+  font-weight: 800;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.town-chip-location {
+  background: var(--town-mint);
+}
+
+.town-chip-effect {
+  background: var(--town-sun);
+  animation: town-pulse 1s ease-in-out infinite alternate;
+}
+
+.town-hop {
+  position: absolute;
+  top: 64px;
+  left: 16px;
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px 10px 10px;
+  border: 2.5px solid var(--town-ink);
+  border-radius: 18px;
+  background: var(--town-paper);
+  box-shadow: 3px 3px 0 var(--town-ink);
+  animation: town-pop 0.35s ease-out;
+}
+
+.town-hop-bar {
+  position: relative;
+  width: 12px;
+  border: 2px solid var(--town-ink);
+  border-radius: 999px;
+  background: #e0f2ff;
+  overflow: hidden;
+}
+
+.town-hop-fill {
+  position: absolute;
+  inset: auto 0 0;
+  background: linear-gradient(to top, var(--town-mint), var(--town-lav), var(--town-pink));
+  transition: height 0.2s ease-out;
+}
+
+.town-hop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.town-hop-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.town-hop-height {
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.town-hop-height small {
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.town-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.town-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--town-paper);
+  color: var(--town-ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.town-icon-btn:hover {
+  background: #fff;
+}
+
+.town-icon-btn:active,
+.town-btn:active,
+.town-round-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--town-ink);
+}
+
+.town-minimap {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 150px;
+  height: 150px;
+  border-radius: 18px;
+  background: #a6de84;
+  transition: opacity 0.3s ease;
+}
+
+.town-minimap.is-hidden {
+  opacity: 0;
+  pointer-events: none !important;
+}
+
+.town-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 10px;
+  border-radius: 999px;
+  background: var(--town-sun);
+  font-weight: 800;
+  font-size: 1.05rem;
+  transform: translateX(-50%);
+  animation: town-bob 1.2s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+.town-toasts {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.town-toast {
+  padding: 8px 16px;
+  border-radius: 14px;
+  background: var(--town-paper);
+  font-weight: 700;
+  animation: town-toast 2.6s ease forwards;
+  white-space: nowrap;
+}
+
+.town-dialog {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(640px, calc(100% - 32px));
+  min-height: 120px;
+  padding: 26px 22px 14px;
+  border-radius: 20px;
+  background: var(--town-paper);
+  color: var(--town-ink);
+  font: inherit;
+  text-align: left;
+  transform: translateX(-50%);
+  cursor: pointer;
+  animation: town-pop 0.25s ease-out;
+}
+
+.town-dialog-title {
+  position: absolute;
+  top: -16px;
+  left: 18px;
+  padding: 3px 14px;
+  border: 2.5px solid var(--town-ink);
+  border-radius: 999px;
+  background: var(--town-pink);
+  font-weight: 900;
+}
+
+.town-dialog-text {
+  min-height: 3.2em;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.town-dialog-more {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.6;
+  animation: town-bob 1s ease-in-out infinite;
+}
+
+.town-help {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(420px, calc(100% - 32px));
+  padding: 22px;
+  border-radius: 22px;
+  background: var(--town-paper);
+  transform: translate(-50%, -50%);
+  animation: town-pop 0.2s ease-out;
+}
+
+.town-help h2 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.town-help p {
+  margin: 14px 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.town-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.town-controls li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.town-btn {
+  padding: 10px 22px;
+  border-radius: 14px;
+  background: var(--town-mint);
+  color: var(--town-ink);
+  font: inherit;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.town-btn:disabled {
+  background: #e7e1d6;
+  cursor: progress;
+  box-shadow: 3px 3px 0 #a79f92;
+  border-color: #a79f92;
+  color: #6b6459;
+}
+
+/* ── Intro ── */
+
+.town-intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(28, 23, 41, 0.18);
+}
+
+.town-intro-card {
+  width: min(560px, 100%);
+  max-height: calc(100% - 20px);
+  overflow: auto;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--town-paper);
+  animation: town-pop 0.4s ease-out;
+}
+
+.town-kicker {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 3px 12px;
+  border: 2px solid var(--town-ink);
+  border-radius: 999px;
+  background: var(--town-lav);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+}
+
+.town-intro-card h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.town-intro-card h1::after {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 8px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: #1f8fea;
+}
+
+.town-intro-text {
+  margin: 0 0 18px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #3b3650;
+}
+
+.town-start {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+  font-size: 1.15rem;
+}
+
+.town-hint {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.town-fade {
+  position: absolute;
+  inset: 0;
+  background: var(--town-ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.town-fade.is-active {
+  opacity: 1;
+}
+
+/* ── Touch controls ── */
+
+.town-joystick {
+  position: absolute;
+  left: 24px;
+  bottom: 28px;
+  width: 128px;
+  height: 128px;
+  border: 2.5px solid var(--town-ink);
+  border-radius: 50%;
+  background: rgba(251, 248, 241, 0.55);
+  touch-action: none;
+}
+
+.town-joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border: 2.5px solid var(--town-ink);
+  border-radius: 50%;
+  background: var(--town-mint);
+  box-shadow: 2px 2px 0 var(--town-ink);
+}
+
+.town-touch-buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 186px;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 12px;
+  align-items: end;
+}
+
+.town-round-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--town-paper);
+  color: var(--town-ink);
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 900;
+  touch-action: none;
+}
+
+.town-round-btn.is-hot {
+  background: var(--town-sun);
+  animation: town-pulse 0.8s ease-in-out infinite alternate;
+}
+
+.town-round-btn-big {
+  width: 72px;
+  height: 72px;
+  background: var(--town-pink);
+}
+
+@media (pointer: coarse) {
+  .town-minimap {
+    right: auto;
+    left: 16px;
+    top: 64px;
+    bottom: auto;
+    width: 110px;
+    height: 110px;
+  }
+
+  .town-prompt {
+    bottom: 176px;
+  }
+}
+
+@media (max-width: 560px) {
+  .town-status {
+    max-width: calc(100% - 200px);
+  }
+
+  .town-chip {
+    padding: 4px 10px;
+    font-size: 0.82rem;
+  }
+
+  .town-hop {
+    top: 92px;
+    padding: 8px 10px 8px 8px;
+  }
+
+  .town-hop-height {
+    font-size: 1.2rem;
+  }
+
+  .town-intro-card {
+    padding: 20px;
+  }
+}
+
+@keyframes town-bob {
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+@keyframes town-pulse {
+  to {
+    scale: 1.06;
+  }
+}
+
+@keyframes town-pop {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+
+@keyframes town-toast {
+  0% {
+    opacity: 0;
+    translate: 0 -10px;
+  }
+  10%,
+  80% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .town-root *,
+  .town-root *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
