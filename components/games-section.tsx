@@ -1,4 +1,6 @@
+"use client";
 import { favoriteGames } from "@/config/games";
+import { trackClick } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +36,11 @@ export function GamesSection() {
                 href="https://steamcommunity.com/id/trudboot/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackClick("steam_profile", {
+                    href: "https://steamcommunity.com/id/trudboot/",
+                  })
+                }
               >
                 <Gamepad2 className="h-4 w-4 text-primary" />
                 我的 Steam

@@ -1,3 +1,6 @@
+"use client";
+import { trackClick } from "@/lib/analytics";
+
 const socialLinks = [
   {
     href: "https://github.com/trudbot",
@@ -41,6 +44,7 @@ export function SocialLinks() {
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackClick("social_link", { name: link.name, href: link.href })}
           className={`group relative flex h-20 w-20 items-center justify-center focus-visible:outline-none ${link.bgColor} ${shapes[index]} sl-item`}
           style={
             {
