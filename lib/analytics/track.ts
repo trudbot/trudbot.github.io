@@ -1,5 +1,5 @@
 /**
- * Minimal, dependency-free analytics client.
+ * Minimal analytics client.
  *
  * Design contract (see the three requirements this module exists to satisfy):
  *  1. Fire-and-forget: uses `navigator.sendBeacon` so events survive the
@@ -11,6 +11,8 @@
  *  3. Small, typed surface: callers use the `trackDisplay` / `trackClick`
  *     helpers and pass a logical event name plus arbitrary custom params.
  */
+
+import { getUid } from "./uid";
 
 export type TrackEventType = "display" | "exposure" | "click";
 
@@ -64,6 +66,9 @@ export function track(
         name,
         page: window.location.pathname,
         host: window.location.host,
+        // Persistent visitor id (FingerprintJS); undefined until resolved on
+        // first visit, in which case JSON.stringify simply omits it.
+        uid: getUid(),
         ...params,
       },
     });

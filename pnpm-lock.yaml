@@ -14,6 +14,9 @@ importers:
       '@emotion/is-prop-valid':
         specifier: latest
         version: 1.4.0
+      '@fingerprintjs/fingerprintjs':
+        specifier: ^5.2.0
+        version: 5.2.0
       '@fontsource/caveat':
         specifier: ^5.2.8
         version: 5.2.8
@@ -259,6 +262,9 @@ packages:
 
   '@emotion/memoize@0.9.0':
     resolution: {integrity: sha512-30FAj7/EoJ5mwVPOWhAyCX+FPfMDrVecJAM+Iw9NRoSl4BBAQeqj4cApHHUXOVvIPgLVDsCFoz/hGD+5QQD1GQ==}
+
+  '@fingerprintjs/fingerprintjs@5.2.0':
+    resolution: {integrity: sha512-j+2nInkwCQNTJcNhOjvkGM/nLRTuGJTC6xai4quqvUpjob2ssrGwBZjS7k55nOmKvge7qvJT2nS3i/IRvQSTQA==}
 
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
@@ -2764,6 +2770,8 @@ snapshots:
       '@emotion/memoize': 0.9.0
 
   '@emotion/memoize@0.9.0': {}
+
+  '@fingerprintjs/fingerprintjs@5.2.0': {}
 
   '@floating-ui/core@1.7.3':
     dependencies:

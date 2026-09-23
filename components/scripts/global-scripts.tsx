@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { trackDisplay } from "@/lib/analytics";
+import { ensureUid, trackDisplay } from "@/lib/analytics";
 
 let initialized = false;
 
@@ -8,6 +8,9 @@ export default function GlobalScripts() {
   useEffect(() => {
     if (initialized) return;
     initialized = true;
+    // Resolve the persistent visitor id early (cached in localStorage) so
+    // events from here on carry `uid`. Non-blocking and failure-safe.
+    void ensureUid();
     // One page-view per document load. GlobalScripts mounts on every page, so
     // this is the single place that covers display tracking site-wide.
     trackDisplay("page_view", { referrer: document.referrer || undefined });
