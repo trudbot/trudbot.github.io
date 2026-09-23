@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { trackClick, trackDisplay } from "@/lib/analytics";
 import type { GameContext } from "./context";
 import { formatTenths } from "./format";
 import type { CircleCollider, Level } from "./level";
@@ -131,10 +132,21 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
   const [firstX, firstZ] = world(ROUTE[0].a, ROUTE[0].b);
   const padFacing = Math.atan2(firstX - padX, firstZ - padZ);
 
+  // Springs and cookies fire on every contact, so they are counted per climb
+  // and reported with its outcome instead of as individual events.
+  let springs = 0;
+  let crumbles = 0;
+  const runTime = () => (run ? Math.round((clock - run.start) * 10) / 10 : null);
+  const beginRun = (assisted: boolean) => {
+    run = { start: clock, assisted };
+    springs = 0;
+    crumbles = 0;
+  };
   const startRun = () => {
     if (run) return;
-    run = { start: clock, assisted: false };
+    beginRun(false);
     peak = 0;
+    trackDisplay("town_hop_start", { assisted: false, best_s: best === null ? null : best / 10 });
   };
 
   buildBeanstalk(level, statics);
@@ -180,7 +192,7 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
         break;
       }
       case "spring":
-        buildSpring(level, ctx, x, s.y, z);
+        buildSpring(level, ctx, x, s.y, z, () => springs++);
         break;
       case "move":
         buildMover(level, x, s.y, z, s.axis ?? "a", s.amp ?? 1.5, i);
@@ -189,7 +201,7 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
         buildLift(level, x, s.y, s.to ?? s.y + 4, z, i);
         break;
       case "crumble":
-        buildCrumble(level, ctx, x, s.y, z, facing);
+        buildCrumble(level, ctx, x, s.y, z, facing, () => crumbles++);
         break;
       case "check": {
         const n = checkpoints.length + 1;
@@ -198,6 +210,7 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
         c.collider.onStand = () => {
           if (n <= reached) return;
           reached = n;
+          trackDisplay("town_hop_checkpoint", { checkpoint: n, total: checkpointTotal, height: s.y, time_s: runTime() });
           c.raise();
           ctx.audio.play("checkpoint");
           ctx.toast(`🚩 检查点 ${n} / ${checkpointTotal}`);
@@ -216,6 +229,15 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
     const p = ctx.playerPosition();
     const near = Math.hypot(p.x - ZX, p.z - ZZ) < SKYHOP_ZONE.r + 3;
     if (run && (!near || p.y < 0.3)) {
+      trackDisplay("town_hop_end", {
+        result: near ? "fall" : "leave",
+        peak: Math.round(peak * 10) / 10,
+        checkpoint: reached,
+        time_s: runTime(),
+        assisted: run.assisted,
+        springs,
+        crumbles,
+      });
       if (near && peak > 4) {
         ctx.toast(reached ? `掉下去啦！起点的云朵可以送你回到检查点 ${reached}` : "掉下去啦！拍拍灰，再来一次～");
       }
@@ -236,6 +258,7 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
   function finish() {
     if (!run) return;
     const time = Math.floor((clock - run.start) * 10);
+    const previousBest = best;
     const pages = [`登顶成功！用时 ${formatTenths(time)}。`];
     if (run.assisted) {
       pages.push("这次是坐云朵从检查点出发的，不计入最佳纪录。试试从地面一口气跳上来？");
@@ -247,6 +270,15 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
       pages.push(`最佳纪录是 ${formatTenths(best)}，再接再厉！`);
     }
     pages.push("云上的风好舒服，整个小镇都在脚下。旁边的彩虹可以一路滑回地面哦。");
+    trackDisplay("town_hop_finish", {
+      time_s: time / 10,
+      assisted: run.assisted,
+      new_best: best !== previousBest,
+      best_s: best === null ? null : best / 10,
+      checkpoint: reached,
+      springs,
+      crumbles,
+    });
     run = null;
     ctx.audio.play("win");
     const p = ctx.playerPosition();
@@ -289,6 +321,7 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
       y: SKYHOP_GOAL,
       pos: () => ({ x: lx, z: lz }),
       action: () => {
+        trackClick("town_hop_slide");
         ctx.audio.play("whoosh");
         ctx.fadeThrough(() => ctx.teleport(padX, START.y, padZ, padFacing));
       },
@@ -382,15 +415,18 @@ export function buildSkyHop(level: Level, statics: THREE.Group, ctx: GameContext
       dynamicLabel: () => (reached ? `乘云去检查点 ${reached}` : "乘云去检查点（未解锁）"),
       action: () => {
         if (!reached) {
+          trackClick("town_hop_elevator", { checkpoint: 0, locked: true });
           ctx.toast("先靠自己跳到第一面 🚩 旗子那里吧！");
           return;
         }
         const cp = checkpoints[reached - 1];
+        trackClick("town_hop_elevator", { checkpoint: reached, height: cp.y });
         ctx.audio.play("whoosh");
         ctx.fadeThrough(() => {
           ctx.teleport(cp.x, cp.y, cp.z, cp.facing);
-          run = { start: clock, assisted: true };
+          beginRun(true);
           peak = cp.y;
+          trackDisplay("town_hop_start", { assisted: true, checkpoint: reached });
         });
       },
     });
@@ -431,7 +467,7 @@ function cloudPlatform(x: number, y: number, z: number, r: number, mat: THREE.Ma
   return g;
 }
 
-function buildSpring(level: Level, ctx: GameContext, x: number, y: number, z: number) {
+function buildSpring(level: Level, ctx: GameContext, x: number, y: number, z: number, onUse: () => void) {
   const cap = group(mesh(geo.custom("springCap", () => new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2)), toon("#FF6B6B"), { scale: [0.95, 0.42, 0.95] }));
   for (let k = 0; k < 5; k++) {
     const ang = (k / 5) * Math.PI * 2;
@@ -450,6 +486,7 @@ function buildSpring(level: Level, ctx: GameContext, x: number, y: number, z: nu
   const c = level.circle(x, z, 0.95, y);
   c.oneWay = true;
   c.onStand = () => {
+    onUse();
     ctx.launch(SPRING_SPEED);
     ctx.audio.play("spring");
     squash = 1;
@@ -516,7 +553,7 @@ function buildLift(level: Level, x: number, y0: number, y1: number, z: number, s
   });
 }
 
-function buildCrumble(level: Level, ctx: GameContext, x: number, y: number, z: number, facing: number) {
+function buildCrumble(level: Level, ctx: GameContext, x: number, y: number, z: number, facing: number, onUse: () => void) {
   const cookie = group(mesh(geo.cyl(1.0, 1.0, 0.36, 28), toon("#d9a066"), { pos: [0, -0.18, 0] }));
   cookie.add(mesh(geo.cyl(0.92, 0.92, 0.04, 28), toon("#e8b87a", { outline: false }), { pos: [0, 0.005, 0], cast: false }));
   for (let k = 0; k < 7; k++) {
@@ -537,6 +574,7 @@ function buildCrumble(level: Level, ctx: GameContext, x: number, y: number, z: n
     if (state !== "idle") return;
     state = "shaking";
     timer = 0.55;
+    onUse();
     ctx.audio.play("crumble");
   };
   level.updaters.push((dt, t) => {

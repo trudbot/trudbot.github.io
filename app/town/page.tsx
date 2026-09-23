@@ -1,6 +1,7 @@
 import "./styles.css";
 import { HelpCircle, House, Moon, Sun, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
+import { trackDisplay } from "@/lib/analytics";
 import type { TownGame } from "./game/engine";
 import { formatTenths } from "./game/format";
 import type { ActionKey, DialogState, HudState } from "./game/types";
@@ -74,6 +75,7 @@ export default function TownPage() {
       })
       .catch((err) => {
         console.error(err);
+        trackDisplay("town_load_error", { reason: err instanceof Error ? err.message : String(err) });
         if (!disposed) setStatus("error");
       });
 

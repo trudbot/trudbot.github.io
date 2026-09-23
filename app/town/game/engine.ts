@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OutlineEffect } from "three/examples/jsm/effects/OutlineEffect.js";
+import { trackClick, trackDisplay } from "@/lib/analytics";
 import { GameAudio } from "./audio";
 import { createCharacter, type Character } from "./character";
 import { HOUSES, type GameContext, type HouseId } from "./context";
@@ -19,6 +20,9 @@ const RADIUS = 0.36;
 const FOV = 50;
 const MAP_RANGE = 60;
 const ORIGIN = new THREE.Vector3();
+
+/** Decimetres are plenty to tell where something happened and keep payloads small. */
+const roundPos = (p: THREE.Vector3) => [p.x, p.y, p.z].map((n) => Math.round(n * 10) / 10);
 
 const lerpAngle = (a: number, b: number, t: number) => a + Math.atan2(Math.sin(b - a), Math.cos(b - a)) * t;
 
@@ -80,6 +84,7 @@ export class TownGame {
   private viewportScale = 400;
   private raf = 0;
   private disposed = false;
+  private sessionReported = false;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -110,9 +115,11 @@ export class TownGame {
       exitHouse: () => this.exitHouse(),
       boost: (s) => {
         this.boostT = s;
+        trackDisplay("town_effect", { effect: "boost", seconds: s });
       },
       grow: (s) => {
         this.growT = s;
+        trackDisplay("town_effect", { effect: "grow", seconds: s });
       },
       holdFlower: (color) => this.holdFlower(color),
       dance: (s) => {
@@ -158,6 +165,7 @@ export class TownGame {
     this.buildMinimapBase();
 
     window.addEventListener("resize", this.resize);
+    window.addEventListener("pagehide", this.reportSession);
     this.resize();
     this.cb.onHud({ ...this.hud });
     this.clock.start();
@@ -170,6 +178,7 @@ export class TownGame {
     if (this.startedAt >= 0) return;
     this.audio.init();
     this.startedAt = this.time;
+    trackClick("town_start", { total: this.totalStars });
     this.camTarget.copy(this.player).setY(1.1);
     this.input.clearActions();
   }
@@ -201,6 +210,7 @@ export class TownGame {
   toggleMute() {
     this.patchHud({ muted: !this.hud.muted });
     this.audio.setMuted(this.hud.muted);
+    trackClick("town_mute", { muted: this.hud.muted });
   }
 
   toggleNight() {
@@ -210,6 +220,7 @@ export class TownGame {
 
   dispose() {
     this.disposed = true;
+    window.removeEventListener("pagehide", this.reportSession);
     cancelAnimationFrame(this.raf);
     window.removeEventListener("resize", this.resize);
     this.input.dispose();
@@ -288,12 +299,14 @@ export class TownGame {
     this.savedYaw = this.yaw;
     this.fadeThrough(() => {
       let lvl = this.interiors.get(id);
+      const firstVisit = !lvl;
       if (!lvl) {
         lvl = buildInterior(id, this.ctx);
         this.interiors.set(id, lvl);
         this.renderer.compile(lvl.scene, this.camera);
       }
       this.enterLevel(lvl);
+      trackClick("town_house_enter", { house: id, first_visit: firstVisit });
     });
   }
 
@@ -301,10 +314,14 @@ export class TownGame {
     if (this.transitioning || !this.level.opts.indoor) return;
     const id = this.level.id as HouseId;
     this.audio.play("door");
-    this.fadeThrough(() => this.enterLevel(this.town.level, this.town.doorways[id]));
+    this.fadeThrough(() => {
+      this.enterLevel(this.town.level, this.town.doorways[id]);
+      trackClick("town_house_exit", { house: id });
+    });
   }
 
   private setNight(night: boolean) {
+    if (night !== this.night) trackClick("town_night", { night, location: this.level.opts.name });
     this.night = night;
     this.audio.setNight(night);
     this.patchHud({ night });
@@ -388,7 +405,10 @@ export class TownGame {
     if (this.dialog) {
       if (this.input.consume("interact") || this.input.consume("jump")) this.advanceDialog();
     } else if (!frozen) {
-      if (this.input.consume("interact") && this.prompt) this.prompt.action();
+      if (this.input.consume("interact") && this.prompt) {
+        trackClick("town_interact", { label: this.promptLabel, location: this.level.opts.name });
+        this.prompt.action();
+      }
       if (this.input.consume("wave")) {
         this.waveT = 1.6;
         this.danceT = 0;
@@ -530,7 +550,16 @@ export class TownGame {
     this.audio.play("star");
     this.level.glow.emit({ pos: s.object.position, count: 40, speed: 4, colors: ["#FFD166", "#FFEAA7", "#ffffff"], size: 0.35, life: 0.9, drag: 2, sprite: Sprite.Star });
     this.patchHud({ stars: this.collected });
+    trackDisplay("town_star", {
+      id: s.id,
+      location: this.level.opts.name,
+      count: this.collected,
+      total: this.totalStars,
+      pos: roundPos(s.object.position),
+      play_s: this.playTime(),
+    });
     if (this.collected === this.totalStars) {
+      trackDisplay("town_star_complete", { total: this.totalStars, play_s: this.playTime() });
       this.audio.play("win");
       for (let i = 0; i < 6; i++) {
         this.level.fx.emit({ pos: { x: this.player.x, y: this.player.y + 2, z: this.player.z }, count: 30, speed: 7, vel: [0, 5, 0], colors: ["#FF8FAB", "#FFD166", "#A78BFA", "#7DD3FC", "#7DFFC7"], size: 0.3, life: 2.5, gravity: 7, drag: 1 });
@@ -545,6 +574,27 @@ export class TownGame {
     } else {
       this.cb.onToast(`⭐ 找到星星 ${this.collected} / ${this.totalStars}`);
     }
+  }
+
+  /**
+   * An MPA never unmounts the game on navigation, so page teardown is the only
+   * reliable end of a visit; the analytics client uses sendBeacon, which still
+   * delivers from `pagehide`.
+   */
+  private readonly reportSession = () => {
+    if (this.startedAt < 0 || this.sessionReported) return;
+    this.sessionReported = true;
+    trackDisplay("town_session", {
+      play_s: this.playTime(),
+      stars: this.collected,
+      total: this.totalStars,
+      houses: this.interiors.size,
+    });
+  };
+
+  /** Seconds since the player pressed start. */
+  private playTime() {
+    return this.startedAt < 0 ? 0 : Math.round((this.time - this.startedAt) * 10) / 10;
   }
 
   private updatePrompt(frozen: boolean) {
