@@ -180,6 +180,52 @@ export default function AnalyticsPage() {
                     </div>
                 </section>
 
+                {data && data.articles && data.articles.length > 0 && (
+                    <section>
+                        <h2 className="text-lg font-semibold mb-1">博客阅读排行</h2>
+                        <p className="text-xs text-zinc-400 mb-4">
+                            当前时间段内有阅读量的文章，按阅读量从高到低。
+                        </p>
+                        <div className="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                            <table className="w-full text-sm">
+                                <thead className="bg-zinc-50 dark:bg-zinc-900 text-zinc-500">
+                                    <tr>
+                                        <th className="text-left font-medium px-4 py-2.5 w-12">#</th>
+                                        <th className="text-left font-medium px-4 py-2.5">文章</th>
+                                        <th className="text-right font-medium px-4 py-2.5">阅读量</th>
+                                        <th className="text-right font-medium px-4 py-2.5 hidden sm:table-cell">
+                                            读者数
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                                    {data.articles.map((article, index) => (
+                                        <tr key={article.page}>
+                                            <td className="px-4 py-3 text-zinc-400 tabular-nums">
+                                                {index + 1}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium text-zinc-800 dark:text-zinc-100 truncate max-w-md">
+                                                    {article.title}
+                                                </div>
+                                                <code className="text-[11px] text-zinc-400">
+                                                    {article.page}
+                                                </code>
+                                            </td>
+                                            <td className="px-4 py-3 text-right tabular-nums font-semibold">
+                                                {article.reads.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3 text-right tabular-nums text-zinc-500 hidden sm:table-cell">
+                                                {article.readers.toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                )}
+
                 {loading && !data ? (
                     <div className="text-sm text-zinc-400 py-10 text-center">正在加载数据…</div>
                 ) : data && totals.all === 0 ? (

@@ -31,6 +31,14 @@ export interface QueryPageBreakdown {
     series: QuerySeriesBucket[];
 }
 
+export interface QueryArticle {
+    page: string;
+    title: string;
+    id: string | null;
+    reads: number;
+    readers: number;
+}
+
 export interface QueryResponse {
     ok: boolean;
     range: { from: string; to: string; days: number; tz: string; bucket: string };
@@ -38,6 +46,7 @@ export interface QueryResponse {
     points: QueryPoint[];
     durations: QueryDuration[];
     pages?: { host: string | null; items: QueryPageBreakdown[] };
+    articles?: QueryArticle[];
 }
 
 const QUERY_ENDPOINT =
