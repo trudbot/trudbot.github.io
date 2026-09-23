@@ -7,6 +7,8 @@ import {
     BarChart,
     CartesianGrid,
     Legend,
+    Line,
+    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
@@ -15,6 +17,7 @@ import {
 import type { TrackEventType } from "@/lib/analytics/track";
 import {
     formatDuration,
+    type QueryPageBreakdown,
     type QueryResponse,
     type QuerySeriesBucket,
 } from "@/lib/analytics/query";
@@ -34,6 +37,76 @@ const TYPE_LABEL: Record<TrackEventType, string> = {
 
 function shortDate(value: string): string {
     return value.length >= 10 ? value.slice(5) : value;
+}
+
+// Distinct hues for the per-page line chart; cycles if pages exceed the list.
+const LINE_PALETTE = [
+    "#3b82f6",
+    "#ef4444",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ec4899",
+    "#14b8a6",
+    "#f97316",
+    "#6366f1",
+    "#84cc16",
+    "#06b6d4",
+    "#d946ef",
+];
+
+const MAX_PAGE_LINES = 12;
+
+function PagesChart({ items }: { items: QueryPageBreakdown[] }) {
+    const pages = items.slice(0, MAX_PAGE_LINES);
+    const dates = pages[0]?.series.map((bucket) => bucket.date) ?? [];
+    const rows = dates.map((date, index) => {
+        const row: Record<string, string | number> = { date };
+        for (const page of pages) row[page.page] = page.series[index]?.count ?? 0;
+        return row;
+    });
+    return (
+        <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={rows} margin={{ top: 8, right: 12, bottom: 0, left: -18 }}>
+                <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="currentColor"
+                    className="text-zinc-200 dark:text-zinc-800"
+                    vertical={false}
+                />
+                <XAxis
+                    dataKey="date"
+                    tickFormatter={shortDate}
+                    tick={{ fontSize: 10 }}
+                    minTickGap={28}
+                    stroke="currentColor"
+                    className="text-zinc-400"
+                />
+                <YAxis
+                    allowDecimals={false}
+                    width={32}
+                    tick={{ fontSize: 10 }}
+                    stroke="currentColor"
+                    className="text-zinc-400"
+                />
+                <Tooltip
+                    labelFormatter={(label) => `日期 ${label}`}
+                    contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                {pages.map((page, index) => (
+                    <Line
+                        key={page.page}
+                        type="monotone"
+                        dataKey={page.page}
+                        stroke={LINE_PALETTE[index % LINE_PALETTE.length]}
+                        strokeWidth={2}
+                        dot={false}
+                    />
+                ))}
+            </LineChart>
+        </ResponsiveContainer>
+    );
 }
 
 function TrendChart({ data, color }: { data: QuerySeriesBucket[]; color: string }) {
@@ -179,6 +252,7 @@ function TrendCard({
 export default function AnalyticsCharts({ data }: { data: QueryResponse }) {
     const byKey = new Map(data.points.map((point) => [point.key, point]));
     const emptySeries: QuerySeriesBucket[] = [];
+    const pageItems = data.pages?.items ?? [];
 
     // Documented points first (registry order), then anything seen in the data
     // but missing from the registry, so drift is always visible.
@@ -209,6 +283,21 @@ export default function AnalyticsCharts({ data }: { data: QueryResponse }) {
 
     return (
         <div className="flex flex-col gap-10">
+            {pageItems.length > 0 && (
+                <section>
+                    <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-1">
+                        页面展现量
+                    </h2>
+                    <p className="text-xs text-zinc-400 mb-4">
+                        按 page 自动分组，每条线代表一个页面
+                        {data.pages?.host ? `（${data.pages.host}）` : ""}。
+                    </p>
+                    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+                        <PagesChart items={pageItems} />
+                    </div>
+                </section>
+            )}
+
             <section>
                 <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
                     趋势

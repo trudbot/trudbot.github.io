@@ -63,6 +63,7 @@ export function track(
       params: {
         name,
         page: window.location.pathname,
+        host: window.location.host,
         ...params,
       },
     });

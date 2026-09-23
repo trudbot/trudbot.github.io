@@ -50,7 +50,10 @@ export default function AnalyticsPage() {
         const controller = new AbortController();
         setLoading(true);
         setError(null);
-        fetchLogQuery(days, "Asia/Shanghai", controller.signal)
+        // Scope the per-page breakdown to this very site, so it lists only
+        // trudbot.github.io pages even though the endpoint is shared.
+        const host = typeof window !== "undefined" ? window.location.host : undefined;
+        fetchLogQuery(days, "Asia/Shanghai", controller.signal, host)
             .then((result) => setData(result))
             .catch((err: unknown) => {
                 if (controller.signal.aborted) return;

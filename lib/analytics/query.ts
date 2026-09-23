@@ -25,12 +25,19 @@ export interface QueryDuration {
     p90Ms: number;
 }
 
+export interface QueryPageBreakdown {
+    page: string;
+    total: number;
+    series: QuerySeriesBucket[];
+}
+
 export interface QueryResponse {
     ok: boolean;
     range: { from: string; to: string; days: number; tz: string; bucket: string };
     totals: Record<string, number>;
     points: QueryPoint[];
     durations: QueryDuration[];
+    pages?: { host: string | null; items: QueryPageBreakdown[] };
 }
 
 const QUERY_ENDPOINT =
@@ -41,10 +48,12 @@ export async function fetchLogQuery(
     days: number,
     tz = "Asia/Shanghai",
     signal?: AbortSignal,
+    host?: string,
 ): Promise<QueryResponse> {
     const url = new URL(QUERY_ENDPOINT);
     url.searchParams.set("days", String(days));
     url.searchParams.set("tz", tz);
+    if (host) url.searchParams.set("host", host);
     const response = await fetch(url.toString(), { signal });
     if (!response.ok) throw new Error(`query failed: ${response.status}`);
     return (await response.json()) as QueryResponse;
