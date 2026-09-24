@@ -21,7 +21,15 @@ src/generated/       # 自动生成的页面 entry 和 SSR 映射
 src/entry-client.tsx # hydrate/createRoot 通用挂载逻辑
 src/entry-server.tsx # SSG 服务端渲染入口
 scripts/             # 路由发现、路由生成和静态生成脚本
+miniapp/*/           # 小黑盒工坊小程序（pnpm workspace 包），独立 Vite 8 构建，不进入主站 SSG
 ```
+
+## 小黑盒小程序（miniapp/）
+
+- 每个子目录是一个独立的工坊小程序，配置在其 `package.json#heybox`，文档见 https://docs.xiaoheihe.cn/hb_sdk/llms.txt 。
+- 产物只能有根 `dist/index.html` 一个 HTML；页面默认无网络权限，不要引入统计、外部图片/字体或 `fetch`。
+- `@` 别名指向仓库根，可复用 `components/`、`lib/` 和 `app/globals.css`、`app/theme-tokens.css`。
+- `@heybox/hb-sdk` 要求 Node `>=22.20.0`。常用命令：`pnpm --filter <包名> dev | build | deploy`；`dev` 与 `deploy` 需先 `hb-sdk login` 并 `hb-sdk remote create` / `bind`。
 
 ## 构建原则
 

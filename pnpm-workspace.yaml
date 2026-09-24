@@ -1,0 +1,6 @@
+packages:
+  - miniapp/*
+
+# @heybox/hb-sdk 用 sharp 校验版本图片，pnpm 默认拦截依赖的构建脚本。
+allowBuilds:
+  sharp: true

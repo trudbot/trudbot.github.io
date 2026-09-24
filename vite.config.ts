@@ -78,10 +78,10 @@ function devPageEntries(): Plugin {
 
 export default defineConfig({
   fmt: {
-    ignorePatterns: ["out/**", ".vite-ssg/**"],
+    ignorePatterns: ["out/**", ".vite-ssg/**", "miniapp/*/dist/**"],
   },
   lint: {
-    ignorePatterns: ["out/**", ".vite-ssg/**"],
+    ignorePatterns: ["out/**", ".vite-ssg/**", "miniapp/*/dist/**"],
   },
   plugins: [devPageEntries()],
   oxc: {

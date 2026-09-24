@@ -1,0 +1,49 @@
+{
+  "name": "miniapp-hello",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "heybox": {
+    "miniProgramId": "01a0d1c7-da5c-7eea-90b4-5b060a9828d4",
+    "name": "trudbot 示例",
+    "icon": "assets/heybox-placeholder.png",
+    "coverImages": [
+      "assets/heybox-placeholder.png"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "ohos"
+    ],
+    "permissions": {
+      "storage": {
+        "enabled": true
+      }
+    }
+  },
+  "scripts": {
+    "hb-sdk": "hb-sdk",
+    "dev": "hb-sdk dev --port 5280 --browser-dev-host-port 5281",
+    "build": "tsc --noEmit && hb-sdk build",
+    "deploy": "hb-sdk remote deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@heybox/hb-sdk": "^0.8.2",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
