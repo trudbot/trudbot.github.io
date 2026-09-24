@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OutlineEffect } from "three/examples/jsm/effects/OutlineEffect.js";
 import { trackClick, trackDisplay } from "@/lib/analytics";
 import { GameAudio } from "./audio";
-import { createCharacter, type Character } from "./character";
+import { createCharacter, type Character } from "./characterModel";
 import { HOUSES, type GameContext, type HouseId } from "./context";
 import { Input } from "./input";
 import { buildInterior } from "./interiors";
