@@ -1,0 +1,151 @@
+.trudbot-page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(120% 120% at 50% 20%, #2a3350 0%, #141a2b 55%, #0c101b 100%);
+  color: #eef2ff;
+  font-family:
+    "Jost", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.trudbot-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none; /* let OrbitControls own drag/pinch gestures */
+  cursor: grab;
+}
+
+.trudbot-canvas:active {
+  cursor: grabbing;
+}
+
+.trudbot-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 32px 0;
+  pointer-events: none;
+}
+
+.trudbot-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.trudbot-subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  opacity: 0.66;
+}
+
+.trudbot-dock {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(18, 22, 36, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.trudbot-chip {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eef2ff;
+  font: inherit;
+  font-size: 14px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.trudbot-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.trudbot-chip:active {
+  transform: scale(0.96);
+}
+
+.trudbot-chip.is-active {
+  background: linear-gradient(135deg, #6ea8ff, #8f7bff);
+  border-color: transparent;
+  color: #0c101b;
+  font-weight: 600;
+}
+
+.trudbot-chip.is-toggle {
+  margin-left: 4px;
+}
+
+.trudbot-hint {
+  position: absolute;
+  right: 24px;
+  bottom: 30px;
+  font-size: 12px;
+  opacity: 0.5;
+  text-align: right;
+  line-height: 1.6;
+  pointer-events: none;
+}
+
+.trudbot-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.trudbot-spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #8f7bff;
+  animation: trudbot-spin 0.9s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes trudbot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.trudbot-overlay-text {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+@media (max-width: 640px) {
+  .trudbot-header {
+    padding: 18px 20px 0;
+  }
+  .trudbot-title {
+    font-size: 20px;
+  }
+  .trudbot-hint {
+    display: none;
+  }
+}

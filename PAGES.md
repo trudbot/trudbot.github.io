@@ -75,3 +75,4 @@ pnpm create-page your-page-name
 - `/colors` → `app/colors/page.tsx`
 - `/bluelink` → `app/bluelink/page.tsx`
 - `/town` → `app/town/page.tsx`
+- `/trudbot` → `app/trudbot/page.tsx`
