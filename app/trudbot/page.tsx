@@ -2,7 +2,11 @@ import "./styles.css";
 import { useEffect, useRef, useState } from "react";
 import type { TrudbotViewer } from "./viewer";
 
-const MODEL_URL = `${import.meta.env.BASE_URL}models/trudbot-full.glb`;
+// Served from OSS CDN to keep the ~3MB binary out of the repo. The bucket must
+// allow cross-origin GET (Access-Control-Allow-Origin) for the site + localhost,
+// or the browser blocks this fetch.
+const MODEL_URL =
+  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/2026/09/24/1790243533119_trudbot-full.glb";
 
 // Chinese labels for the clip names baked into the GLB.
 const CLIP_LABELS: Record<string, string> = {
