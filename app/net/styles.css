@@ -1,0 +1,328 @@
+.net-page {
+  min-height: 100vh;
+  padding: 24px 20px 40px;
+  background: #141a2b;
+  color: #eef2ff;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.net-header,
+.net-status,
+.net-footer {
+  width: min(100%, 560px);
+}
+
+.net-title {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.net-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.net-level-chip {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #2f3a57;
+  background: #1c2338;
+  color: #b8c0d9;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.net-level-chip[data-cleared] {
+  border-color: #5ce0d8;
+  color: #5ce0d8;
+}
+
+.net-level-chip[data-final] {
+  border-color: #ffd166;
+}
+
+.net-level-chip[aria-current] {
+  background: #eef2ff;
+  border-color: #eef2ff;
+  color: #141a2b;
+}
+
+.net-level-chip:focus-visible,
+.net-button:focus-visible,
+.net-tile:focus-visible {
+  outline: 2px solid #ffd166;
+  outline-offset: 2px;
+}
+
+.net-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.net-level-name {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.net-level-meta {
+  font-size: 13px;
+  color: #8f99b8;
+}
+
+.net-counters {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #8f99b8;
+  font-variant-numeric: tabular-nums;
+}
+
+.net-counters b {
+  color: #eef2ff;
+  font-size: 18px;
+}
+
+.net-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.net-board {
+  display: grid;
+  border: 2px solid #3a4666;
+  border-radius: 6px;
+  background: #1c2338;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.net-board[data-won] {
+  animation: net-win 0.6s ease-out;
+}
+
+@keyframes net-win {
+  40% {
+    box-shadow: 0 0 0 6px rgb(92 224 216 / 0.35);
+  }
+}
+
+.net-tile {
+  position: relative;
+  width: var(--tile);
+  height: var(--tile);
+  padding: 0;
+  border: 0;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 0.5px #2a3350;
+  background: transparent;
+  cursor: pointer;
+}
+
+.net-tile[data-locked] {
+  background: #252e48;
+}
+
+.net-wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: #5c6685;
+  transition: transform 0.13s ease-out;
+}
+
+.net-arm {
+  stroke: currentColor;
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+
+.net-arm[data-loop] {
+  stroke: #ff5a5f;
+  stroke-dasharray: 10 8;
+}
+
+.net-tile[data-short] .net-wires {
+  animation: net-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes net-pulse {
+  to {
+    opacity: 0.55;
+  }
+}
+
+.net-source {
+  stroke: #141a2b;
+  stroke-width: 5;
+}
+
+.net-end {
+  fill: #1c2338;
+  stroke: currentColor;
+  stroke-width: 9;
+}
+
+.net-barriers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  stroke: #ffa94d;
+  stroke-width: 10;
+}
+
+.net-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 260px;
+  padding: 24px;
+  border: 2px solid #3a4666;
+  border-radius: 6px;
+  background: #1c2338;
+  text-align: center;
+}
+
+.net-card-badge {
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #2a3350;
+  color: #5ce0d8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.net-card-badge[data-final] {
+  background: #ffd166;
+  color: #141a2b;
+}
+
+.net-card-note {
+  margin: 0;
+  font-size: 12px;
+  color: #8f99b8;
+}
+
+.net-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.net-card-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b8c0d9;
+}
+
+.net-card-sources {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+}
+
+.net-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+}
+
+.net-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.net-tip {
+  font-size: 12px;
+  color: #8f99b8;
+}
+
+.net-button {
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1px solid #3a4666;
+  background: #1c2338;
+  color: #eef2ff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.net-button--primary {
+  border-color: #5ce0d8;
+  background: #5ce0d8;
+  color: #141a2b;
+  font-weight: 600;
+}
+
+.net-result {
+  text-align: center;
+}
+
+.net-result p {
+  margin: 0 0 8px;
+}
+
+.net-result-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #5ce0d8;
+}
+
+.net-result-best {
+  font-size: 13px;
+  color: #8f99b8;
+}
+
+.net-footer {
+  margin-top: auto;
+  font-size: 13px;
+  color: #8f99b8;
+  text-align: center;
+}
+
+.net-footer p {
+  margin: 4px 0;
+}
+
+.net-credit {
+  font-size: 11px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .net-wires {
+    transition: none;
+  }
+  .net-board[data-won],
+  .net-tile[data-short] .net-wires {
+    animation: none;
+  }
+}
