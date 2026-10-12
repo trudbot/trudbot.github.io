@@ -9,7 +9,7 @@
 - TypeScript 7（原生 ts-go 编译器）
 - Tailwind CSS v4
 - 自定义 SSG 脚本：`scripts/ssg.mjs`
-- 文件目录式自动路由：`app/**/page.tsx`
+- 文件目录式自动路由：`app/**/page.tsx`（React）/ `app/**/page.vue`（Vue）
 
 ## 常用命令
 
@@ -24,7 +24,7 @@ pnpm lint      # Vite Plus lint
 
 ## 路由
 
-路由自动从 `app/**/page.tsx` 生成：
+路由自动从 `app/**/page.tsx` 或 `app/**/page.vue` 生成：
 
 - `app/(home)/page.tsx` → `/`
 - `app/json/page.tsx` → `/json`

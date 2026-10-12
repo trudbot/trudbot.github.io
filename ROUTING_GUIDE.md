@@ -1,17 +1,18 @@
 # 多页面静态路由指南
 
-本项目不是 SPA 路由，也不依赖客户端 router。路由由 `app/**/page.tsx` 自动发现，静态托管服务根据 `out/` 目录里的 HTML 文件返回页面。
+本项目不是 SPA 路由，也不依赖客户端 router。路由由 `app/**/page.tsx`（React）或 `app/**/page.vue`（Vue）自动发现，静态托管服务根据 `out/` 目录里的 HTML 文件返回页面。
 
 ## 构建方式
 
 `pnpm build` 执行 `scripts/ssg.mjs`：
 
-1. 扫描 `app/**/page.tsx`。
-2. 生成 `src/generated/entries/*` 和 `src/generated/pages.ts`。
+1. 扫描 `app/**/page.tsx` 与 `app/**/page.vue`，按文件名确定页面框架；`page.vue` 中声明了 `<script vapor>` 的按 Vue Vapor 挂载。
+2. 生成 `src/generated/entries/*`（调用对应框架的挂载器 `src/runtime/mount-*`）和 `src/generated/pages.ts`。
 3. Vite 构建每个页面的客户端 entry。
 4. Vite 构建 SSR entry。
-5. SSR entry 按自动发现的路由渲染 HTML。
-6. SSG 脚本为每个路由写入：
+5. SSR entry 按页面框架选择 React 或 Vue 的服务端渲染器生成 HTML。
+6. 校验每个页面没有加载其他框架的运行时 chunk（如 Vue 页面引入了 `react`），否则构建失败。
+7. SSG 脚本为每个路由写入：
    - `out/<route>/index.html`
    - `out/<route>.html`
 
@@ -19,7 +20,7 @@
 
 ## 路由规则
 
-- 只有 `page.tsx` 会成为路由。
+- 只有 `page.tsx` 和 `page.vue` 会成为路由；同一目录不能同时存在两者。
 - 括号目录会从 URL 中剥离。
 - 嵌套目录会成为嵌套路由。
 

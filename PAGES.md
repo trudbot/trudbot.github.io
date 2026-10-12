@@ -19,7 +19,7 @@ app/
         └── receive-client.tsx
 src/
 ├── generated/        # 自动生成的页面 entry 和 SSR 映射，不手写
-├── entry-client.tsx  # 页面挂载逻辑
+├── runtime/          # 各框架挂载器与框架无关的全站脚本
 └── entry-server.tsx  # SSG 服务端渲染入口
 scripts/
 ├── discover-pages.mjs
@@ -29,7 +29,7 @@ scripts/
 
 ## 页面约定
 
-只有 `app/**/page.tsx` 会被识别为路由。
+`app/**/page.tsx`（React）和 `app/**/page.vue`（Vue SFC）会被识别为路由。
 
 路径映射规则：
 
@@ -75,4 +75,4 @@ pnpm create-page your-page-name
 - `/colors` → `app/colors/page.tsx`
 - `/bluelink` → `app/bluelink/page.tsx`
 - `/town` → `app/town/page.tsx`
-- `/trudbot` → `app/trudbot/page.tsx`
+- `/trudbot` → `app/trudbot/page.vue`（Vue Vapor）

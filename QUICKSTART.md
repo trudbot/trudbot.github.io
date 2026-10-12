@@ -1,6 +1,6 @@
 # 快速开始
 
-本项目是 Vite Plus + React 的多页面静态应用。路由自动从 `app/**/page.tsx` 发现，构建时由 `scripts/ssg.mjs` 预渲染成静态 HTML。
+本项目是 Vite Plus + React 的多页面静态应用。路由自动从 `app/**/page.tsx`（React）或 `app/**/page.vue`（Vue）发现，构建时由 `scripts/ssg.mjs` 预渲染成静态 HTML。
 
 ## 当前页面
 

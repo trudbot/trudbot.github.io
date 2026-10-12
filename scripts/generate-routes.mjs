@@ -10,9 +10,17 @@ const entriesDir = path.join(generatedDir, "entries");
 const pageCssDir = path.join(generatedDir, "page-css");
 const themeTokensCss = path.join(root, "app/theme-tokens.css");
 
+// .vue 在 import 里总是写全扩展名，走下方「原样存在」分支即可解析，无需加入补全列表。
 const RESOLVE_EXTS = [".tsx", ".ts", ".jsx", ".js"];
 // 只有这些扩展名的文件才含有 Tailwind class，需要被 @source 扫描。
-const SOURCE_EXTS = new Set([".tsx", ".ts", ".jsx", ".js"]);
+const SOURCE_EXTS = new Set([".tsx", ".ts", ".jsx", ".js", ".vue"]);
+
+// 每个框架页面 entry 使用的挂载器（见 src/runtime/）。
+const MOUNTERS = {
+  react: { name: "mountReact", module: "@/src/runtime/mount-react" },
+  vue: { name: "mountVue", module: "@/src/runtime/mount-vue" },
+  "vue-vapor": { name: "mountVueVapor", module: "@/src/runtime/mount-vue-vapor" },
+};
 
 // 从一个 import 说明符解析出本地文件路径（忽略第三方包）。
 function resolveImport(spec, fromFile) {
@@ -81,7 +89,7 @@ function pageCssContent(sources) {
     if (relDir.includes("(")) {
       lines.add(`@source "${relDir}";`);
     } else {
-      const stem = toPosixRelative(pageCssDir, file).replace(/\.[jt]sx?$/, "");
+      const stem = toPosixRelative(pageCssDir, file).replace(/\.([jt]sx?|vue)$/, "");
       lines.add(`@source "${stem}*";`);
     }
   }
@@ -99,8 +107,16 @@ function routeSort(a, b) {
   return a.route.localeCompare(b.route);
 }
 
+// .tsx 去掉扩展名以沿用仓库里的 import 习惯；.vue 必须保留扩展名才能被 Vite 解析。
 function importPath(pageFile) {
   return `@/${pageFile.replace(/\.tsx$/, "").replace(/'/g, "\\'")}`;
+}
+
+function entryContent(page, cssName) {
+  const mounter = MOUNTERS[page.framework];
+  if (!mounter) throw new Error(`No mounter for framework '${page.framework}' (${page.pageFile})`);
+
+  return `import '../page-css/${cssName}'\nimport Page from '${importPath(page.pageFile)}'\nimport { ${mounter.name} } from '${mounter.module}'\n\n${mounter.name}(Page)\n`;
 }
 
 export async function generateRoutes() {
@@ -115,10 +131,7 @@ export async function generateRoutes() {
       const sources = collectSources(path.join(root, page.pageFile));
       const cssName = `${page.entryName}.css`;
       await fs.writeFile(path.join(pageCssDir, cssName), pageCssContent(sources));
-      await fs.writeFile(
-        path.join(root, page.entryFile),
-        `import '../page-css/${cssName}'\nimport Page from '${importPath(page.pageFile)}'\nimport { mountPage } from '@/src/entry-client'\n\nmountPage(Page)\n`,
-      );
+      await fs.writeFile(path.join(root, page.entryFile), entryContent(page, cssName));
     }),
   );
 
@@ -126,11 +139,16 @@ export async function generateRoutes() {
     .map((page, index) => `import Page${index} from '${importPath(page.pageFile)}'`)
     .join("\n");
   const routeList = pages.map((page) => `'${page.route}'`).join(", ");
-  const pageMapEntries = pages.map((page, index) => `  '${page.route}': Page${index},`).join("\n");
+  const pageMapEntries = pages
+    .map(
+      (page, index) =>
+        `  '${page.route}': { framework: '${page.framework}', component: Page${index} },`,
+    )
+    .join("\n");
 
   await fs.writeFile(
     path.join(generatedDir, "pages.ts"),
-    `${imports}\nimport type { ComponentType } from 'react'\n\nexport const routesToPrerender = [${routeList}]\n\nexport const pages: Record<string, ComponentType> = {\n${pageMapEntries}\n}\n`,
+    `${imports}\nimport type { PageEntry } from '@/src/runtime/page-entry'\n\nexport const routesToPrerender = [${routeList}]\n\nexport const pages: Record<string, PageEntry> = {\n${pageMapEntries}\n}\n`,
   );
 
   await fs.writeFile(

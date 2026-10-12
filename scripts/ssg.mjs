@@ -36,6 +36,9 @@ const routeManifest = JSON.parse(
   await fs.readFile(path.join(root, "src/generated/route-manifest.json"), "utf-8"),
 );
 const routeEntries = Object.fromEntries(routeManifest.map((page) => [page.route, page.entryFile]));
+const routeFrameworks = Object.fromEntries(
+  routeManifest.map((page) => [page.route, page.framework]),
+);
 const serverEntry = await import(pathToFileURL(path.join(ssrOutDir, "entry-server.js")).href);
 
 function collectAssets(entryKey, seen = new Set()) {
@@ -64,6 +67,27 @@ function pageClientAssets(route) {
   const imports = [...new Set(assets.imports.map((key) => manifest[key]?.file).filter(Boolean))];
 
   return { css, imports, entryFile: entry.file };
+}
+
+// 框架运行时 chunk 名与 vite.config.ts 的 VENDOR_CHUNK 保持一致。
+const FRAMEWORK_RUNTIME_CHUNKS = { react: "react", vue: "vue", "vue-vapor": "vue" };
+
+// 页面首屏只允许加载自己框架的运行时。共享 chunk 可能被打包器把别的框架代码
+// 合并进来而悄悄带上另一个运行时，人工难以察觉，因此在构建期强制校验。
+function assertRuntimeIsolation(route) {
+  const framework = routeFrameworks[route];
+  const entryKey = routeEntries[route];
+  // 只看被 import 的 chunk：entry 自身的 name 来自路由，可能与运行时 chunk 同名。
+  const loaded = new Set(collectAssets(entryKey).imports.map((key) => manifest[key]?.name));
+
+  for (const [other, chunk] of Object.entries(FRAMEWORK_RUNTIME_CHUNKS)) {
+    if (chunk !== FRAMEWORK_RUNTIME_CHUNKS[framework] && loaded.has(chunk)) {
+      throw new Error(
+        `Route '${route}' (${framework}) loads the '${chunk}' runtime chunk. ` +
+          `Check shared modules it imports for ${other}-only code.`,
+      );
+    }
+  }
 }
 
 function pageHeadAssets(route) {
@@ -266,7 +290,8 @@ function pageBodyAssets(route) {
 }
 
 for (const route of serverEntry.routesToPrerender) {
-  const appHtml = serverEntry.render(route);
+  assertRuntimeIsolation(route);
+  const appHtml = await serverEntry.render(route);
   const html = template
     .replace("<!--page-assets-->", pageHeadAssets(route))
     .replace("<!--app-html-->", appHtml)
