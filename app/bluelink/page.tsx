@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Sparkles, ArrowRight, Check, Link2, Terminal } from "lucide-react";
-import { Toaster, toast } from "@/components/ui/sonner";
+import { Toaster, toast } from "@/components/toaster";
 
 export default function BlueLinkPage() {
   const [displayText, setDisplayText] = useState("马年红包");

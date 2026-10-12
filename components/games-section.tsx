@@ -1,9 +1,6 @@
 "use client";
 import { favoriteGames } from "@/config/games";
 import { trackClick } from "@/lib/analytics";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Gamepad2, ExternalLink } from "lucide-react";
 
 export function GamesSection() {
@@ -12,12 +9,9 @@ export function GamesSection() {
       <div className="gs-section">
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center justify-center md:justify-start gap-4">
-            <Badge
-              variant="outline"
-              className="text-[#00703a] dark:text-primary border-primary/50 text-sm md:text-base px-4 py-1"
-            >
+            <span className="inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-md border border-primary/50 px-4 py-1 text-sm font-medium text-[#00703a] md:text-base dark:text-primary">
               Interests
-            </Badge>
+            </span>
             <div className="inline-block relative">
               <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl font-sans whitespace-nowrap">
                 我最爱的游戏
@@ -27,26 +21,21 @@ export function GamesSection() {
           </div>
 
           <div className="flex justify-center md:justify-end">
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-full border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all text-sm font-sans gap-2"
+            <a
+              href="https://steamcommunity.com/id/trudboot/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                trackClick("steam_profile", {
+                  href: "https://steamcommunity.com/id/trudboot/",
+                })
+              }
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-primary/30 bg-background px-3 py-2 font-sans text-sm font-medium shadow-xs outline-none transition-all hover:border-primary/60 hover:bg-primary/5 hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:border-input dark:bg-input/30 dark:hover:bg-input/50 [&_svg]:pointer-events-none [&_svg]:shrink-0"
             >
-              <a
-                href="https://steamcommunity.com/id/trudboot/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackClick("steam_profile", {
-                    href: "https://steamcommunity.com/id/trudboot/",
-                  })
-                }
-              >
-                <Gamepad2 className="h-4 w-4 text-primary" />
-                我的 Steam
-                <ExternalLink className="h-3 w-3 opacity-50" />
-              </a>
-            </Button>
+              <Gamepad2 className="h-4 w-4 text-primary" />
+              我的 Steam
+              <ExternalLink className="size-4 opacity-50" />
+            </a>
           </div>
         </div>
 
@@ -62,7 +51,7 @@ export function GamesSection() {
                 } as React.CSSProperties
               }
             >
-              <Card className="group relative h-full overflow-hidden border-2 border-primary/10 bg-card hover:border-primary/50 transition-all duration-300 rounded-3xl p-4 flex flex-col">
+              <div className="group relative flex h-full flex-col gap-6 overflow-hidden rounded-3xl border-2 border-primary/10 bg-card p-4 text-card-foreground shadow-sm transition-all duration-300 hover:border-primary/50">
                 <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-muted group-hover:shadow-2xl transition-all duration-300">
                   <img
                     src={game.coverUrl}
@@ -86,7 +75,7 @@ export function GamesSection() {
 
                 {/* Decoration shapes */}
                 <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-accent/20 blur-xl group-hover:bg-primary/20 transition-colors" />
-              </Card>
+              </div>
             </div>
           ))}
         </div>

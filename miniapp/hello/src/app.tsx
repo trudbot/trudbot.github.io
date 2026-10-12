@@ -4,15 +4,12 @@ import hbSDK, {
   type MiniProgramSDKHandshakeState,
 } from "@heybox/hb-sdk";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 
 const COUNTER_KEY = "hello_counter";
 
 // 按钮可用性必须由持久握手状态驱动：`ready` 事件不重放，晚挂载的组件会错过。
 function useHandshakeState() {
-  const [state, setState] = useState<MiniProgramSDKHandshakeState>(() =>
-    hbSDK.getHandshakeState(),
-  );
+  const [state, setState] = useState<MiniProgramSDKHandshakeState>(() => hbSDK.getHandshakeState());
   useEffect(() => hbSDK.onHandshakeStateChange(setState), []);
   return state;
 }
@@ -80,11 +77,13 @@ export default function App() {
         <p className="text-sm text-muted-foreground">
           SDK 状态：
           <span
-            className={cn(
-              "font-medium",
-              handshake.status === "ready" && "text-primary",
-              handshake.status === "failed" && "text-secondary",
-            )}
+            className={
+              handshake.status === "ready"
+                ? "font-medium text-primary"
+                : handshake.status === "failed"
+                  ? "font-medium text-secondary"
+                  : "font-medium"
+            }
           >
             {handshake.status}
           </span>

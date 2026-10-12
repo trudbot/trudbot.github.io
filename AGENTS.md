@@ -7,15 +7,15 @@
 - **语言**: TypeScript
 - **UI**: React 19；也支持 Vue 3.6 SFC 页面（`page.vue`），`<script setup vapor>` 的页面走 Vapor 模式（如 `/trudbot`）
 - **样式**: Tailwind CSS v4
-- **动画**: Framer Motion / tw-animate-css
-- **组件基础**: Radix UI 风格组件
+- **动画**: Framer Motion
+- **组件**: 不使用组件脚手架（如 shadcn/ui）；交互原语直接用 Radix（如 `@radix-ui/react-switch`），样式在调用处用 Tailwind 写
 - **图标**: Lucide React
 
 ## 架构
 
 ```txt
 app/                 # 页面组件和页面专属 CSS；app/**/page.tsx、page.vue 自动成为路由
-components/          # 共享组件
+components/          # 共享 React 组件
 lib/                 # 共享逻辑和特效
 src/generated/       # 自动生成的页面 entry 和 SSR 映射
 src/runtime/         # 各框架挂载器（mount-react/mount-vue）与框架无关的全站脚本

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Toaster, toast } from "@/components/ui/sonner";
+import { Toaster, toast } from "@/components/toaster";
 import { parseUrl, type UrlParameter } from "./url-parser";
 
 const MONOSPACE_FONT =

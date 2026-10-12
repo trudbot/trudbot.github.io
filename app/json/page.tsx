@@ -15,10 +15,16 @@ import {
   Wrench,
   FileCode2,
 } from "lucide-react";
-import { Toaster, toast } from "@/components/ui/sonner";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Toaster, toast } from "@/components/toaster";
+import * as Switch from "@radix-ui/react-switch";
 import { ClientOnly } from "@/components/client-only";
+
+const SWITCH_CLASS =
+  "inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80";
+const SWITCH_THUMB_CLASS =
+  "pointer-events-none block size-4 rounded-full bg-background ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0 dark:data-[state=checked]:bg-primary-foreground dark:data-[state=unchecked]:bg-foreground";
+const LABEL_CLASS =
+  "flex cursor-pointer select-none items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-400";
 
 type ReactJsonComponent = ComponentType<import("@microlink/react-json-view").ReactJsonViewProps>;
 
@@ -195,8 +201,9 @@ export default function JsonFormatPage() {
 
             <div className="hidden sm:flex items-center gap-4 mr-2 border-r border-slate-200 dark:border-slate-800 pr-4">
               <div className="flex items-center gap-2">
-                <Switch
+                <Switch.Root
                   id="json5-mode"
+                  className={SWITCH_CLASS}
                   checked={isJson5Mode}
                   onMouseEnter={preloadJson5}
                   onFocus={preloadJson5}
@@ -204,25 +211,28 @@ export default function JsonFormatPage() {
                     setIsJson5Mode(checked);
                     if (checked) preloadJson5();
                   }}
-                />
-                <Label
-                  htmlFor="json5-mode"
-                  className="text-sm font-medium cursor-pointer text-slate-600 dark:text-slate-400 flex items-center gap-1.5"
                 >
+                  <Switch.Thumb className={SWITCH_THUMB_CLASS} />
+                </Switch.Root>
+                <label htmlFor="json5-mode" className={LABEL_CLASS}>
                   <FileCode2 className="w-3.5 h-3.5" />
                   <span>JSON5</span>
-                </Label>
+                </label>
               </div>
 
               <div className="flex items-center gap-2">
-                <Switch id="edit-mode" checked={isEditable} onCheckedChange={setIsEditable} />
-                <Label
-                  htmlFor="edit-mode"
-                  className="text-sm font-medium cursor-pointer text-slate-600 dark:text-slate-400 flex items-center gap-1.5"
+                <Switch.Root
+                  id="edit-mode"
+                  className={SWITCH_CLASS}
+                  checked={isEditable}
+                  onCheckedChange={setIsEditable}
                 >
+                  <Switch.Thumb className={SWITCH_THUMB_CLASS} />
+                </Switch.Root>
+                <label htmlFor="edit-mode" className={LABEL_CLASS}>
                   <Pencil className="w-3.5 h-3.5" />
                   <span>编辑</span>
-                </Label>
+                </label>
               </div>
             </div>
 

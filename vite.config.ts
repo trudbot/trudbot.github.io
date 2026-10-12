@@ -20,9 +20,6 @@ const VENDOR_CHUNK: Record<string, string> = {
   "react-dom": "react",
   scheduler: "react",
   vue: "vue",
-  "class-variance-authority": "ui-utils",
-  clsx: "ui-utils",
-  "tailwind-merge": "ui-utils",
   sonner: "sonner",
   three: "three",
   recharts: "recharts",
@@ -34,11 +31,10 @@ const VENDOR_CHUNK: Record<string, string> = {
   "qrcode-generator": "share-common",
 };
 
-// 本仓库源码 → chunk 名。用于：避免无谓的小 chunk（如 cn()）、以及给
-// 与三方包重名的本地模块单独命名（如 sonner 外壳 → toaster，区分 sonner 库）。
+// 本仓库源码 → chunk 名。用于：避免无谓的小 chunk、以及让多个页面共享的
+// 本地模块拥有稳定可读的名字。
 const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
-  ["/lib/utils.ts", "ui-utils"], // cn()：只与 ui 组件同载，并入 ui-utils
-  ["/components/ui/sonner.tsx", "toaster"], // 懒加载 Toaster 外壳，与 sonner 库(sonner chunk)区分
+  ["/components/toaster.tsx", "toaster"], // 懒加载 Toaster 外壳，与 sonner 库(sonner chunk)区分
   ["/app/share/styles.css", "share-common"], // share 两页共享样式
   // 全站基础样式由各框架挂载器引入，独立成 chunk，避免随挂载器各产出一份。
   ["/app/globals.css", "globals"],
@@ -52,7 +48,6 @@ function chunkName(id: string) {
   const packageName = modulePackageName(normalized);
 
   if (packageName) {
-    if (packageName.startsWith("@radix-ui/")) return "ui-utils";
     // vue 的运行时拆在多个 @vue/* 包里，合成一个 chunk，与 react chunk 对称。
     if (packageName.startsWith("@vue/")) return "vue";
     return VENDOR_CHUNK[packageName];

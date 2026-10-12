@@ -75,7 +75,7 @@ function toPosixRelative(fromDir, target) {
 // 为单个页面生成一份「只包含该页面用到的 utility」的 CSS。
 // 本工具链下 Tailwind 的 @source 有几个限制，据此选择写法：
 //   1. @source 指向具体文件无效，只能用目录或 glob；因此逐文件用去扩展名的 `*` glob 精确锁定，
-//      避免把 components/ui 等目录里未使用的文件一起带进来。
+//      避免把 components/ 等目录里未使用的文件一起带进来。
 //   2. glob 无法可靠地字面匹配路由分组目录里的圆括号（如 (home)）；这类目录只含该页面自身文件，
 //      直接整目录扫描即可。
 //   3. @source 不能与 @reference 共存（否则不生成任何 utility）；因此自定义 token（如 bg-primary）
