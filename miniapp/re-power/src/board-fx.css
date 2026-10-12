@@ -1,0 +1,213 @@
+/* Fixtures drawn over the wires, plus sparks and the victory wave. */
+.rp-gen {
+  fill: #0e1110;
+  stroke-width: 4;
+}
+
+.rp-gen-halo {
+  fill: none;
+  stroke: var(--rp-c, #444);
+  stroke-width: 2;
+  opacity: 0;
+}
+
+.rp-tile[data-lit] .rp-gen-halo {
+  animation: rp-halo 1.6s ease-out infinite;
+}
+
+@keyframes rp-halo {
+  from {
+    opacity: 0.8;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+.rp-gen-halo,
+.rp-lamp-on {
+  transform-origin: 50px 50px;
+  transform-box: view-box;
+}
+
+.rp-gen-bolt {
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
+.rp-lamp-ring {
+  fill: #0e1110;
+  stroke: #4a524d;
+  stroke-width: 4;
+}
+
+.rp-lamp-glass {
+  fill: #232926;
+}
+
+.rp-lamp-on {
+  fill: var(--rp-c);
+  filter: drop-shadow(0 0 6px var(--rp-c));
+}
+
+.rp-tile[data-surge] .rp-lamp-on {
+  animation: rp-lamp 0.45s ease-out both calc(var(--rp-delay) + var(--rp-arm-ms));
+}
+
+@keyframes rp-lamp {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.35);
+    fill: #fff;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Walls: hazard-striped steel bars on the tile edges. */
+.rp-wall {
+  stroke: var(--rp-hazard);
+  stroke-width: 12;
+}
+
+.rp-wall-stripe {
+  stroke: #1a1305;
+  stroke-width: 12;
+  stroke-dasharray: 7 7;
+}
+
+/* Locked tiles get clamp brackets in the corners. */
+.rp-tile[data-locked] {
+  background: #1a1e1b;
+}
+
+.rp-clamp path {
+  fill: none;
+  stroke: var(--rp-hazard);
+  stroke-width: 6;
+  opacity: 0.85;
+  animation: rp-clamp 0.22s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  transform-origin: 50px 50px;
+  transform-box: view-box;
+}
+
+@keyframes rp-clamp {
+  from {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.rp-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.rp-spark {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.rp-spark::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, var(--rp-c) 40%, transparent 70%);
+  animation: rp-flash 0.35s ease-out both;
+}
+
+.rp-spark[data-big]::before {
+  left: -26px;
+  top: -26px;
+  width: 52px;
+  height: 52px;
+}
+
+.rp-spark i {
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 2px;
+  height: 9px;
+  border-radius: 1px;
+  background: #fff;
+  box-shadow: 0 0 4px var(--rp-c);
+  transform-origin: 1px 0;
+  animation: rp-ray 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) both;
+}
+
+@keyframes rp-ray {
+  from {
+    transform: rotate(var(--a)) translateY(0) scaleY(1.6);
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--a)) translateY(calc(var(--r) * var(--rp-tile))) scaleY(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes rp-flash {
+  from {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Victory: a wave of light runs out from every generator. */
+.rp-board[data-won] .rp-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--rp-c);
+  opacity: 0;
+  pointer-events: none;
+  animation: rp-wave 0.6s ease-out both calc(var(--rp-wave) * 55ms);
+}
+
+@keyframes rp-wave {
+  30% {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.rp-board[data-won] {
+  animation: rp-board-won 1.4s ease-out both;
+}
+
+@keyframes rp-board-won {
+  from {
+    box-shadow: 0 0 0 1px #313a35;
+  }
+  60% {
+    box-shadow:
+      0 0 0 1px var(--rp-crt),
+      0 0 40px rgb(139 255 90 / 0.35);
+  }
+  to {
+    box-shadow:
+      0 0 0 1px #4f7a3b,
+      0 0 24px rgb(139 255 90 / 0.15);
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "miniapp-re-power",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "heybox": {
+    "name": "通通电",
+    "category": "game",
+    "icon": "assets/icon.png",
+    "coverImages": [
+      "assets/cover.png"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "ohos"
+    ],
+    "permissions": {
+      "storage": {
+        "enabled": true
+      },
+      "leaderboard": {
+        "enabled": true
+      }
+    },
+    "miniProgramId": "01a125a4-8c34-761f-8dbb-58e7d24949e8"
+  },
+  "scripts": {
+    "hb-sdk": "hb-sdk",
+    "dev": "hb-sdk dev --port 5282 --browser-dev-host-port 5283",
+    "build": "tsc --noEmit && hb-sdk build",
+    "deploy": "hb-sdk remote deploy",
+    "typecheck": "tsc --noEmit",
+    "art": "node scripts/gen-art.mjs",
+    "boards": "node scripts/create-boards.mjs"
+  },
+  "dependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@heybox/hb-sdk": "^0.8.5",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.1",
+    "sharp": "0.34.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}

@@ -1,0 +1,173 @@
+/* The riveted panel, the briefing card and the breaker lever. */
+.rp-panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background:
+    repeating-linear-gradient(115deg, rgb(255 255 255 / 0.015) 0 2px, transparent 2px 7px),
+    #1c2120;
+  border: 1px solid #36403b;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 #3d4743,
+    inset 0 -2px 0 #0b0d0c,
+    0 10px 30px rgb(0 0 0 / 0.5);
+}
+
+/* Rust bleeding from the bottom edge of the plate. */
+.rp-panel::after {
+  content: "";
+  position: absolute;
+  inset: auto 8% -1px 12%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, rgb(138 69 36 / 0.7) 30%, transparent 55%, rgb(138 69 36 / 0.5) 80%, transparent);
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.rp-rivet {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8a948e, #2b322e 70%);
+}
+
+.rp-rivet[data-pos^="t"] {
+  top: 5px;
+}
+.rp-rivet[data-pos^="b"] {
+  bottom: 5px;
+}
+.rp-rivet[data-pos$="l"] {
+  left: 5px;
+}
+.rp-rivet[data-pos$="r"] {
+  right: 5px;
+}
+
+.rp-brief {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  max-width: calc(100vw - 60px);
+  padding: 6px 4px;
+  animation: rp-rise 0.35s ease-out both;
+}
+
+@keyframes rp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.rp-brief p,
+.rp-brief h2 {
+  margin: 0;
+}
+
+.rp-brief-badge {
+  align-self: flex-start;
+  padding: 2px 8px;
+  background: var(--rp-crt);
+  color: #0b1406;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.rp-brief-badge[data-final] {
+  background: var(--rp-red);
+  color: #fff;
+}
+
+.rp-brief-title {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.rp-brief-lesson {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.rp-brief-note,
+.rp-brief-meta,
+.rp-brief-best {
+  color: var(--rp-dim);
+  font-size: 12px;
+}
+
+.rp-brief-rule {
+  padding: 8px 10px;
+  border: 1px dashed #4a3a1a;
+  color: #e8c46a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.rp-breaker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  align-self: stretch;
+  margin-top: 4px;
+  padding: 10px 14px;
+  background: #101312;
+  border: 1px solid #3b4440;
+  border-radius: 4px;
+}
+
+.rp-breaker-slot {
+  position: relative;
+  width: 22px;
+  height: 46px;
+  border-radius: 3px;
+  background: #050605;
+  box-shadow: inset 0 0 0 2px #2a302d;
+}
+
+.rp-breaker-handle {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--rp-red);
+  box-shadow: 0 2px 0 #7a1414;
+  transition: transform 0.32s cubic-bezier(0.6, -0.4, 0.4, 1.6);
+}
+
+.rp-breaker[data-pulled] .rp-breaker-handle {
+  transform: translateY(22px);
+  background: var(--rp-crt);
+  box-shadow: 0 0 10px var(--rp-crt);
+}
+
+.rp-breaker-label {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+}
+
+.rp-game-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  min-height: 56px;
+  margin-top: 12px;
+}
+
+.rp-tip {
+  margin: 0;
+  color: var(--rp-dim);
+  font-size: 11px;
+  line-height: 1.5;
+}

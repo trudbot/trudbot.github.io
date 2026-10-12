@@ -1,0 +1,141 @@
+/* Level list: one stencilled sector plate per level. */
+.rp-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: #050806;
+  border: 1px solid #1f2a22;
+  color: var(--rp-dim);
+  font: 12px var(--rp-mono);
+  letter-spacing: 0.1em;
+}
+
+.rp-progress b {
+  color: var(--rp-crt);
+  font-size: 16px;
+}
+
+.rp-progress-cells {
+  display: flex;
+  flex: 1;
+  gap: 3px;
+  height: 12px;
+}
+
+.rp-progress-cells i {
+  flex: 1;
+  background: #16201a;
+}
+
+.rp-progress-cells i[data-on] {
+  background: var(--rp-crt);
+  box-shadow: 0 0 6px rgb(139 255 90 / 0.6);
+}
+
+.rp-level-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rp-level {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 74px;
+  padding: 10px 12px 10px 0;
+  overflow: hidden;
+  text-align: left;
+  background: var(--rp-plate);
+  border: 1px solid var(--rp-edge);
+  border-left: 0;
+  border-radius: 4px;
+  animation: rp-plate-in 0.35s ease-out both;
+  transition: transform 0.1s;
+}
+
+@keyframes rp-plate-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+}
+
+.rp-level:active {
+  transform: scale(0.985);
+}
+
+.rp-level-no {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  margin: -10px 0;
+  background: #252b28;
+  color: #6b746e;
+  font: 900 22px var(--rp-mono);
+  border-right: 2px solid #0b0d0c;
+}
+
+.rp-level[data-state="cleared"] .rp-level-no {
+  background: #1f3317;
+  color: var(--rp-crt);
+  text-shadow: 0 0 8px rgb(139 255 90 / 0.5);
+}
+
+.rp-level[data-state="open"] .rp-level-no {
+  background: var(--rp-hazard);
+  color: #1a1305;
+}
+
+.rp-level[data-state="open"] {
+  border-color: #5a4a1e;
+  box-shadow: 0 0 0 1px rgb(232 181 46 / 0.15), 0 0 18px rgb(232 181 46 / 0.08);
+}
+
+.rp-level[data-final] .rp-level-badge {
+  color: var(--rp-red);
+}
+
+.rp-level-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rp-level-badge {
+  color: var(--rp-dim);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+
+.rp-level-name {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.rp-level-meta {
+  display: flex;
+  align-items: center;
+  color: var(--rp-dim);
+  font: 11px var(--rp-mono);
+}
+
+.rp-level-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  max-width: 46vw;
+  color: var(--rp-ink);
+  font: 12px/1.35 var(--rp-mono);
+  text-align: right;
+}

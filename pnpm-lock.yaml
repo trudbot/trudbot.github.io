@@ -263,6 +263,40 @@ importers:
         specifier: ^8.3.0
         version: 8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1)
 
+  miniapp/re-power:
+    dependencies:
+      react:
+        specifier: ^19
+        version: 19.2.0
+      react-dom:
+        specifier: ^19
+        version: 19.2.0(react@19.2.0)
+    devDependencies:
+      '@heybox/hb-sdk':
+        specifier: ^0.8.5
+        version: 0.8.5(vite@8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1))
+      '@types/node':
+        specifier: ^22
+        version: 22.18.9
+      '@types/react':
+        specifier: ^19
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.1(@types/react@19.2.2)
+      '@vitejs/plugin-react':
+        specifier: ^6.1.1
+        version: 6.1.1(vite@8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1))
+      sharp:
+        specifier: 0.34.5
+        version: 0.34.5
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1)
+
 packages:
 
   '@alloc/quick-lru@5.2.0':
@@ -327,8 +361,21 @@ packages:
   '@heybox/hb-sdk-protocol@0.8.2':
     resolution: {integrity: sha512-PsJnGpENFG51Jz2SoCXiMbfEbTIZLaWjc306n51UrY2eESXWXhENP/16vLKDdztOHfdCAgb0ZYlFnBSJQzf5Gg==}
 
+  '@heybox/hb-sdk-protocol@0.8.5':
+    resolution: {integrity: sha512-DjJTPdCqsQmJaL5/yI80N4zEfXTyk0uGuHhopWnkd8YlBv58gTMnQBQhfCycF6V7Vh1yjqwAmeUOqMvIe/ogzA==}
+
   '@heybox/hb-sdk@0.8.2':
     resolution: {integrity: sha512-V184dxY8lJBolW2Fus25KF8+Hm5HWboJNuJgBXDVh/0bGUtvcsJqPanH4webfWFvgEt1q5e/El1XBt4siE5bWg==}
+    engines: {node: '>=22.20.0'}
+    hasBin: true
+    peerDependencies:
+      vite: '>=5'
+    peerDependenciesMeta:
+      vite:
+        optional: true
+
+  '@heybox/hb-sdk@0.8.5':
+    resolution: {integrity: sha512-BSXiyX438vhWb4d/+2+QNP37q6V27IHtIRl3S75351+uFVck278FzuoFB99gCm8rApdMZ/6JUkpUAdpDc/TPOg==}
     engines: {node: '>=22.20.0'}
     hasBin: true
     peerDependencies:
@@ -3392,9 +3439,26 @@ snapshots:
 
   '@heybox/hb-sdk-protocol@0.8.2': {}
 
+  '@heybox/hb-sdk-protocol@0.8.5': {}
+
   '@heybox/hb-sdk@0.8.2(vite@8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1))':
     dependencies:
       '@heybox/hb-sdk-protocol': 0.8.2
+      '@msgpack/msgpack': 2.8.0
+      parse5: 7.3.0
+      sharp: 0.34.5
+      skills: 1.5.23
+      undici: 7.29.1
+      ws: 8.21.0
+    optionalDependencies:
+      vite: 8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@heybox/hb-sdk@0.8.5(vite@8.3.0(@types/node@22.18.9)(jiti@2.7.0)(yaml@2.9.1))':
+    dependencies:
+      '@heybox/hb-sdk-protocol': 0.8.5
       '@msgpack/msgpack': 2.8.0
       parse5: 7.3.0
       sharp: 0.34.5

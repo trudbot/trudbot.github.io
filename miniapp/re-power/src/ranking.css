@@ -1,0 +1,124 @@
+/* Leaderboard: level picker, board switch and the survivor log. */
+.rp-chips {
+  display: flex;
+  gap: 6px;
+  margin: 0 -16px 12px;
+  padding: 2px 16px 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.rp-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.rp-chip {
+  flex: none;
+  width: 44px;
+  height: 36px;
+  border: 1px solid var(--rp-edge);
+  border-radius: 3px;
+  background: var(--rp-plate);
+  color: var(--rp-dim);
+  font: 800 14px var(--rp-mono);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.rp-chip[data-cleared] {
+  color: var(--rp-ink);
+  border-bottom: 2px solid #4f7a3b;
+}
+
+.rp-chip[data-final] {
+  border-color: #5a2525;
+}
+
+.rp-chip[aria-selected="true"] {
+  background: var(--rp-hazard);
+  border-color: var(--rp-hazard);
+  color: #1a1305;
+}
+
+.rp-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  background: #050806;
+  border: 1px solid var(--rp-edge);
+  border-radius: 4px;
+}
+
+.rp-segment button {
+  height: 36px;
+  border-radius: 2px;
+  color: var(--rp-dim);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.rp-segment button[aria-selected="true"] {
+  background: var(--rp-plate-hi);
+  color: var(--rp-crt);
+  box-shadow: inset 0 -2px 0 var(--rp-crt);
+}
+
+.rp-rule {
+  margin: 10px 0;
+  color: var(--rp-dim);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.rp-mine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background: #1a1d12;
+  border: 1px solid #5a4a1e;
+  border-radius: 4px;
+}
+
+.rp-mine-tag,
+.rp-row-me {
+  padding: 1px 6px;
+  background: var(--rp-hazard);
+  color: #1a1305;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.rp-mine-line {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e8c46a;
+}
+
+.rp-mine-score {
+  font: 800 16px var(--rp-mono);
+  color: var(--rp-crt);
+}
+
+.rp-empty {
+  padding: 28px 12px;
+  color: var(--rp-dim);
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.rp-empty p {
+  margin: 0 0 12px;
+}
+
+.rp-more {
+  display: block;
+  margin: 12px auto 0;
+}

@@ -1,0 +1,157 @@
+/* The fuse grid: wires, fixtures and the current running through them. */
+.rp-board {
+  position: relative;
+  display: grid;
+  border: 2px solid #050605;
+  background: #0b0d0c;
+  box-shadow:
+    inset 0 0 0 1px #262c29,
+    0 0 0 1px #313a35;
+}
+
+.rp-tile {
+  position: relative;
+  width: var(--rp-tile);
+  height: var(--rp-tile);
+  background: var(--rp-plate);
+  box-shadow: inset 0 0 0 1px #0b0d0c, inset 1px 1px 0 1px #1f2522;
+  overflow: hidden;
+}
+
+.rp-tile:active {
+  background: #1d2220;
+}
+
+.rp-tile > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rp-wires {
+  transition: transform 0.17s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+
+.rp-wires line {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.rp-arm-dead {
+  stroke: #343b37;
+  stroke-width: 13;
+}
+
+.rp-arm-glow {
+  stroke: var(--rp-c);
+  stroke-width: 30;
+  opacity: 0.18;
+}
+
+.rp-arm-lit {
+  stroke: var(--rp-c);
+  stroke-width: 11;
+}
+
+/* Bright beads travelling with the current, from source towards the ends. */
+.rp-arm-flow {
+  stroke: #fff;
+  stroke-width: 4.5;
+  stroke-dasharray: 0.1 16;
+  opacity: 0.75;
+  animation: rp-flow 0.42s linear infinite;
+}
+
+@keyframes rp-flow {
+  from {
+    stroke-dashoffset: 16.1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Light-up: the inbound arm fills first, the outbound arms one beat later. */
+.rp-tile[data-surge] .rp-arm-lit,
+.rp-tile[data-surge] .rp-arm-glow {
+  stroke-dasharray: 1 1;
+  animation: rp-fill var(--rp-arm-ms) linear both;
+  animation-delay: calc(var(--rp-delay) + var(--rp-arm-ms));
+}
+
+.rp-tile[data-surge] [data-in] .rp-arm-lit,
+.rp-tile[data-surge] [data-in] .rp-arm-glow {
+  animation-delay: var(--rp-delay);
+}
+
+.rp-tile[data-surge] .rp-arm-flow {
+  animation:
+    rp-appear 0.01s both calc(var(--rp-delay) + 2 * var(--rp-arm-ms)),
+    rp-flow 0.42s linear infinite;
+}
+
+/* Only the dash moves: each layer keeps its own opacity while filling. */
+@keyframes rp-fill {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rp-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.75;
+  }
+}
+
+/* Loops are marked whether or not they carry power. */
+.rp-wires [data-loop] .rp-arm-lit {
+  stroke: var(--rp-red);
+  stroke-width: 9;
+  stroke-dasharray: 0.16 0.12;
+  stroke-linecap: butt;
+  animation: rp-march 0.6s linear infinite;
+  opacity: 1;
+}
+
+.rp-wires [data-loop] .rp-arm-glow {
+  stroke: var(--rp-red);
+  animation: none;
+  stroke-dasharray: none;
+}
+
+.rp-wires [data-loop] .rp-arm-flow {
+  display: none;
+}
+
+@keyframes rp-march {
+  to {
+    stroke-dashoffset: -0.28;
+  }
+}
+
+.rp-tile[data-short] .rp-lit {
+  animation: rp-flicker 0.46s steps(1) infinite;
+}
+
+@keyframes rp-flicker {
+  0%,
+  40%,
+  70% {
+    opacity: 1;
+  }
+  20%,
+  55% {
+    opacity: 0.15;
+  }
+  85% {
+    opacity: 0.5;
+  }
+}

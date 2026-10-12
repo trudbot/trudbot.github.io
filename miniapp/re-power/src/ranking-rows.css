@@ -1,0 +1,86 @@
+/* Rows of the survivor log. */
+.rp-rows {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rp-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 12px 0 0;
+  background: var(--rp-plate);
+  border: 1px solid #222826;
+  border-radius: 3px;
+  animation: rp-row-in 0.3s ease-out both;
+}
+
+@keyframes rp-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.rp-row[data-skeleton] {
+  animation: rp-blink 1.2s ease-in-out infinite;
+}
+
+.rp-row[data-me] {
+  background: #1a1d12;
+  border-color: #5a4a1e;
+}
+
+.rp-row-rank {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  background: #0f1211;
+  color: var(--rp-dim);
+  font: 800 15px var(--rp-mono);
+}
+
+.rp-row[data-podium="1"] .rp-row-rank {
+  background: var(--rp-hazard);
+  color: #1a1305;
+}
+
+.rp-row[data-podium="2"] .rp-row-rank {
+  background: #9aa49e;
+  color: #101312;
+}
+
+.rp-row[data-podium="3"] .rp-row-rank {
+  background: #9a5a32;
+  color: #fff3e8;
+}
+
+.rp-row-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.rp-row-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.rp-row-score b {
+  color: var(--rp-crt);
+  font: 800 16px var(--rp-mono);
+}
+
+.rp-row-score small {
+  color: var(--rp-dim);
+  font: 11px var(--rp-mono);
+}
