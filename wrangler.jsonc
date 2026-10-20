@@ -1,0 +1,13 @@
+{
+  "name": "trudbot",
+  "compatibility_date": "2026-10-20",
+  // 纯静态站点：只托管 SSG 产物，不需要 Worker 脚本。
+  "assets": {
+    // 须先 `pnpm build` 生成 out/。
+    "directory": "./out",
+    // 产物同时有 foo.html 与 foo/index.html，按无尾斜杠规范 URL，与 GitHub Pages 的访问路径保持一致。
+    "html_handling": "drop-trailing-slash",
+    // MPA，不能用 single-page-application 回退到 index.html，否则未知路径会渲染首页而非 404。
+    "not_found_handling": "none",
+  },
+}
