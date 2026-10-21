@@ -1,4 +1,5 @@
 import { AvatarInteractive } from "@/components/avatar-interactive";
+import { HandwritingTitle } from "@/components/handwriting-title";
 import { SocialLinks } from "@/components/social-links";
 
 // ─── ProfileInfo ─────────────────────────────────────────────────────────────
@@ -9,13 +10,9 @@ function ProfileInfo() {
       style={{ animation: "pc-fade-up 0.8s ease-out 0.3s both" }}
     >
       <div className="relative mb-8">
-        <h1 className="font-handwriting text-6xl font-bold leading-tight tracking-tight text-foreground md:text-7xl lg:text-8xl">
-          <span
-            className="inline-block pc-entry"
-            style={{ animation: "pc-text-left 0.5s ease-out 0.6s both" }}
-          >
-            @trudbot
-          </span>
+        {/* 字号决定手写 SVG 的尺寸（SVG 宽高以 em 表示） */}
+        <h1 className="text-6xl leading-tight text-foreground md:text-7xl lg:text-8xl">
+          <HandwritingTitle />
         </h1>
 
         {/* 名字下方的蜡笔色条 — 童趣梦境感 */}

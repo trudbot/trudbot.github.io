@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import caveat400 from "@fontsource/caveat/files/caveat-latin-400-normal.woff2?url";
-import caveat700 from "@fontsource/caveat/files/caveat-latin-700-normal.woff2?url";
 
 /*
  * 手写体（Caveat）对首屏并非必需。这里在 hydration 后的空闲时段，用 FontFace API
@@ -12,12 +11,9 @@ import caveat700 from "@fontsource/caveat/files/caveat-latin-700-normal.woff2?ur
  *     字体字节仅在 FontFace.load() 时才下载。
  *   - 加载完成前，font-handwriting 走 --font-caveat 里的回退（默认字体）；
  *     加载完成后自动切换到 Caveat。
- * 加载首页用到的字重：常规 400 与标题的 700。
+ * 只加载首页正文用到的 400；标题是手写 SVG（components/handwriting-title.tsx），不依赖字体。
  */
-const FONT_FACES: ReadonlyArray<readonly [src: string, weight: string]> = [
-  [caveat400, "400"],
-  [caveat700, "700"],
-];
+const FONT_FACES: ReadonlyArray<readonly [src: string, weight: string]> = [[caveat400, "400"]];
 
 export function HandwritingFont() {
   useEffect(() => {

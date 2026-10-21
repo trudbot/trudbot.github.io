@@ -19,12 +19,6 @@
     transform: scaleX(0);
   }
 }
-@keyframes pc-text-left {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-}
 @keyframes pc-pop {
   from {
     transform: scale(0);
