@@ -43,7 +43,11 @@ export function AvatarFallbackSvg() {
 // ─── AvatarPhoto (SSR 渲染的原生 <img>，保证首屏 HTML 中即存在头像) ──────────────
 export function AvatarPhoto() {
   return (
-    <div className="relative flex h-48 w-48 shrink-0 items-center justify-center overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64">
+    // 头像本身就招人点，点它给破碎彩蛋（lib/glass-shatter/trigger.ts）攒更多压力。
+    <div
+      data-shatter-weight="2"
+      className="relative flex h-48 w-48 shrink-0 items-center justify-center overflow-hidden rounded-full border-8 border-background shadow-2xl md:h-64 md:w-64"
+    >
       {/* 加载中 / 加载失败时的占位，位于图片下方 */}
       <div className="absolute inset-0 flex items-center justify-center bg-background/5 backdrop-blur-xl">
         <AvatarFallbackSvg />
