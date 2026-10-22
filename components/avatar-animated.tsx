@@ -216,9 +216,13 @@ export default function AvatarAnimated() {
     tapTimestamps.current.push(now);
     // Keep only taps within the time window
     tapTimestamps.current = tapTimestamps.current.filter((t) => now - t < SHATTER_TAP_WINDOW_MS);
+    // Warm the chunk on the first tap so the third one starts the effect without a network wait.
+    if (tapTimestamps.current.length === 1) void import("@/lib/glass-shatter");
     if (tapTimestamps.current.length >= SHATTER_TAP_COUNT) {
       tapTimestamps.current = [];
-      import("@/lib/glass-shatter").then((mod) => mod.triggerShatter());
+      // framer-motion reports page coordinates; the effect works in viewport coordinates.
+      const origin = { x: info.point.x - window.scrollX, y: info.point.y - window.scrollY };
+      import("@/lib/glass-shatter").then((mod) => mod.triggerShatter({ origin }));
     }
   }, []);
 

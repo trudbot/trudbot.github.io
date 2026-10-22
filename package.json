@@ -22,7 +22,6 @@
     "@microlink/react-json-view": "^1.31.36",
     "@radix-ui/react-switch": "1.1.2",
     "@zumer/snapdom": "^2.6.0",
-    "delaunator": "^5.1.0",
     "framer-motion": "latest",
     "json5": "^2.2.3",
     "jsonrepair": "^3.13.2",

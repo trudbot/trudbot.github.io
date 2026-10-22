@@ -108,7 +108,7 @@ export default defineConfig({
     outDir: "out",
     emptyOutDir: true,
     manifest: true,
-    // Three.js is isolated in a chunk loaded only when the glass-shatter effect is triggered.
+    // Three.js is isolated in its own chunk and only loaded by the 3D pages.
     chunkSizeWarningLimit: 550,
     rollupOptions: {
       onwarn(warning, defaultHandler) {
