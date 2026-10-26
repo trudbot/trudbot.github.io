@@ -8,10 +8,10 @@
 
 1. 扫描 `app/**/page.tsx` 与 `app/**/page.vue`，按文件名确定页面框架；`page.vue` 中声明了 `<script vapor>` 的按 Vue Vapor 挂载。
 2. 生成 `src/generated/entries/*`（调用对应框架的挂载器 `src/runtime/mount-*`）和 `src/generated/pages.ts`。
-3. Vite 构建每个页面的客户端 entry。
+3. Vite 逐页构建客户端 entry（`SSG_PAGE` 环境变量指定页面），每页产出 entry + async 两个 JS，页面间不共享 chunk。
 4. Vite 构建 SSR entry。
 5. SSR entry 按页面框架选择 React 或 Vue 的服务端渲染器生成 HTML。
-6. 校验每个页面没有加载其他框架的运行时 chunk（如 Vue 页面引入了 `react`），否则构建失败。
+6. 构建期校验每个页面没有打包其他框架的运行时（如 Vue 页面引入了 `react`）、JS 不超过两个，否则构建失败。
 7. SSG 脚本为每个路由写入：
    - `out/<route>/index.html`
    - `out/<route>.html`
@@ -47,7 +47,6 @@ pnpm dev
 
 - 每个页面 entry 自动生成。
 - 页面 CSS 由页面组件导入，只随该页面加载。
-- 共享依赖通过 `manualChunks` 命名，方便分析产物。
 
 ## 验证
 

@@ -14,51 +14,97 @@ function modulePackageName(id: string) {
   return first.startsWith("@") && second ? `${first}/${second}` : first;
 }
 
-// 三方包 → 稳定、可读的 chunk 名（便于产物分析）。key 为精确包名。
-const VENDOR_CHUNK: Record<string, string> = {
-  react: "react",
-  "react-dom": "react",
-  scheduler: "react",
-  vue: "vue",
-  sonner: "sonner",
-  three: "three",
-  recharts: "recharts",
-  "@zumer/snapdom": "snapdom",
-  "react-json-view": "react-json-view",
-  json5: "json5",
-  jsonrepair: "jsonrepair",
-  "lz-string": "share-common",
-  "qrcode-generator": "share-common",
-};
+type Page = ReturnType<typeof discoverPages>[number];
+type ChunkingContext = { getModuleInfo(id: string): { importedIds: string[] } | null };
 
-// 本仓库源码 → chunk 名。用于：避免无谓的小 chunk、以及让多个页面共享的
-// 本地模块拥有稳定可读的名字。
-const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
-  ["/components/toaster.tsx", "toaster"], // 懒加载 Toaster 外壳，与 sonner 库(sonner chunk)区分
-  ["/app/share/styles.css", "share-common"], // share 两页共享样式
-  // 全站基础样式由各框架挂载器引入，独立成 chunk，避免随挂载器各产出一份。
-  ["/app/globals.css", "globals"],
-];
-
-function chunkName(id: string) {
-  const normalized = id.split("?")[0].replaceAll("\\", "/");
-  // 所有动态 import 都依赖 Vite 的 preload helper；若不单独成 chunk，它会被并进
-  // 某个先用到它的业务 chunk（如 toaster），使所有页面间接依赖该 chunk 及其框架运行时。
-  if (normalized.endsWith("vite/preload-helper.js")) return "preload-helper";
-  const packageName = modulePackageName(normalized);
-
-  if (packageName) {
-    // vue 的运行时拆在多个 @vue/* 包里，合成一个 chunk，与 react chunk 对称。
-    if (packageName.startsWith("@vue/")) return "vue";
-    return VENDOR_CHUNK[packageName];
+function moduleFramework(id: string) {
+  const packageName = modulePackageName(id);
+  if (packageName === "react" || packageName === "react-dom" || packageName === "scheduler") {
+    return "react";
   }
+  if (packageName === "vue" || packageName?.startsWith("@vue/")) return "vue";
+  return undefined;
+}
 
-  return APP_CHUNK.find(([suffix]) => normalized.endsWith(suffix))?.[1];
+// 从页面 entry 出发沿静态 import 能到达的模块，即首屏必须加载的模块。
+function staticGraph(entryId: string, ctx: ChunkingContext) {
+  const seen = new Set<string>();
+  const stack = [entryId];
+  while (stack.length > 0) {
+    const id = stack.pop()!;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    stack.push(...(ctx.getModuleInfo(id)?.importedIds ?? []));
+  }
+  return seen;
+}
+
+/*
+ * 每个页面单独构建，产物固定为两个 JS：entry（首屏静态依赖全部内联）与
+ * `<page>-async`（页面所有动态导入的模块合成一个）。页面之间不共享 chunk，
+ * 代价是公共代码（如 react）在每个页面的产物里各有一份。
+ */
+function pageCodeSplitting(page: Page) {
+  const entryId = path.resolve(import.meta.dirname, page.entryFile);
+  const initialModules = new WeakMap<ChunkingContext, Set<string>>();
+
+  return {
+    groups: [
+      {
+        name(id: string, ctx: ChunkingContext) {
+          let initial = initialModules.get(ctx);
+          if (!initial) initialModules.set(ctx, (initial = staticGraph(entryId, ctx)));
+          return initial.has(id) ? null : `${page.entryName}-async`;
+        },
+        // 必须关闭：否则 async 模块依赖的首屏模块（如 react）会被一并收进 async chunk，
+        // 与 entry 里那份重复，运行时出现两个 React 实例。
+        includeDependenciesRecursively: false,
+      },
+    ],
+  };
+}
+
+// 构建期守住两条约定：页面只打进自己框架的运行时（共享代码误引框架专属模块时，
+// 人工很难从产物里察觉）；每个页面最多 entry + async 两个 JS。
+function pageBundleCheck(page: Page): Plugin {
+  const framework = page.framework === "react" ? "react" : "vue";
+  return {
+    name: "page-bundle-check",
+    apply: "build",
+    generateBundle(_, bundle) {
+      const chunks = Object.values(bundle).filter((file) => file.type === "chunk");
+      if (chunks.length > 2) {
+        this.error(
+          `Page '${page.route}' emits ${chunks.length} JS chunks (expected entry + async): ` +
+            chunks.map((chunk) => chunk.fileName).join(", "),
+        );
+      }
+      for (const chunk of chunks) {
+        for (const [id, info] of Object.entries(chunk.modules)) {
+          const other = moduleFramework(id);
+          if (other && other !== framework && info.renderedLength > 0) {
+            this.error(
+              `Page '${page.route}' (${page.framework}) bundles ${other} runtime module ${id}. ` +
+                `Check shared modules it imports for ${other}-only code.`,
+            );
+          }
+        }
+      }
+    },
+  };
 }
 
 const pages = discoverPages({ root: import.meta.dirname });
+// scripts/ssg.mjs 逐页设置后调用构建；未设置时（dev、SSR 构建）包含全部页面。
+const ssgPageName = process.env.SSG_PAGE;
+const ssgPage = ssgPageName ? pages.find((page) => page.entryName === ssgPageName) : undefined;
+if (ssgPageName && !ssgPage) throw new Error(`Unknown SSG_PAGE '${ssgPageName}'`);
+
 const input = Object.fromEntries(
-  pages.map((page) => [page.entryName, path.resolve(import.meta.dirname, page.entryFile)]),
+  (ssgPage ? [ssgPage] : pages).map((page) => [
+    page.entryName,
+    path.resolve(import.meta.dirname, page.entryFile),
+  ]),
 );
 const routeEntries = Object.fromEntries(pages.map((page) => [page.route, page.entryFile]));
 
@@ -90,7 +136,11 @@ export default defineConfig({
   },
   // plugin-vue 的类型来自独立的 vite 包，与 vite-plus 的 Plugin 类型结构相同但
   // tsc 比较二者时栈溢出（TS2321）；运行时由同一套插件机制执行，直接断言即可。
-  plugins: [devPageEntries(), vue() as unknown as Plugin],
+  plugins: [
+    devPageEntries(),
+    vue() as unknown as Plugin,
+    ...(ssgPage ? [pageBundleCheck(ssgPage)] : []),
+  ],
   // JSX 统一交给 React：.tsx 只用于 React 页面，Vue 页面使用 SFC 模板。
   oxc: {
     jsx: {
@@ -106,8 +156,9 @@ export default defineConfig({
   },
   build: {
     outDir: "out",
-    emptyOutDir: true,
-    manifest: true,
+    // 逐页构建共用 out/，由 scripts/ssg.mjs 在开始前统一清空；每页的 manifest 分开写。
+    emptyOutDir: !ssgPage,
+    manifest: ssgPage ? `.vite/manifest/${ssgPage.entryName}.json` : true,
     // Three.js is isolated in its own chunk and only loaded by the 3D pages.
     chunkSizeWarningLimit: 550,
     rollupOptions: {
@@ -116,9 +167,7 @@ export default defineConfig({
         defaultHandler(warning);
       },
       input,
-      output: {
-        manualChunks: chunkName,
-      },
+      output: ssgPage ? { codeSplitting: pageCodeSplitting(ssgPage) } : {},
     },
   },
 });

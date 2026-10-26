@@ -13,10 +13,20 @@ await generateRoutes();
 await fs.rm(outDir, { recursive: true, force: true });
 await fs.rm(ssrOutDir, { recursive: true, force: true });
 
-await build({
-  root,
-  configFile: path.join(root, "vite.config.ts"),
-});
+const routeManifest = JSON.parse(
+  await fs.readFile(path.join(root, "src/generated/route-manifest.json"), "utf-8"),
+);
+
+// 每个页面单独构建，页面之间不共享 chunk（见 vite.config.ts 的 SSG_PAGE）。
+// vite.config.ts 在每次 build 时重新求值，因此必须逐个串行构建。
+for (const page of routeManifest) {
+  process.env.SSG_PAGE = page.entryName;
+  await build({
+    root,
+    configFile: path.join(root, "vite.config.ts"),
+  });
+}
+delete process.env.SSG_PAGE;
 
 await build({
   root,
@@ -29,24 +39,28 @@ await build({
 });
 
 const template = await fs.readFile(path.join(root, "index.html"), "utf-8");
-const manifest = JSON.parse(
-  await fs.readFile(path.join(outDir, ".vite", "manifest.json"), "utf-8"),
-);
-const routeManifest = JSON.parse(
-  await fs.readFile(path.join(root, "src/generated/route-manifest.json"), "utf-8"),
+const pageManifests = Object.fromEntries(
+  await Promise.all(
+    routeManifest.map(async (page) => [
+      page.route,
+      JSON.parse(
+        await fs.readFile(
+          path.join(outDir, ".vite", "manifest", `${page.entryName}.json`),
+          "utf-8",
+        ),
+      ),
+    ]),
+  ),
 );
 const routeEntries = Object.fromEntries(routeManifest.map((page) => [page.route, page.entryFile]));
-const routeFrameworks = Object.fromEntries(
-  routeManifest.map((page) => [page.route, page.framework]),
-);
 const serverEntry = await import(pathToFileURL(path.join(ssrOutDir, "entry-server.js")).href);
 
-function collectAssets(entryKey, seen = new Set()) {
+function collectAssets(manifest, entryKey, seen = new Set()) {
   const entry = manifest[entryKey];
   if (!entry || seen.has(entryKey)) return { css: [], imports: [] };
   seen.add(entryKey);
 
-  const childAssets = (entry.imports || []).map((key) => collectAssets(key, seen));
+  const childAssets = (entry.imports || []).map((key) => collectAssets(manifest, key, seen));
   return {
     css: [
       ...childAssets.flatMap((assets) => assets.css),
@@ -58,36 +72,16 @@ function collectAssets(entryKey, seen = new Set()) {
 }
 
 function pageClientAssets(route) {
+  const manifest = pageManifests[route];
   const entryKey = routeEntries[route];
   const entry = manifest[entryKey];
   if (!entry) throw new Error(`Missing client entry in manifest: ${entryKey}`);
 
-  const assets = collectAssets(entryKey);
+  const assets = collectAssets(manifest, entryKey);
   const css = [...new Set(assets.css)];
   const imports = [...new Set(assets.imports.map((key) => manifest[key]?.file).filter(Boolean))];
 
   return { css, imports, entryFile: entry.file };
-}
-
-// 框架运行时 chunk 名与 vite.config.ts 的 VENDOR_CHUNK 保持一致。
-const FRAMEWORK_RUNTIME_CHUNKS = { react: "react", vue: "vue", "vue-vapor": "vue" };
-
-// 页面首屏只允许加载自己框架的运行时。共享 chunk 可能被打包器把别的框架代码
-// 合并进来而悄悄带上另一个运行时，人工难以察觉，因此在构建期强制校验。
-function assertRuntimeIsolation(route) {
-  const framework = routeFrameworks[route];
-  const entryKey = routeEntries[route];
-  // 只看被 import 的 chunk：entry 自身的 name 来自路由，可能与运行时 chunk 同名。
-  const loaded = new Set(collectAssets(entryKey).imports.map((key) => manifest[key]?.name));
-
-  for (const [other, chunk] of Object.entries(FRAMEWORK_RUNTIME_CHUNKS)) {
-    if (chunk !== FRAMEWORK_RUNTIME_CHUNKS[framework] && loaded.has(chunk)) {
-      throw new Error(
-        `Route '${route}' (${framework}) loads the '${chunk}' runtime chunk. ` +
-          `Check shared modules it imports for ${other}-only code.`,
-      );
-    }
-  }
 }
 
 function pageHeadAssets(route) {
@@ -290,7 +284,6 @@ function pageBodyAssets(route) {
 }
 
 for (const route of serverEntry.routesToPrerender) {
-  assertRuntimeIsolation(route);
   const appHtml = await serverEntry.render(route);
   const html = template
     .replace("<!--page-assets-->", pageHeadAssets(route))

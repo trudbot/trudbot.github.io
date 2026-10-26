@@ -35,13 +35,12 @@ miniapp/*/           # 小黑盒工坊小程序（pnpm workspace 包），独立
 
 - 项目是 MPA，不使用客户端 router 接管页面。
 - 路由从 `app/**/page.tsx` / `page.vue` 自动发现，`src/generated/` 不手写。
-- 每个页面只能加载自己框架的运行时，`scripts/ssg.mjs` 在构建期校验。共享代码（`lib/`、`src/runtime/global-scripts.ts`）必须保持零框架依赖；框架专属代码（如 `components/`、`lib/analytics/use-page-view.ts`）只能被同框架页面引用。
+- 每个页面只能打包自己框架的运行时，`vite.config.ts` 的 `page-bundle-check` 在构建期校验。共享代码（`lib/`、`src/runtime/global-scripts.ts`）必须保持零框架依赖；框架专属代码（如 `components/`、`lib/analytics/use-page-view.ts`）只能被同框架页面引用。
 - `.tsx` 的 JSX 固定编译为 React；Vue 页面使用 SFC 模板，不写 Vue JSX。`tsc` 不检查 `.vue` 内部类型（vue-tsc 暂不兼容 TypeScript 7）。
-- 每个页面独立打包 JS/CSS。
+- 每个页面单独构建、不与其他页面共享 chunk：JS 固定为 entry（首屏）+ `<page>-async`（所有动态导入）两个文件，公共代码在各页面产物中重复。
 - 页面专属 CSS 在页面组件中导入。
 - 非首屏功能使用动态导入，必要时用 idle/hover 预加载。
 - 保持 SSG HTML 可读，避免页面完全依赖客户端 JS 才能展示内容。
-- chunk 命名在 `vite.config.ts` 中维护，产物应便于分析。
 
 ## 设计原则
 

@@ -62,8 +62,7 @@ pnpm create-page your-page-name
 ## 性能约定
 
 - 非首屏功能使用动态导入。
-- 大型依赖按页面或功能拆分 chunk。
-- 构建产物命名通过 `vite.config.ts` 的 `manualChunks` 保持可读。
+- 每个页面产物只有 `<page>.js`（首屏）和 `<page>-async.js`（动态导入）两个 JS，页面间不共享 chunk。
 - 页面应该即使在 JS 加载前也具备可读的 SSG HTML。
 
 ## 当前路由
