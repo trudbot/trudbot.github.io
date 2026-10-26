@@ -91,7 +91,9 @@ function GlowEffects({ isActive }: { isActive: boolean }) {
           }}
         />
       )}
+      {/* initial={false}：否则挂载时会从 DOM 默认的 opacity 1 淡出到 0，替换静态头像时边框闪一下 */}
       <motion.div
+        initial={false}
         animate={{
           rotate: isActive ? [0, 360] : 0,
           opacity: isActive ? 0.8 : 0,
@@ -109,6 +111,7 @@ function GlowEffects({ isActive }: { isActive: boolean }) {
       />
       <div className="relative rounded-full">
         <motion.div
+          initial={false}
           animate={{ opacity: isActive ? 1 : 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="pointer-events-none absolute inset-0 rounded-full"
