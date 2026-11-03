@@ -1,0 +1,142 @@
+:root {
+  --omh-ink: #1a1a2e;
+  --omh-paper: #fffffe;
+  --omh-gold: #ffd166;
+  --omh-amber: #ffa94d;
+  --omh-pink: #ff6b9d;
+  --omh-teal: #5ce0d8;
+  --omh-violet: #a78bfa;
+  --omh-sky: #7dd3fc;
+  --omh-safe-t: env(safe-area-inset-top, 0px);
+  --omh-safe-r: env(safe-area-inset-right, 0px);
+  --omh-safe-b: env(safe-area-inset-bottom, 0px);
+  --omh-safe-l: env(safe-area-inset-left, 0px);
+  --omh-font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+  --omh-display: "Avenir Next Condensed", "DIN Condensed", "Arial Narrow", "PingFang SC", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--omh-ink);
+  color: var(--omh-paper);
+  font-family: var(--omh-font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+#omh-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#omh-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#omh-ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.omh-fatal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  font-size: 15px;
+  pointer-events: auto;
+}
+
+.omh-kbd {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  vertical-align: 1px;
+}
+
+@media (pointer: coarse) {
+  .omh-kbd {
+    display: none;
+  }
+}
+
+.omh-btn {
+  appearance: none;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    transform 0.12s,
+    background-color 0.15s;
+}
+
+.omh-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.omh-btn:focus-visible,
+.omh-levels li:focus-visible,
+.omh-toggle:focus-visible {
+  outline: 2px solid var(--omh-teal);
+  outline-offset: 2px;
+}
+
+.omh-primary {
+  background: var(--omh-gold);
+  color: var(--omh-ink);
+  box-shadow: 0 4px 0 #c99a2e;
+}
+
+.omh-primary:active {
+  box-shadow: 0 2px 0 #c99a2e;
+}
+
+.omh-ghost {
+  background: rgb(255 255 254 / 0.1);
+  color: var(--omh-paper);
+  border: 1px solid rgb(255 255 254 / 0.2);
+}
+
+.omh-link {
+  background: none;
+  padding: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.7;
+}

@@ -5,3 +5,7 @@ packages:
 allowBuilds:
   '@tailwindcss/oxide': false
   sharp: true
+
+minimumReleaseAgeExclude:
+  - '@heybox/hb-sdk-protocol@0.9.4'
+  - '@heybox/hb-sdk@0.9.4'

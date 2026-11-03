@@ -1,0 +1,51 @@
+{
+  "name": "miniapp-one-more-hit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.20.0"
+  },
+  "heybox": {
+    "name": "一锤超限 ONE MORE HIT",
+    "desc": "看准时机出锤的 3D 节奏锤击游戏：从一只小罐子一路砸到整个宇宙，每关都有独立场景、配乐与破坏动画。",
+    "category": "game",
+    "icon": "assets/icon.png",
+    "coverImages": [
+      "assets/cover.png"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "ohos"
+    ],
+    "permissions": {
+      "storage": {
+        "enabled": true
+      }
+    },
+    "miniProgramId": "01a18650-6511-7965-9f76-48a36161fc90"
+  },
+  "scripts": {
+    "hb-sdk": "hb-sdk",
+    "dev": "hb-sdk dev --port 5284 --browser-dev-host-port 5285",
+    "web": "vite --port 5286 --mode web",
+    "build": "tsc --noEmit && hb-sdk build",
+    "build:web": "tsc --noEmit && vite build --mode web",
+    "deploy": "hb-sdk remote deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --no-warnings scripts/verify-core.ts",
+    "art": "node scripts/gen-art.mjs"
+  },
+  "dependencies": {
+    "three": "^0.183.2"
+  },
+  "devDependencies": {
+    "@heybox/hb-sdk": "0.9.4",
+    "@types/node": "^22",
+    "@types/three": "^0.183.1",
+    "sharp": "0.34.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
