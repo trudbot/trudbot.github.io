@@ -29,6 +29,7 @@ miniapp/*/           # 小黑盒工坊小程序（pnpm workspace 包），独立
 - 每个子目录是一个独立的工坊小程序，配置在其 `package.json#heybox`，文档见 https://docs.xiaoheihe.cn/hb_sdk/llms.txt 。
 - 产物只能有根 `dist/index.html` 一个 HTML；页面默认无网络权限，不要引入统计、外部图片/字体或 `fetch`。
 - `@` 别名指向仓库根，可复用 `components/`、`lib/` 和 `app/globals.css`、`app/theme-tokens.css`。
+- 声明了 `build:web` script 的小程序会在主站 `pnpm build` 时以普通 web 应用输出到 `out/miniapp/<目录名>/`。web 模式（`vite --mode web`）不加载 `miniappManifest()`，因此没有 Runtime Gate，SDK 握手会失败；代码需在 `sdkReady` 为 false 时降级（如改用 `localStorage`）。
 - `@heybox/hb-sdk` 要求 Node `>=22.20.0`。常用命令：`pnpm --filter <包名> dev | build | deploy`；`dev` 与 `deploy` 需先 `hb-sdk login` 并 `hb-sdk remote create` / `bind`。
 
 ## 构建原则

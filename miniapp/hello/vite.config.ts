@@ -6,9 +6,10 @@ import { defineConfig } from "vite";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: "./",
-  plugins: [react(), tailwindcss(), miniappManifest()],
+  // SDK 插件注入的 Runtime Gate 在 App 外会拦下页面；web 模式产出普通浏览器可用的版本。
+  plugins: mode === "web" ? [react(), tailwindcss()] : [react(), tailwindcss(), miniappManifest()],
   resolve: {
     // 与主站保持同一个 `@` 语义，复用的 components/lib 内部也依赖 `@/...` 导入。
     alias: { "@": repoRoot },
@@ -19,4 +20,4 @@ export default defineConfig({
     // 内联配置阻止 Vite 向上找到主站的 postcss.config.mjs，避免 Tailwind 被重复处理。
     postcss: {},
   },
-});
+}));

@@ -32,6 +32,7 @@
     "hb-sdk": "hb-sdk",
     "dev": "hb-sdk dev --port 5282 --browser-dev-host-port 5283",
     "build": "tsc --noEmit && hb-sdk build",
+    "build:web": "tsc --noEmit && vite build --mode web",
     "deploy": "hb-sdk remote deploy",
     "typecheck": "tsc --noEmit",
     "art": "node scripts/gen-art.mjs",

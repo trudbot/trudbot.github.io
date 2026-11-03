@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -304,3 +305,42 @@ for (const route of serverEntry.routesToPrerender) {
 }
 
 await fs.rm(ssrOutDir, { recursive: true, force: true });
+
+// 声明了 build:web 的小程序以普通 web 应用发布到 /miniapp/<目录名>/。小程序是独立的
+// Vite 8 工程，只能经各自的 script 构建，不能复用这里的 vite-plus build()。
+const miniappRoot = path.join(root, "miniapp");
+for (const entry of await fs.readdir(miniappRoot, { withFileTypes: true })) {
+  if (!entry.isDirectory()) continue;
+  const packageDir = path.join(miniappRoot, entry.name);
+  const packageJson = JSON.parse(
+    await fs.readFile(path.join(packageDir, "package.json"), "utf-8").catch(() => "{}"),
+  );
+  if (!packageJson.scripts?.["build:web"]) continue;
+
+  // 绝对 base：以不带尾斜杠的 /miniapp/<name> 访问时，相对资源路径会解析到上一级目录。
+  // outDir 在小程序工程之外，Vite 默认不清空，需显式开启。
+  await run(
+    "pnpm",
+    [
+      "run",
+      "build:web",
+      "--base",
+      `/miniapp/${entry.name}/`,
+      "--outDir",
+      path.join(outDir, "miniapp", entry.name),
+      "--emptyOutDir",
+    ],
+    packageDir,
+  );
+}
+
+function run(command, args, cwd) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd, stdio: "inherit" });
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`'${command} ${args.join(" ")}' exited with ${code} in ${cwd}`));
+    });
+  });
+}
