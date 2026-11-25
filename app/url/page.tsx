@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LazyMotion, m } from "framer-motion";
+import { loadMotionFeatures } from "@/components/motion-features";
 import { Check, Copy, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Toaster, toast } from "@/components/toaster";
@@ -64,7 +65,7 @@ function ValueBlock({
 
 function ParameterRow({ parameter, index }: { parameter: UrlParameter; index: number }) {
   return (
-    <motion.article
+    <m.article
       className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-3"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
@@ -107,7 +108,7 @@ function ParameterRow({ parameter, index }: { parameter: UrlParameter; index: nu
           </pre>
         </div>
       )}
-    </motion.article>
+    </m.article>
   );
 }
 
@@ -125,174 +126,176 @@ export default function UrlPage() {
   const active = analysis.result !== null;
 
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950 selection:bg-primary/20">
-      <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-12 sm:pt-16 pb-16">
-        <AnimatePresence initial={false}>
-          {!active && (
-            <motion.header
-              className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-4"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12, height: 0, marginBottom: 0, paddingBottom: 0 }}
-              transition={{ duration: 0.28, ease: "easeInOut" }}
-              style={{ overflow: "hidden" }}
-            >
-              <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                URL 解析器
-              </h1>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                支持任意协议（http、自定义 scheme 等），解码查询参数，自动格式化 JSON。
-              </p>
-            </motion.header>
-          )}
-        </AnimatePresence>
-
-        {/* Input area */}
-        <motion.div className="relative" layout transition={{ duration: 0.28, ease: "easeInOut" }}>
-          <label className="flex items-center gap-2 mb-2" htmlFor="url-input">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">输入 URL</span>
-            {active && (
-              <span className="ml-auto text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                {analysis.result!.parameters.length} 个参数
-              </span>
-            )}
-          </label>
-          <div className="relative">
-            <textarea
-              id="url-input"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="baiduboxapp://v1/browser/open?url=https%3A%2F%2Fm.baidu.com"
-              spellCheck={false}
-              autoCapitalize="off"
-              autoCorrect="off"
-              wrap="off"
-              rows={active ? 1 : 4}
-              className="[&::-webkit-scrollbar]:hidden block w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3.5 pr-12 text-base leading-6 whitespace-pre overflow-x-auto overflow-y-hidden text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-[height,border-color,box-shadow] duration-300 ease-in-out outline-none resize-none"
-              style={{ fontFamily: MONOSPACE_FONT, scrollbarWidth: "none" }}
-              aria-describedby={analysis.error ? "url-error" : undefined}
-            />
-            {input && (
-              <button
-                className="absolute top-4 right-4 inline-flex items-center justify-center w-8 h-8 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                type="button"
-                onClick={() => setInput("")}
-                aria-label="清空 URL"
-                title="清空"
-              >
-                <RotateCcw className="w-4 h-4" aria-hidden="true" />
-              </button>
-            )}
-          </div>
-          <AnimatePresence>
-            {analysis.error && (
-              <motion.p
-                id="url-error"
-                className="text-sm text-red-500 font-medium mt-2 flex items-center gap-2"
-                role="alert"
-                initial={{ opacity: 0, y: -6 }}
+    <LazyMotion features={loadMotionFeatures} strict>
+      <main className="min-h-screen bg-white dark:bg-zinc-950 selection:bg-primary/20">
+        <div className="max-w-2xl mx-auto px-5 sm:px-6 pt-12 sm:pt-16 pb-16">
+          <AnimatePresence initial={false}>
+            {!active && (
+              <m.header
+                className="mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-4"
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
+                exit={{ opacity: 0, y: -12, height: 0, marginBottom: 0, paddingBottom: 0 }}
+                transition={{ duration: 0.28, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
               >
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 text-xs">
-                  !
-                </span>
-                {analysis.error}
-              </motion.p>
+                <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                  URL 解析器
+                </h1>
+                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                  支持任意协议（http、自定义 scheme 等），解码查询参数，自动格式化 JSON。
+                </p>
+              </m.header>
             )}
           </AnimatePresence>
-        </motion.div>
 
-        {/* Results */}
-        <AnimatePresence mode="wait">
-          {analysis.result && (
-            <motion.section
-              className="mt-10 space-y-6"
-              key={`${analysis.result.scheme}://${analysis.result.host}`}
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.42, delay: 0.08 }}
-              aria-live="polite"
-            >
-              {/* URL structure */}
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                    URL 结构
+          {/* Input area */}
+          <m.div className="relative" layout transition={{ duration: 0.28, ease: "easeInOut" }}>
+            <label className="flex items-center gap-2 mb-2" htmlFor="url-input">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">输入 URL</span>
+              {active && (
+                <span className="ml-auto text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
+                  {analysis.result!.parameters.length} 个参数
+                </span>
+              )}
+            </label>
+            <div className="relative">
+              <textarea
+                id="url-input"
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder="baiduboxapp://v1/browser/open?url=https%3A%2F%2Fm.baidu.com"
+                spellCheck={false}
+                autoCapitalize="off"
+                autoCorrect="off"
+                wrap="off"
+                rows={active ? 1 : 4}
+                className="[&::-webkit-scrollbar]:hidden block w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3.5 pr-12 text-base leading-6 whitespace-pre overflow-x-auto overflow-y-hidden text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-primary focus:ring-3 focus:ring-primary/10 transition-[height,border-color,box-shadow] duration-300 ease-in-out outline-none resize-none"
+                style={{ fontFamily: MONOSPACE_FONT, scrollbarWidth: "none" }}
+                aria-describedby={analysis.error ? "url-error" : undefined}
+              />
+              {input && (
+                <button
+                  className="absolute top-4 right-4 inline-flex items-center justify-center w-8 h-8 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                  type="button"
+                  onClick={() => setInput("")}
+                  aria-label="清空 URL"
+                  title="清空"
+                >
+                  <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+            <AnimatePresence>
+              {analysis.error && (
+                <m.p
+                  id="url-error"
+                  className="text-sm text-red-500 font-medium mt-2 flex items-center gap-2"
+                  role="alert"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500 text-xs">
+                    !
                   </span>
-                  <CopyButton
-                    value={`${analysis.result.scheme}://${analysis.result.host}${analysis.result.path}`}
-                    label="复制基础 URL"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
-                      Scheme
+                  {analysis.error}
+                </m.p>
+              )}
+            </AnimatePresence>
+          </m.div>
+
+          {/* Results */}
+          <AnimatePresence mode="wait">
+            {analysis.result && (
+              <m.section
+                className="mt-10 space-y-6"
+                key={`${analysis.result.scheme}://${analysis.result.host}`}
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 18 }}
+                transition={{ duration: 0.42, delay: 0.08 }}
+                aria-live="polite"
+              >
+                {/* URL structure */}
+                <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                      URL 结构
                     </span>
-                    <code className="block font-mono text-sm mt-1 text-zinc-800 dark:text-zinc-200">
-                      {analysis.result.scheme}
-                    </code>
+                    <CopyButton
+                      value={`${analysis.result.scheme}://${analysis.result.host}${analysis.result.path}`}
+                      label="复制基础 URL"
+                    />
                   </div>
-                  <div>
-                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
-                      Host
-                    </span>
-                    <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
-                      {analysis.result.host || <span className="text-zinc-400 italic">无</span>}
-                    </code>
-                  </div>
-                  <div>
-                    <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
-                      Path
-                    </span>
-                    <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
-                      {analysis.result.path || <span className="text-zinc-400 italic">无</span>}
-                    </code>
-                  </div>
-                  {analysis.result.hash && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
-                        Hash
+                        Scheme
                       </span>
-                      <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
-                        {analysis.result.hash}
+                      <code className="block font-mono text-sm mt-1 text-zinc-800 dark:text-zinc-200">
+                        {analysis.result.scheme}
                       </code>
                     </div>
-                  )}
+                    <div>
+                      <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                        Host
+                      </span>
+                      <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                        {analysis.result.host || <span className="text-zinc-400 italic">无</span>}
+                      </code>
+                    </div>
+                    <div>
+                      <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                        Path
+                      </span>
+                      <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                        {analysis.result.path || <span className="text-zinc-400 italic">无</span>}
+                      </code>
+                    </div>
+                    {analysis.result.hash && (
+                      <div>
+                        <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">
+                          Hash
+                        </span>
+                        <code className="block font-mono text-sm mt-1 break-all text-zinc-800 dark:text-zinc-200">
+                          {analysis.result.hash}
+                        </code>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Parameters heading */}
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
-                <h2 className="text-sm font-semibold text-zinc-900 dark:text-white">查询参数</h2>
-                <span className="text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">
-                  {analysis.result.parameters.length}
-                </span>
-              </div>
+                {/* Parameters heading */}
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                  <h2 className="text-sm font-semibold text-zinc-900 dark:text-white">查询参数</h2>
+                  <span className="text-sm text-zinc-500 dark:text-zinc-400 tabular-nums">
+                    {analysis.result.parameters.length}
+                  </span>
+                </div>
 
-              {/* Parameter list */}
-              {analysis.result.parameters.length > 0 ? (
-                <div className="space-y-4">
-                  {analysis.result.parameters.map((parameter, index) => (
-                    <ParameterRow
-                      parameter={parameter}
-                      index={index}
-                      key={`${parameter.rawKey}-${index}`}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-sm text-zinc-500 dark:text-zinc-400">
-                  这个 URL 没有查询参数。
-                </div>
-              )}
-            </motion.section>
-          )}
-        </AnimatePresence>
-      </div>
-      <Toaster position="bottom-center" />
-    </main>
+                {/* Parameter list */}
+                {analysis.result.parameters.length > 0 ? (
+                  <div className="space-y-4">
+                    {analysis.result.parameters.map((parameter, index) => (
+                      <ParameterRow
+                        parameter={parameter}
+                        index={index}
+                        key={`${parameter.rawKey}-${index}`}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-sm text-zinc-500 dark:text-zinc-400">
+                    这个 URL 没有查询参数。
+                  </div>
+                )}
+              </m.section>
+            )}
+          </AnimatePresence>
+        </div>
+        <Toaster position="bottom-center" />
+      </main>
+    </LazyMotion>
   );
 }

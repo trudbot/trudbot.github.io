@@ -61,6 +61,8 @@ export function SocialLinks() {
               aria-hidden="true"
               className="h-full w-full object-contain"
               crossOrigin="anonymous"
+              // 低优先级让带宽先给 LCP 头像；React SSR 也不会再为它输出 <link rel="preload">。
+              fetchPriority="low"
             />
           </div>
           <span className="sr-only">{link.name}</span>

@@ -34,7 +34,7 @@ const VENDOR_CHUNK: Record<string, string> = {
   json5: "json5",
   jsonrepair: "jsonrepair",
   "lz-string": "share-common",
-  "@chromium-style/qrcode/generator": "share-common",
+  "@chromium-style-qrcode/generator": "qrcode",
 };
 
 // 本仓库源码 → chunk 名。用于：避免无谓的小 chunk、以及让多个页面共享的
@@ -52,6 +52,9 @@ const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
   ["/components/client-only.tsx", "react-shared"],
   // 懒加载 sonner 的 Toaster 外壳本身很小；sonner 库仍在独立的 sonner chunk。
   ["/components/toaster.tsx", "react-shared"],
+  ["/components/motion-features.ts", "react-shared"],
+  // 只是转出 domMax 的一行模块，并入 features chunk，免得单独产出一个空壳文件。
+  ["/components/motion-features-max.ts", "framer-motion"],
   ["/app/share/styles.css", "share-common"], // share 两页共享样式
   // 全站基础样式由各框架挂载器引入，独立成 chunk，避免随挂载器各产出一份。
   ["/app/globals.css", "globals"],
@@ -78,12 +81,18 @@ function chunkName(id: string) {
 // 的组先认领。被各处依赖的底层 chunk 必须优先，否则会被上层 chunk 吞掉，例如
 // react 的 jsx-runtime 被并进 framer-motion，使所有 React 页面都依赖 framer-motion。
 const BASE_CHUNKS = ["runtime", "react", "vue"];
+const isMotionModule = (id: string) => chunkName(id) === "framer-motion";
 const chunkGroups = [
   ...BASE_CHUNKS.map((name, index) => ({
     name,
     test: (id: string) => chunkName(id) === name,
     priority: BASE_CHUNKS.length - index + 1,
   })),
+  // 页面首屏只静态引用 `m` + LazyMotion，动画 features 经动态 import 加载
+  // （components/motion-features.ts）。按是否首屏可达拆成两个 chunk，否则合成一个
+  // 会把 features 又带回首屏。
+  { name: "framer-motion", test: isMotionModule, tags: ["$initial" as const], priority: 1 },
+  { name: "framer-motion-features", test: isMotionModule, priority: 1 },
   { name: (id: string) => chunkName(id) ?? null, priority: 0 },
 ];
 

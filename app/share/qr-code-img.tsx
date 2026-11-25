@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  CenterImage,
-  LocatorStyle,
-  ModuleStyle,
-  QuietZone,
-  generateQRCode,
-  initialize,
-} from "@chromium-style-qrcode/generator";
+
+type QRGenerator = typeof import("@chromium-style-qrcode/generator");
+
+// 生成器内联了 base64 的 wasm，体积比页面其余代码加起来还大，而二维码要等用户
+// 输入后才出现，因此不进首屏，按需加载并初始化。
+let generatorPromise: Promise<QRGenerator> | undefined;
+export function loadQRGenerator() {
+  generatorPromise ??= import("@chromium-style-qrcode/generator")
+    .then(async (generator) => {
+      await generator.initialize();
+      return generator;
+    })
+    .catch((error: unknown) => {
+      // 失败后允许下次调用重试，而不是永远拿到同一个 rejected promise。
+      generatorPromise = undefined;
+      throw error;
+    });
+  return generatorPromise;
+}
 
 const MODULE_COLOR = "#000000";
 const BACKGROUND_COLOR = "#ffffff";
@@ -163,17 +174,17 @@ function renderQRCodeChromiumStyle(
 
 export function QRCodeImg({ value }: { value: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [moduleStatus, setModuleStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [generator, setGenerator] = useState<QRGenerator | "loading" | "error">("loading");
   const [renderStatus, setRenderStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
     let isMounted = true;
-    initialize()
-      .then(() => {
-        if (isMounted) setModuleStatus("ready");
+    loadQRGenerator()
+      .then((loaded) => {
+        if (isMounted) setGenerator(loaded);
       })
       .catch(() => {
-        if (isMounted) setModuleStatus("error");
+        if (isMounted) setGenerator("error");
       });
 
     return () => {
@@ -185,15 +196,16 @@ export function QRCodeImg({ value }: { value: string }) {
     let isMounted = true;
 
     async function renderQRCode() {
-      if (moduleStatus === "loading") {
+      if (generator === "loading") {
         setRenderStatus("loading");
         return;
       }
 
-      if (moduleStatus === "error") {
+      if (generator === "error") {
         setRenderStatus("error");
         return;
       }
+      const { generateQRCode, ModuleStyle, LocatorStyle, CenterImage, QuietZone } = generator;
 
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d");
@@ -239,7 +251,7 @@ export function QRCodeImg({ value }: { value: string }) {
     return () => {
       isMounted = false;
     };
-  }, [moduleStatus, value]);
+  }, [generator, value]);
 
   return (
     <div className="text-share-qr-card">

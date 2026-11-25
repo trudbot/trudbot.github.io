@@ -1,7 +1,12 @@
 // 头像的静态部分（不依赖 framer-motion）：SSR 首屏与「加载动画增强前」都用它，
 // 保证 LCP 头像图片始终存在于首屏 HTML。交互动画在 avatar-animated.tsx 中按需加载。
-export const AVATAR_IMAGE_URL =
-  "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/2026/07/02/1782996318044_202407082112768.jpg";
+//
+// 头像显示为 192px（md 以上 256px），按 2x 屏准备了两档；1x 屏会直接选 384。
+const AVATAR_BASE = "https://trudbot-md-img.oss-cn-shanghai.aliyuncs.com/2026/11/25";
+const AVATAR_384 = `${AVATAR_BASE}/1795598471447_1782996318044_202407082112768_%281%29.jpg`;
+const AVATAR_512 = `${AVATAR_BASE}/1795598471449_1782996318044_202407082112768_%282%29.jpg`;
+const AVATAR_SRCSET = `${AVATAR_384} 384w, ${AVATAR_512} 512w`;
+const AVATAR_SIZES = "(min-width: 768px) 256px, 192px";
 
 // ─── AvatarFallbackSvg ───────────────────────────────────────────────────────
 export function AvatarFallbackSvg() {
@@ -53,7 +58,11 @@ export function AvatarPhoto() {
         <AvatarFallbackSvg />
       </div>
       <img
-        src={AVATAR_IMAGE_URL}
+        src={AVATAR_512}
+        srcSet={AVATAR_SRCSET}
+        sizes={AVATAR_SIZES}
+        width={512}
+        height={512}
         alt="trudbot"
         fetchPriority="high"
         decoding="async"

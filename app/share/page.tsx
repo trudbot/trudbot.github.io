@@ -3,7 +3,7 @@ import "@fontsource/caveat/latin-700.css";
 import "./styles.css";
 import { useEffect, useMemo, useState } from "react";
 import LZString from "lz-string";
-import { QRCodeImg } from "./qr-code-img";
+import { QRCodeImg, loadQRGenerator } from "./qr-code-img";
 import {
   CopiedBubble,
   RoughActionButton,
@@ -203,6 +203,8 @@ export default function SharePage() {
               <textarea
                 value={inputText}
                 onChange={(event) => setInputText(event.target.value)}
+                // 聚焦即开始加载二维码生成器，输入完第一个字时多半已就绪。
+                onFocus={() => void loadQRGenerator().catch(() => {})}
                 className="text-share-generator-input"
                 placeholder={"网址、一句话、一个秘密…\n什么都可以"}
                 spellCheck={false}
