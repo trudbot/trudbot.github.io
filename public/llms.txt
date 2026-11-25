@@ -27,6 +27,33 @@
 - **知乎**: https://www.zhihu.com/people/qu-ge-sha-ming-hao-ni-30 - 专业讨论与交流
 - **NPM**: https://www.npmjs.com/org/trudbot - 发布的 npm 包
 
+## 站内页面
+
+站点地址：https://trudbot.cn
+
+### 主页
+
+- [trudbot 个人主页](https://trudbot.cn/): 头像、社交链接，以及最喜欢的游戏（生化危机4、怪物猎人崛起、赛博朋克2077、只狼）和 Steam 主页；在空白处快速连点会触发玻璃碎裂彩蛋。
+
+### 工具
+
+- [JSON 编辑器](https://trudbot.cn/json): 输入 JSON，右侧显示可折叠、可直接编辑的树形预览；支持 JSON5 解析、一键修复格式错误的 JSON、格式化复制，以及分栏/仅输入/仅结果三种布局。
+- [URL 解析器](https://trudbot.cn/url): 粘贴任意 URL（含 `baiduboxapp://` 等自定义 scheme），拆出 Scheme、Host、Path、Hash，逐项列出查询参数的原始值与解码值，JSON 参数自动格式化。
+- [文字转二维码](https://trudbot.cn/share): 输入文字或网址，实时生成二维码和分享链接；长文本自动做 LZ 压缩。扫码或打开链接后在 https://trudbot.cn/share/r 查看内容，网址可直接打开。
+- [助手蓝链生成工具](https://trudbot.cn/bluelink): 输入显示文本和以 `baidu` 开头的 Scheme，生成百度助手聊天中可点击的蓝链语法，一键复制。
+
+### 游戏与 3D
+
+- [Net · 多色电网](https://trudbot.cn/net): 旋转格子把多色电源全部接通且不短路的接线解谜，共 10 关，记录用时和步数；玩法源自 Simon Tatham's Puzzles 的 Net。
+- [trudbot 的卡通小镇](https://trudbot.cn/town): 3D 卡通小镇（需 WebGL）。操控 trudbot 散步、进屋与家具互动、收集 20 颗星星，挑战沿魔豆藤攀爬的「云端跳跳乐」；支持昼夜切换和手机虚拟摇杆。
+- [Trudbot 3D 模型](https://trudbot.cn/trudbot): 查看 trudbot 的 3D 模型，可旋转、缩放、平移，播放待机、跑步、跳跃、跳舞、鞠躬等动作。
+- [一锤超限 ONE MORE HIT](https://trudbot.cn/miniapp/one-more-hit/): 看准时机出锤的 3D 节奏锤击游戏，从一只小罐子一路砸到整个宇宙，每关有独立场景、配乐与破坏动画。也是小黑盒工坊小程序。
+- [通通电](https://trudbot.cn/miniapp/re-power/): 「Net · 多色电网」的小黑盒工坊小程序版本，在小黑盒内运行时首次通关成绩会进入排行榜。
+
+### 其他
+
+- [收藏的颜色](https://trudbot.cn/colors): 按主题分组展示收藏的 15 种颜色，每种附名字、短句和 hex 值。
+
 ## 联系方式
 
 trudbot@outlook.com
