@@ -23,6 +23,12 @@ const VENDOR_CHUNK: Record<string, string> = {
   sonner: "sonner",
   three: "three",
   recharts: "recharts",
+  "framer-motion": "framer-motion",
+  "motion-dom": "framer-motion",
+  "motion-utils": "framer-motion",
+  // 图标按需 tree-shake 后每个只有几百字节，按页面组合自动拆分会产生大量碎 chunk；
+  // 合进 React 页面共用的胶水 chunk，代价是个别页面多下载几个用不到的图标。
+  "lucide-react": "react-shared",
   "@zumer/snapdom": "snapdom",
   "@microlink/react-json-view": "react-json-view",
   json5: "json5",
@@ -33,8 +39,19 @@ const VENDOR_CHUNK: Record<string, string> = {
 
 // 本仓库源码 → chunk 名。用于：避免无谓的小 chunk、以及让多个页面共享的
 // 本地模块拥有稳定可读的名字。
+//
+// 不指定时打包器按「被哪些页面共用」自动拆分，页面组合一多就会出现大量 1KB
+// 左右的碎 chunk，各自占一次请求。因此几 KB 量级的共享胶水代码按框架合并：
+// - runtime：零框架依赖、所有页面都会加载的代码，Vue 页面也可安全引用；
+// - react-shared：只被 React 页面引用，可依赖 react chunk。
+// 合并的代价是部分页面会多下载少量用不到的代码，只适合放体积很小的模块；
+// 较大的库仍应单独成 chunk。
 const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
-  ["/components/toaster.tsx", "toaster"], // 懒加载 Toaster 外壳，与 sonner 库(sonner chunk)区分
+  ["/src/runtime/global-scripts.ts", "runtime"],
+  ["/src/runtime/mount-react.tsx", "react-shared"],
+  ["/components/client-only.tsx", "react-shared"],
+  // 懒加载 sonner 的 Toaster 外壳本身很小；sonner 库仍在独立的 sonner chunk。
+  ["/components/toaster.tsx", "react-shared"],
   ["/app/share/styles.css", "share-common"], // share 两页共享样式
   // 全站基础样式由各框架挂载器引入，独立成 chunk，避免随挂载器各产出一份。
   ["/app/globals.css", "globals"],
@@ -42,9 +59,10 @@ const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
 
 function chunkName(id: string) {
   const normalized = id.split("?")[0].replaceAll("\\", "/");
-  // 所有动态 import 都依赖 Vite 的 preload helper；若不单独成 chunk，它会被并进
-  // 某个先用到它的业务 chunk（如 toaster），使所有页面间接依赖该 chunk 及其框架运行时。
-  if (normalized.endsWith("vite/preload-helper.js")) return "preload-helper";
+  // 所有动态 import 都依赖 Vite 的 preload helper；若不指定，它会被并进某个先用到
+  // 它的业务 chunk，使所有页面间接依赖该 chunk 及其框架运行时。
+  // 打包器自身的模块互操作 runtime 不经过分组，固定输出为独立的 rolldown-runtime chunk。
+  if (normalized.endsWith("vite/preload-helper.js")) return "runtime";
   const packageName = modulePackageName(normalized);
 
   if (packageName) {
@@ -55,6 +73,19 @@ function chunkName(id: string) {
 
   return APP_CHUNK.find(([suffix]) => normalized.endsWith(suffix))?.[1];
 }
+
+// 分组会连同依赖一起收入模块（includeDependenciesRecursively 默认开启），先处理
+// 的组先认领。被各处依赖的底层 chunk 必须优先，否则会被上层 chunk 吞掉，例如
+// react 的 jsx-runtime 被并进 framer-motion，使所有 React 页面都依赖 framer-motion。
+const BASE_CHUNKS = ["runtime", "react", "vue"];
+const chunkGroups = [
+  ...BASE_CHUNKS.map((name, index) => ({
+    name,
+    test: (id: string) => chunkName(id) === name,
+    priority: BASE_CHUNKS.length - index + 1,
+  })),
+  { name: (id: string) => chunkName(id) ?? null, priority: 0 },
+];
 
 const pages = discoverPages({ root: import.meta.dirname });
 const input = Object.fromEntries(
@@ -117,7 +148,7 @@ export default defineConfig({
       },
       input,
       output: {
-        manualChunks: chunkName,
+        codeSplitting: { groups: chunkGroups },
       },
     },
   },

@@ -63,7 +63,7 @@ pnpm create-page your-page-name
 
 - 非首屏功能使用动态导入。
 - 大型依赖按页面或功能拆分 chunk。
-- 构建产物命名通过 `vite.config.ts` 的 `manualChunks` 保持可读。
+- 构建产物命名通过 `vite.config.ts` 的 `output.codeSplitting` 分组保持可读。
 - 页面应该即使在 JS 加载前也具备可读的 SSG HTML。
 
 ## 当前路由

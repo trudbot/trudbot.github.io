@@ -47,7 +47,7 @@ pnpm dev
 
 - 每个页面 entry 自动生成。
 - 页面 CSS 由页面组件导入，只随该页面加载。
-- 共享依赖通过 `manualChunks` 命名，方便分析产物。
+- 共享依赖通过 `output.codeSplitting` 分组命名，方便分析产物。
 
 ## 验证
 
