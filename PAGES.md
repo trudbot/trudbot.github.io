@@ -6,7 +6,7 @@
 app/
 ├── globals.css
 ├── (home)/
-│   ├── page.tsx
+│   ├── page.vue
 │   └── home.css
 ├── json/
 │   ├── page.tsx
@@ -33,7 +33,7 @@ scripts/
 
 路径映射规则：
 
-- `app/(home)/page.tsx` → `/`
+- `app/(home)/page.vue` → `/`
 - `app/json/page.tsx` → `/json`
 - `app/share/r/page.tsx` → `/share/r`
 
@@ -68,7 +68,7 @@ pnpm create-page your-page-name
 
 ## 当前路由
 
-- `/` → `app/(home)/page.tsx`
+- `/` → `app/(home)/page.vue`（Vue Vapor）
 - `/json` → `app/json/page.tsx`
 - `/share` → `app/share/page.tsx`
 - `/share/r` → `app/share/r/page.tsx`

@@ -26,7 +26,7 @@ pnpm lint      # Vite Plus lint
 
 路由自动从 `app/**/page.tsx` 或 `app/**/page.vue` 生成：
 
-- `app/(home)/page.tsx` → `/`
+- `app/(home)/page.vue` → `/`
 - `app/json/page.tsx` → `/json`
 - `app/share/r/page.tsx` → `/share/r`
 

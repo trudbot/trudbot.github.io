@@ -48,6 +48,8 @@ const VENDOR_CHUNK: Record<string, string> = {
 // 较大的库仍应单独成 chunk。
 const APP_CHUNK: Array<[suffix: string, chunk: string]> = [
   ["/src/runtime/global-scripts.ts", "runtime"],
+  // Vue 挂载器很小，跟着 vue chunk 走，Vue 页面本来就要加载它。
+  ["/src/runtime/mount-vue-vapor.ts", "vue"],
   ["/src/runtime/mount-react.tsx", "react-shared"],
   ["/components/client-only.tsx", "react-shared"],
   // 懒加载 sonner 的 Toaster 外壳本身很小；sonner 库仍在独立的 sonner chunk。
@@ -79,8 +81,9 @@ function chunkName(id: string) {
 
 // 分组会连同依赖一起收入模块（includeDependenciesRecursively 默认开启），先处理
 // 的组先认领。被各处依赖的底层 chunk 必须优先，否则会被上层 chunk 吞掉，例如
-// react 的 jsx-runtime 被并进 framer-motion，使所有 React 页面都依赖 framer-motion。
-const BASE_CHUNKS = ["runtime", "react", "vue"];
+// react 的 jsx-runtime 被并进 framer-motion，使所有 React 页面都依赖 framer-motion；
+// globals.css 被并进 vue（Vue 挂载器引入了它），使 React 页面依赖 vue chunk。
+const BASE_CHUNKS = ["runtime", "globals", "react", "vue"];
 const isMotionModule = (id: string) => chunkName(id) === "framer-motion";
 const chunkGroups = [
   ...BASE_CHUNKS.map((name, index) => ({

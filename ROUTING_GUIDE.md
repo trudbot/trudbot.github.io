@@ -27,7 +27,7 @@
 示例：
 
 ```txt
-app/(home)/page.tsx  -> /
+app/(home)/page.vue  -> /
 app/json/page.tsx    -> /json
 app/share/r/page.tsx -> /share/r
 ```

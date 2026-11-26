@@ -292,9 +292,12 @@ function pageBodyAssets(route) {
 
 for (const route of serverEntry.routesToPrerender) {
   assertRuntimeIsolation(route);
-  const appHtml = await serverEntry.render(route);
+  const { html: appHtml, head } = await serverEntry.render(route);
   const html = template
-    .replace("<!--page-assets-->", pageHeadAssets(route))
+    .replace(
+      "<!--page-assets-->",
+      [pageHeadAssets(route), ...head.map((tag) => `    ${tag}`)].join("\n"),
+    )
     .replace("<!--app-html-->", appHtml)
     .replace("<!--body-assets-->", pageBodyAssets(route));
   const filePaths =

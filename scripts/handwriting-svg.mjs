@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /*
  * 用 tegaki CLI（https://github.com/gkurt/tegaki）生成首页标题 `@trudbot` 的手写动画 SVG，
- * 由 components/handwriting-title.tsx 以 `?raw` 内联进页面。通过 npx 临时运行，不作为项目依赖。
+ * 由 app/(home)/HandwritingTitle.vue 以 `?raw` 内联进页面。通过 npx 临时运行，不作为项目依赖。
  *
  * 用法：
  *   node scripts/handwriting-svg.mjs [输出路径] [其余参数原样透传给 tegaki]
  *
- * 样式对齐 components/profile-card.tsx 里的标题：
+ * 样式对齐 app/(home)/ProfileCard.vue 里的标题：
  *   font-handwriting(Caveat) / tracking-tight(-0.025em) / font-bold / text-foreground。
  *   - 颜色用 currentColor，跟随标题的 text-foreground，深浅主题都适用。
  *   - 宽高以 em 输出，尺寸跟随标题的响应式字号；FONT_SIZE 只是生成时的坐标基准。
@@ -24,11 +24,11 @@ const TEXT = "@trudbot";
 const FONT_SIZE = 96;
 // 目测与 Caveat 700 粗细最接近的倍数
 const WEIGHT_SCALE = 1.5;
-// 推迟开笔，等标题所在区块的入场淡入（profile-card 里 0.3s 起的 pc-fade-up）基本可见；
+// 推迟开笔，等标题所在区块的入场淡入（ProfileCard.vue 里 0.3s 起的 pc-fade-up）基本可见；
 // SMIL 时间轴从页面加载开始计时，不受 CSS 动画影响
 const START_DELAY = 0.6;
 
-const [output = "components/trudbot-handwriting.svg", ...extraArgs] = process.argv.slice(2);
+const [output = "app/(home)/trudbot-handwriting.svg", ...extraArgs] = process.argv.slice(2);
 
 const raw = execFileSync(
   "npx",

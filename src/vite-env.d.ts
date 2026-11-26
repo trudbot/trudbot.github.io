@@ -1,6 +1,6 @@
 /// <reference types="vite-plus/client" />
 
-// 额外的 query 让同一文件的动态 import 成为独立模块（见 components/handwriting-title.tsx），
+// 额外的 query 让同一文件的动态 import 成为独立模块（见 app/(home)/HandwritingTitle.vue），
 // 内置的 `*?raw` 声明匹配不到。
 declare module "*?raw&lazy" {
   const content: string;

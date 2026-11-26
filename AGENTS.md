@@ -5,9 +5,9 @@
 - **构建工具**: Vite Plus / Vite
 - **渲染方式**: 自定义 SSG，多页面静态应用
 - **语言**: TypeScript
-- **UI**: React 19；也支持 Vue 3.6 SFC 页面（`page.vue`），`<script setup vapor>` 的页面走 Vapor 模式（如 `/trudbot`）
+- **UI**: React 19；也支持 Vue 3.6 SFC 页面（`page.vue`），`<script setup vapor>` 的页面走 Vapor 模式（如 `/`、`/trudbot`）
 - **样式**: Tailwind CSS v4
-- **动画**: Framer Motion
+- **动画**: React 页面用 Framer Motion；首页（Vue Vapor）的头像动画用 `app/(home)/motion.ts`，语义对齐 Framer Motion
 - **组件**: 不使用组件脚手架（如 shadcn/ui）；交互原语直接用 Radix（如 `@radix-ui/react-switch`），样式在调用处用 Tailwind 写
 - **图标**: Lucide React
 
